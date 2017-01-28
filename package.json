@@ -15,6 +15,7 @@
     "babel-preset-stage-2": "^6.18.0",
     "babel-regenerator-runtime": "^6.5.0",
     "bcrypt": "^1.0.2",
+    "body-parser": "^1.16.0",
     "compress": "^0.99.0",
     "compression": "^1.6.2",
     "cookie-parser": "^1.4.3",
