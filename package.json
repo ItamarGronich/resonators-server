@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --require test/setup test/**/*.test.js"
   },
   "author": "InterAl",
   "license": "ISC",
@@ -21,6 +21,7 @@
     "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
     "express-request-id": "^1.2.0",
+    "node-fetch": "^1.6.3",
     "pg": "^6.1.2",
     "pm2": "^2.2.3",
     "sequelize": "^3.29.0"
@@ -28,6 +29,7 @@
   "devDependencies": {
     "babel-plugin-transform-async-to-generator": "^6.22.0",
     "babel-plugin-transform-regenerator": "^6.22.0",
-    "babel-plugin-transform-runtime": "^6.22.0"
+    "babel-plugin-transform-runtime": "^6.22.0",
+    "supertest": "^2.0.1"
   }
 }

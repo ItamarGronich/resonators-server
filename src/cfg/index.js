@@ -1,4 +1,5 @@
 import dev from './dev';
+import test from './test';
 
 const env = process.env.ENV || 'dev';
 
@@ -10,6 +11,9 @@ switch (env) {
         break;
     case 'prod':
         cfg = prod;
+        break;
+    case 'test':
+        cfg = test;
         break;
     default:
         cfg = dev;

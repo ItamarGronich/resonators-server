@@ -9,7 +9,7 @@ export default async function login(email, pass) {
         }
     });
 
-    let user, isValid;
+    let user, isValid = false;
 
     if (dbUser) {
         const userEntity = dbToDomain.toUser(dbUser);
@@ -19,6 +19,6 @@ export default async function login(email, pass) {
 
     return {
         isValid,
-        user: isValid && user
+        user: isValid ? user : null
     };
 }
