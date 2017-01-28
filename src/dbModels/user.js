@@ -2,6 +2,12 @@ import Sequelize from 'sequelize';
 import conn from '../dbConnection';
 
 export default conn.define('users', {
+    id: {
+        type: Sequelize.UUID,
+        field: 'id',
+        primaryKey: true
+    },
+
     name: {
         type: Sequelize.STRING,
         field: 'name'

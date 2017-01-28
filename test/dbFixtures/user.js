@@ -1,10 +1,12 @@
 import user from '../../src/dbModels/user';
 
-user.truncate();
-
-user.create({
-    name: 'foo',
-    email: 'foo@bar.baz',
-    pass: '$2a$10$EJT3ZPB5W5ZM10F3lR6RyeUnNxVjsyQmJwPohB6.V3YOmKMNNqoSG',
-    salt: '$2a$10$EJT3ZPB5W5ZM10F3lR6Rye'
-});
+export default () => {
+    return user.sync({force: true})
+                .then(() => user.create({
+                    id: '455f0d8c-64c8-49af-843d-a2a2b0bdb591',
+                    name: 'foo',
+                    email: 'foo@bar.baz',
+                    pass: '$2a$10$EJT3ZPB5W5ZM10F3lR6RyeUnNxVjsyQmJwPohB6.V3YOmKMNNqoSG',
+                    salt: '$2a$10$EJT3ZPB5W5ZM10F3lR6Rye'
+                }));
+};

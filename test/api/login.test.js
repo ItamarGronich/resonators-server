@@ -1,11 +1,16 @@
 import app from '../../src/api/index';
+import User from '../../src/dbModels/user.js';
+import UserLogin from '../../src/dbModels/userLogin';
+import db from '../../src/dbConnection';
 import request from 'supertest';
+import {assert} from 'chai';
+const knex = require('knex')({});
 
 describe('login', () => {
     it('login without credentials', done => {
         request(app)
             .post('/user_sessions')
-            .expect(200, {loginResult: { isValid: false, user: null }}, done)
+            .expect(200, {loginResult: { isValid: false, user: null }}, done);
     });
 
     it('successful login', done => {
@@ -36,4 +41,25 @@ describe('login', () => {
                 }
             }, done);
     });
+
+    it('successful login - insert into UserLogin', async done => {
+        await UserLogin.sync({force: true});
+
+        request(app)
+            .post('/user_sessions')
+            .send({ email: 'foo@bar.baz', password: '1234'})
+            .end((err, res) => {
+                if (err) return done(err);
+
+                const sql = knex('users')
+                            .join('user_logins', 'users.id', 'user_logins.user_id')
+                            .where('users.email', 'foo@bar.baz')
+                            .toString();
+
+                db.query(sql)
+                    .spread(rows => assert.isAbove(rows.length, 0))
+                    .then(done)
+                    .catch(done);
+            });
+    })
 });

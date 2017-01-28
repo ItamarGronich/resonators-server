@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 
 export default class User {
     constructor({
+        id,
         name,
         email,
         country,
@@ -9,6 +10,7 @@ export default class User {
         pass,
         salt
     }) {
+        this.id = id;
         this.name = name;
         this.email = email;
         this.country = country;

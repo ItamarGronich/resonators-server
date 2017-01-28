@@ -1,13 +1,20 @@
 import Sequelize from 'sequelize';
 import conn from '../dbConnection';
+import User from '../dbModels/user';
 
-export default conn.define('user_logins', {
+const UserLogin = conn.define('user_logins', {
+    id: {
+        type: Sequelize.UUID,
+        field: 'id',
+        primaryKey: true
+    },
+
     userId: {
-        type: Sequelize.STRING,
+        type: Sequelize.UUID,
         field: 'user_id'
     },
 
-    userAgen: {
+    userAgent: {
         type: Sequelize.STRING,
         field: 'user_agent'
     },
@@ -23,5 +30,9 @@ export default conn.define('user_logins', {
     }
 }, {
     createdAt: 'created_at',
-    updatedAt: 'updated_at'
+    updatedAt: false
 });
+
+UserLogin.belongsTo(User, { through: 'user_id'});
+
+export default UserLogin;
