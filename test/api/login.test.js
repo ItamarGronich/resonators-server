@@ -28,14 +28,41 @@ describe('login', () => {
                 }
             })
             .end((err, res) => {
-                err && done(err);
+                if (err) return done(err);
 
                 assert.match(res.headers['set-cookie'][0],
                              /loginId=.+; Max\-Age=\d+;/,
                              'set cookie match failed');
 
                 done();
-            })
+            });
+    });
+
+    it('relogin with cookie', done => {
+        request(app)
+            .post('/user_sessions')
+            .send({ email: 'foo@bar.baz', password: '1234'})
+            .end((err, res) => {
+                if (err) return done(err);
+
+                const matches = /loginId=(.+?);/.exec(res.headers['set-cookie'][0]);
+                const loginId = matches[1];
+
+                return request(app)
+                    .get('/user_sessions')
+                    .set('Cookie', [`loginId=${loginId}`])
+                    .expect(200, {
+                        loginResult: {
+                            isValid: true,
+                            user: {
+                                name: 'foo',
+                                email: 'foo@bar.baz',
+                                unsubscribed: null,
+                                country: null
+                            }
+                        }
+                    }, done);
+            });
     });
 
     it('failed login', done => {
@@ -47,7 +74,22 @@ describe('login', () => {
                     isValid: false,
                     user: null
                 }
-            }, done);
+            })
+            .end((err, res) => {
+                if (err) return done(err);
+
+
+                const cookies = res.headers['set-cookie'];
+
+                if (cookies)
+                    cookies.forEach(cookie => {
+                        console.log('zzz', cookie)
+                        assert(cookie.indexOf('loginId') === -1,
+                               'loginId was present in a cookie - it should not!');
+                    });
+
+                done();
+            });
     });
 
     it('successful login - insert into UserLogin', done => {
