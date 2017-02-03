@@ -1,8 +1,8 @@
-import user from '../../src/db/dbModels/user';
+import {users} from '../../src/db/sequelize/models';
 
 export default () => {
-    return user.sync({force: true})
-                .then(() => user.create({
+    return users.sync({force: true})
+                .then(() => users.create({
                     id: '455f0d8c-64c8-49af-843d-a2a2b0bdb591',
                     name: 'foo',
                     email: 'foo@bar.baz',

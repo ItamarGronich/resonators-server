@@ -1,5 +1,5 @@
-import userLogin from '../../src/db/dbModels/userLogin';
+import {user_logins} from '../../src/db/sequelize/models';
 
 export default () => {
-    return userLogin.sync({force: true});
+    return user_logins.sync({force: true});
 };

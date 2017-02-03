@@ -1,5 +1,5 @@
 const fixtures = [
-    () => require('./user.js').default().then(() => require('./userLogin').default())
+    () => require('./users.js').default().then(() => require('./user_logins').default())
 ];
 
 export default () => {

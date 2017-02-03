@@ -20,4 +20,6 @@ switch (env) {
         break;
 }
 
+console.log('zzzzzzzz', cfg);
+
 export default cfg;

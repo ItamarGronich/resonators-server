@@ -1,8 +1,5 @@
+import dbCfg from '../db/sequelize/config/config';
+
 export default {
-    db: {
-        username: 'postgres',
-        address: 'localhost',
-        port: '5432',
-        database: 'r_d'
-    }
+    db: dbCfg.development
 };

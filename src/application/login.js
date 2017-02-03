@@ -1,5 +1,4 @@
-import User from '../db/dbModels/user';
-import UserLogin from '../db/dbModels/userLogin';
+import {user_logins as UserLogin} from '../db/sequelize/models';
 import uuid from 'uuid/v4';
 import userRepository from '../db/repositories/UserRepository.js';
 import * as dtoFactory from './dto/index.js'
@@ -26,7 +25,7 @@ async function authenticate(userEntity, pass) {
     if (isValid) {
         await UserLogin.create({
             id: uuid(),
-            userId: userEntity.id
+            user_id: userEntity.id
         });
 
         user = dtoFactory.toUser(userEntity);

@@ -1,7 +1,6 @@
 import app from '../../src/api/index';
-import User from '../../src/db/dbModels/user.js';
-import UserLogin from '../../src/db/dbModels/userLogin';
-import db from '../../src/db/dbConnection';
+import {user_logins as UserLogin} from '../../src/db/sequelize/models';
+import db from '../../src/db/sequelize/dbConnection';
 import request from 'supertest';
 import {assert} from 'chai';
 const knex = require('knex')({});
@@ -42,24 +41,25 @@ describe('login', () => {
             }, done);
     });
 
-    it('successful login - insert into UserLogin', async done => {
-        await UserLogin.sync({force: true});
+    it('successful login - insert into UserLogin', done => {
+        UserLogin.truncate()
+        .then(() => {
+            request(app)
+                .post('/user_sessions')
+                .send({ email: 'foo@bar.baz', password: '1234'})
+                .end((err, res) => {
+                    if (err) return done(err);
 
-        request(app)
-            .post('/user_sessions')
-            .send({ email: 'foo@bar.baz', password: '1234'})
-            .end((err, res) => {
-                if (err) return done(err);
+                    const sql = knex('users')
+                                .join('user_logins', 'users.id', 'user_logins.user_id')
+                                .where('users.email', 'foo@bar.baz')
+                                .toString();
 
-                const sql = knex('users')
-                            .join('user_logins', 'users.id', 'user_logins.user_id')
-                            .where('users.email', 'foo@bar.baz')
-                            .toString();
-
-                db.query(sql)
-                    .spread(rows => assert.isAbove(rows.length, 0))
-                    .then(done)
-                    .catch(done);
-            });
+                    db.query(sql)
+                        .spread(rows => assert.isAbove(rows.length, 0))
+                        .then(done)
+                        .catch(done);
+                });
+        }).catch(done);
     })
 });

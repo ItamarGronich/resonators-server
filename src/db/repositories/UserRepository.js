@@ -1,6 +1,6 @@
 import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
-import User from '../dbModels/user';
+import {users as User} from '../sequelize/models';
 
 class UserRepository extends Repository {
     constructor(...args) {

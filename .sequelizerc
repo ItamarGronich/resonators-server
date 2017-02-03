@@ -1,0 +1,9 @@
+var path = require('path');
+
+var folder = './src/db/sequelize';
+
+module.exports = {
+  'config': path.resolve(folder, 'config/config.json'),
+  'migrations-path': path.resolve(folder, 'migrations'),
+  'models-path': path.resolve(folder, 'models')
+}
