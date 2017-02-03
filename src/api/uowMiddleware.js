@@ -1,6 +1,6 @@
 import {UnitOfWork} from 'ddd-helpers';
 import sequelize from 'sequelize';
-import userRepository from '../dbModels/userRepository';
+import userRepository from '../db/repositories/userRepository';
 var createDomain = require('domain').create;
 
 var createUow = UnitOfWork(createTransaction, getEntityRepository);

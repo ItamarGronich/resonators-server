@@ -1,5 +1,5 @@
 import express from './express';
-import Users from '../dbModels/user';
+import Users from '../db/dbModels/user';
 
 express.get('/users', async (request, response) => {
     response.status(200);

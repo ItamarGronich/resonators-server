@@ -1,7 +1,7 @@
-import User from '../dbModels/user';
-import UserLogin from '../dbModels/userLogin';
+import User from '../db/dbModels/user';
+import UserLogin from '../db/dbModels/userLogin';
 import uuid from 'uuid/v4';
-import userRepository from '../dbModels/UserRepository.js';
+import userRepository from '../db/repositories/UserRepository.js';
 import * as dtoFactory from './dto/index.js'
 
 export default async function login(email, pass) {

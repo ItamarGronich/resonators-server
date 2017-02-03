@@ -1,4 +1,4 @@
-import user from '../../src/dbModels/user';
+import user from '../../src/db/dbModels/user';
 
 export default () => {
     return user.sync({force: true})

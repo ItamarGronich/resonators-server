@@ -1,6 +1,6 @@
-import * as dbToDomain from './dbToDomain';
+import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
-import User from './user';
+import User from '../dbModels/user';
 
 class UserRepository extends Repository {
     constructor(...args) {

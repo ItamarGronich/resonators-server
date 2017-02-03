@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize';
 import conn from '../dbConnection';
-import User from '../dbModels/user';
+import User from './user';
 
 const UserLogin = conn.define('user_logins', {
     id: {
