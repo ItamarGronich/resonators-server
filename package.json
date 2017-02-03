@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --require test/setup test/**/*.test.js"
+    "test": "mocha --require test/setup test/**/*.test.js",
+    "test:watch": "mocha --watch --require test/setup test/**/*.test.js"
   },
   "author": "InterAl",
   "license": "ISC",

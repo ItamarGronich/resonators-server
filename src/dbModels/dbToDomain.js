@@ -1,4 +1,4 @@
-import User from '../../domain/user';
+import User from '../domain/user';
 
 export function toUser(dbUser) {
     return new User({

@@ -1,19 +1,14 @@
-import * as dbToDomain from './converters/dbToDomain';
 import User from '../dbModels/user';
 import UserLogin from '../dbModels/userLogin';
 import uuid from 'uuid/v4';
-import * as dtoFactory from './dto';
+import userRepository from '../dbModels/UserRepository.js';
+import * as dtoFactory from './dto/index.js'
 
 export default async function login(email, pass) {
-    const dbUser = await User.findOne({
-        where: {
-            email
-        }
-    });
+    const user = await userRepository.findByEmail(email);
 
-    if (dbUser) {
-        const userEntity = dbToDomain.toUser(dbUser);
-        const result = await authenticate(userEntity, pass);
+    if (user) {
+        const result = await authenticate(user, pass);
         return result;
     } else {
         return {
