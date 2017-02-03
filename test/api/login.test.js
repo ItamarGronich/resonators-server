@@ -26,7 +26,16 @@ describe('login', () => {
                         unsubscribed: null
                     }
                 }
-            }, done);
+            })
+            .end((err, res) => {
+                err && done(err);
+
+                assert.match(res.headers['set-cookie'][0],
+                             /loginId=.+; Max\-Age=\d+;/,
+                             'set cookie match failed');
+
+                done();
+            })
     });
 
     it('failed login', done => {

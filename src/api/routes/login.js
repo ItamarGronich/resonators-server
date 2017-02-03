@@ -4,8 +4,19 @@ import routeHandler from '../routeHandler';
 
 express.post('/user_sessions', routeHandler(async (request, response) => {
     const {email, password} = request.body;
-    const loginResult = await login(email, password);
+
+    const {user, isValid, loginId} = await login(email, password);
 
     response.status(200);
-    response.json({ loginResult });
+
+    response.cookie('loginId', loginId, {
+        maxAge: 3600 * 24 * 7 * 1000
+    });
+
+    response.json({
+        loginResult: {
+            user,
+            isValid
+        }
+    });
 }));

@@ -7,8 +7,7 @@ export default async function login(email, pass) {
     const user = await userRepository.findByEmail(email);
 
     if (user) {
-        const result = await authenticate(user, pass);
-        return result;
+        return await authenticate(user, pass);
     } else {
         return {
             isValid: false,
@@ -18,18 +17,20 @@ export default async function login(email, pass) {
 }
 
 async function authenticate(userEntity, pass) {
-    let user = null, isValid = false;
+    let user = null, isValid = false, loginId;
 
     isValid = userEntity.passwordsMatch(pass);
 
     if (isValid) {
+        loginId = uuid();
+
         await UserLogin.create({
-            id: uuid(),
+            id: loginId,
             user_id: userEntity.id
         });
 
         user = dtoFactory.toUser(userEntity);
     }
 
-    return {user, isValid};
+    return {user, isValid, loginId};
 }
