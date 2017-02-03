@@ -20,4 +20,5 @@ console.log('\n***************\nDB MIGRATION\n***************\n');
 
 const sequelize = args => './node_modules/.bin/sequelize ' + args;
 
-exec(sequelize('db:migrate'));
+exec(sequelize('db:migrate --env development'));
+exec(sequelize('db:migrate --env test'));

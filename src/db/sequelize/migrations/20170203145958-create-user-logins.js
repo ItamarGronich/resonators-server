@@ -3,9 +3,9 @@ module.exports = {
   up: function(queryInterface, Sequelize) {
     return queryInterface.createTable('user_logins', {
       id: {
+        type: Sequelize.UUID,
         allowNull: false,
-        primaryKey: true,
-        type: Sequelize.UUID
+        primaryKey: true
       },
       id: {
         type: Sequelize.UUID
@@ -31,7 +31,9 @@ module.exports = {
         type: Sequelize.DATE
       }
     }).then(function() {
-        return queryInterface.addIndex('user_logins', ['user_id'])
+        return queryInterface.addIndex('user_logins', ['user_id']);
+    }).then(function() {
+        return queryInterface.addIndex('user_logins', ['id']);
     });
   },
   down: function(queryInterface, Sequelize) {
