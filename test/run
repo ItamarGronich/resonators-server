@@ -5,11 +5,20 @@ process.env.ENV = 'test';
 
 const {execSync} = require('child_process');
 const createDbFixtures = require('./dbFixtures').default;
+const noInit = process.argv.slice(2).indexOf('noinit') !== -1;
 
 //********************************************
 
-initDB();
-initFixtures();
+if (noInit) {
+    console.log('running tests without initing the test DB');
+    runMocha();
+} else {
+    initDB();
+
+    initFixtures()
+        .then(runMocha)
+        .catch(err => console.error(err));
+}
 
 //********************************************
 
@@ -25,11 +34,11 @@ function initDB() {
 }
 
 function initFixtures() {
-    return createDbFixtures()
-        .then(() => {
-            execSync('mocha --watch --require test/setup test/**/*.test.js', {
-                stdio: 'inherit'
-            });
-        })
-        .catch(err => console.error(err));
+    return createDbFixtures();
+}
+
+function runMocha() {
+    return execSync('mocha --watch --require test/setup test/**/*.test.js', {
+        stdio: 'inherit'
+    });
 }

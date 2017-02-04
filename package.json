@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "./test/run",
+    "test:noinit": "./test/run noinit",
     "migrate": "./node_modules/.bin/sequelize db:migrate",
     "migrate:undo": "./node_modules/.bin/sequelize db:migrate:undo",
     "initdb": "./scripts/initdb"
