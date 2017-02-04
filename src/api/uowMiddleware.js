@@ -19,5 +19,8 @@ export default function uowMiddleware(req, res, next) {
   domain.add(res);
   domain.uow = createUow();
   domain.run(next);
-  domain.on('error', next);
+  domain.on('error', err => {
+      console.error('app error', err);
+      next();
+  });
 }

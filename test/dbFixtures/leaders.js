@@ -7,7 +7,7 @@ export default () => {
 };
 
 export const fooLeader = {
-    id: uuid(),
+    id: '076123b9-4d90-4272-8f64-23c2d1de9057',
     user_id: fooUser.id,
     title: 'A fearless leader',
     description: 'Terra is my nation',

@@ -86,7 +86,6 @@ describe('login', () => {
             .end((err, res) => {
                 if (err) return done(err);
 
-
                 const cookies = res.headers['set-cookie'];
 
                 if (cookies)
@@ -100,24 +99,21 @@ describe('login', () => {
     });
 
     it('successful login - insert into UserLogin', done => {
-        UserLogin.truncate()
-        .then(() => {
-            request(app)
-                .post('/user_sessions')
-                .send({ email: 'foo@bar.baz', password: '1234'})
-                .end((err, res) => {
-                    if (err) return done(err);
+        request(app)
+        .post('/user_sessions')
+        .send({ email: 'foo@bar.baz', password: '1234'})
+        .end((err, res) => {
+            if (err) return done(err);
 
-                    const sql = knex('users')
-                                .join('user_logins', 'users.id', 'user_logins.user_id')
-                                .where('users.email', 'foo@bar.baz')
-                                .toString();
+            const sql = knex('users')
+            .join('user_logins', 'users.id', 'user_logins.user_id')
+            .where('users.email', 'foo@bar.baz')
+            .toString();
 
-                    db.query(sql)
-                        .spread(rows => assert.isAbove(rows.length, 0))
-                        .then(done)
-                        .catch(done);
-                });
-        }).catch(done);
+            db.query(sql)
+            .spread(rows => assert.isAbove(rows.length, 0))
+            .then(done)
+            .catch(done);
+        });
     })
 });

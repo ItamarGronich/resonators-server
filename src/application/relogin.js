@@ -9,11 +9,18 @@ export default async function relogin(loginId) {
         include: [users]
     });
 
-    const {user} = row;
-    const userDto = toUser(user);
+    if (row) {
+        const {user} = row;
+        const userDto = toUser(user);
 
-    return {
-        isValid: Boolean(row.get('id')),
-        user: userDto
-    };
+        return {
+            isValid: Boolean(row.get('id')),
+            user: userDto
+        };
+    } else {
+        return {
+            isValid: false,
+            user: null
+        };
+    }
 }
