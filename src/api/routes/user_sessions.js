@@ -25,16 +25,14 @@ express.post('/user_sessions', routeHandler(async (request, response) => {
 }));
 
 express.get('/user_sessions', routeHandler(async (request, response) => {
-    const {loginId} = request.cookies;
-
-    const {user, isValid} = await relogin(loginId);
-
     response.status(200);
 
     response.json({
         loginResult: {
-            user,
-            isValid
+            user: request.appSession.user,
+            isValid: true
         }
     });
+}, {
+    enforceLogin: true
 }));

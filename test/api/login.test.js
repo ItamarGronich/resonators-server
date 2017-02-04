@@ -65,6 +65,14 @@ describe('login', () => {
             });
     });
 
+    it('relogin without cookie', done => {
+        request(app)
+            .get('/user_sessions')
+            .expect(403, {
+                status: 'Must be logged in for using this call.'
+            }, done);
+    });
+
     it('failed login', done => {
         request(app)
             .post('/user_sessions')
