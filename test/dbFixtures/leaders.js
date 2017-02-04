@@ -1,10 +1,12 @@
-import {users} from '../../src/db/sequelize/models';
+import {leaders} from '../../src/db/sequelize/models';
 
 export default () => {
-    return users.create(fooUser);
+    return leaders.create({
+    
+    });
 };
 
-export const fooUser = {
+export const fooLeader = {
     id: '455f0d8c-64c8-49af-843d-a2a2b0bdb591',
     name: 'foo',
     email: 'foo@bar.baz',

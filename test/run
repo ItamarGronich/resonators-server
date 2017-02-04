@@ -1,0 +1,35 @@
+#!/usr/bin/env node
+initBabel();
+
+process.env.ENV = 'test';
+
+const {execSync} = require('child_process');
+const createDbFixtures = require('./dbFixtures').default;
+
+//********************************************
+
+initDB();
+initFixtures();
+
+//********************************************
+
+function initBabel() {
+    global.regeneratorRuntime = require('babel-regenerator-runtime');
+    require("babel-register")({});
+}
+
+function initDB() {
+    return execSync('DB=resonators_test ./scripts/initdb', {
+        stdio: 'inherit'
+    });
+}
+
+function initFixtures() {
+    return createDbFixtures()
+        .then(() => {
+            execSync('mocha --watch --require test/setup test/**/*.test.js', {
+                stdio: 'inherit'
+            });
+        })
+        .catch(err => console.error(err));
+}

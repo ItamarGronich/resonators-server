@@ -1,9 +1,12 @@
 #!/usr/bin/env node
+const selectedDB = process.env.DB;
 
-const databases = [
+const allDatabases = [
     'resonators_dev',
     'resonators_test'
 ];
+
+const databases = allDatabases.filter(dbName => !selectedDB || dbName === selectedDB);
 
 const exec = (...args) => require('child_process').execSync(...args, {stdio: 'inherit'});
 

@@ -1,8 +1,14 @@
-const fixtures = [
-    () => require('./users.js').default().then(() => require('./user_logins').default())
+const loadOrder = [
+    './users.js',
+    './user_logins'
 ];
 
+const promiseChain = () => {
+    return loadOrder.reduce((acc, cur) => {
+        return acc.then(() => require(cur).default());
+    }, Promise.resolve());
+};
+
 export default () => {
-    const promises = fixtures.map(f => f());
-    return Promise.all(promises);
+    return promiseChain();
 };

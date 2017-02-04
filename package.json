@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --require test/setup test/**/*.test.js",
-    "test:watch": "mocha --watch --require test/setup test/**/*.test.js",
+    "test": "./test/run",
     "migrate": "./node_modules/.bin/sequelize db:migrate",
     "migrate:undo": "./node_modules/.bin/sequelize db:migrate:undo",
     "initdb": "./scripts/initdb"
@@ -13,6 +12,7 @@
   "author": "InterAl",
   "license": "ISC",
   "dependencies": {
+    "argv": "0.0.2",
     "babel-cli": "^6.18.0",
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-react": "^6.16.0",

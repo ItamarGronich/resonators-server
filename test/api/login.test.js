@@ -83,7 +83,6 @@ describe('login', () => {
 
                 if (cookies)
                     cookies.forEach(cookie => {
-                        console.log('zzz', cookie)
                         assert(cookie.indexOf('loginId') === -1,
                                'loginId was present in a cookie - it should not!');
                     });
