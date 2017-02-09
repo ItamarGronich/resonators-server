@@ -8,7 +8,7 @@ express.get('/leader_clinics', routeHandler(async (request, response) => {
     const clinics = await getLeaderClinics(user.id);
 
     response.status(200);
-    response.json({clinics});
+    response.json(clinics);
 }, {
     enforceLogin: true
 }));

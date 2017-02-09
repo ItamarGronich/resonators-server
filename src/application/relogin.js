@@ -1,4 +1,4 @@
-import {user_logins as UserLogin, users} from '../db/sequelize/models';
+import {user_logins as UserLogin, users, leaders} from '../db/sequelize/models';
 import {toUser} from './dto';
 
 export default async function relogin(loginId) {
@@ -6,7 +6,10 @@ export default async function relogin(loginId) {
         where: {
             id: loginId
         },
-        include: [users]
+        include: [{
+            model: users,
+            include: [leaders]
+        }]
     });
 
     if (row) {

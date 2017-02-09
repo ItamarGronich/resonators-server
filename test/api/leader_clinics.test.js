@@ -12,16 +12,14 @@ describe('leader_clinics', () => {
         .end((err, res) => {
             if (err) return done(err);
 
-            assert.shallowDeepEqual(res.body, {
-                clinics: [{
-                    id: '0a2f1d72-0b4b-4a21-9873-bae07a2ea3e3',
-                    user_id: '455f0d8c-64c8-49af-843d-a2a2b0bdb591',
-                    name: 'Foo\'s clinic',
-                }]
-            });
+            assert.shallowDeepEqual(res.body, [{
+                id: '0a2f1d72-0b4b-4a21-9873-bae07a2ea3e3',
+                user_id: '455f0d8c-64c8-49af-843d-a2a2b0bdb591',
+                name: 'Foo\'s clinic',
+            }]);
 
-            assert.isOk(res.body.clinics[0].created_at);
-            assert.isOk(res.body.clinics[0].updated_at);
+            assert.isOk(res.body[0].created_at);
+            assert.isOk(res.body[0].updated_at);
 
             done();
         });

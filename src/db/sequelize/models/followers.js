@@ -1,22 +1,21 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
-    var leaders = sequelize.define('leaders', {
+    var followers = sequelize.define('followers', {
         id: {
             type: DataTypes.UUID,
             primaryKey: true
         },
         user_id: DataTypes.UUID,
-        title: DataTypes.STRING,
-        description: DataTypes.TEXT,
-        visible: DataTypes.INTEGER
+        leader_id: DataTypes.UUID,
+        clinic_id: DataTypes.UUID,
+        status: DataTypes.INTEGER
     }, {
         underscored: true,
         classMethods: {
             associate: function(models) {
-                leaders.belongsTo(models.users);
-                leaders.hasMany(models.followers);
+                followers.belongsTo(models.users);
             }
         }
     });
-    return leaders;
+    return followers;
 };

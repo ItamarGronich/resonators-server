@@ -2,7 +2,8 @@ const loadOrder = [
     './users.js',
     './user_logins',
     './leaders',
-    './clinics'
+    './clinics',
+    './followers'
 ];
 
 const promiseChain = () => {
