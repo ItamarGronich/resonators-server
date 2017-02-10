@@ -2,6 +2,7 @@ import express from '../express';
 import login from '../../application/login';
 import relogin from '../../application/relogin';
 import routeHandler from '../routeHandler';
+import * as dtoFactory from '../../application/dto';
 
 express.post('/user_sessions', routeHandler(async (request, response) => {
     const {email, password} = request.body;
@@ -29,7 +30,7 @@ express.get('/user_sessions', routeHandler(async (request, response) => {
 
     response.json({
         loginResult: {
-            user: request.appSession.user,
+            user: dtoFactory.toUser(request.appSession.user),
             isValid: true
         }
     });

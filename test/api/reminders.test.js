@@ -7,7 +7,7 @@ import setLoginCookie from './setLoginCookie';
 import {assert} from 'chai';
 import moment from 'moment';
 
-describe.only('reminders', () => {
+describe('reminders', () => {
     it('block unauthorized leader', (done) => {
         request(app)
         .get(`/leader_followers/${barFollower.id}/reminders`)
