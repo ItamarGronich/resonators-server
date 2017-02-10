@@ -2,7 +2,6 @@ import _ from 'lodash';
 import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
 import {followers, users, leaders} from '../sequelize/models';
-import Follower from '../../domain/entities/follower';
 
 class FollowerRepository extends Repository {
     constructor(...args) {
@@ -36,6 +35,19 @@ class FollowerRepository extends Repository {
         foundFollowers.forEach(follower => this.trackEntity(follower));
 
         return foundFollowers;
+    }
+
+    async findById(id) {
+        const row = await followers.findOne({ id });
+
+        if (!row)
+            return null;
+
+        const follower = dbToDomain.toFollower(row);
+
+        this.trackEntity(follower);
+
+        return follower;
     }
 }
 

@@ -13,3 +13,9 @@ export function toFollower(follower) {
         user: toUser(follower.user)
     };
 }
+
+export function toResonator(resonator) {
+    return {
+        ...resonator
+    };
+}

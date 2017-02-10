@@ -8,12 +8,12 @@ export default async function enforceLogin(request, response) {
         return;
     }
 
-    const {isValid, user} = await relogin(loginId);
+    const reloginResult = await relogin(loginId);
 
-    if (!isValid)
+    if (!reloginResult.isValid)
         return sendLoginFailed(response);
     else
-        return user;
+        return reloginResult;
 }
 
 function sendLoginFailed(response) {

@@ -4,11 +4,11 @@ export default function routeHandler(cb, options = {}) {
     return async function (req, res, ...rest) {
         try {
             if (options.enforceLogin) {
-                const loggedInUser = await enforceLogin(req, res);
+                const loginResult = await enforceLogin(req, res);
 
-                req.appSession.user = loggedInUser;
+                req.appSession = loginResult;
 
-                if (!loggedInUser) {
+                if (!loginResult) {
                     return;
                 }
             }

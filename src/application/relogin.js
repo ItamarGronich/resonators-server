@@ -1,5 +1,5 @@
 import {user_logins as UserLogin, users, leaders} from '../db/sequelize/models';
-import {toUser} from './dto';
+import {toUser, toLeader} from '../db/dbToDomain';
 
 export default async function relogin(loginId) {
     const row = await UserLogin.findOne({
@@ -14,11 +14,13 @@ export default async function relogin(loginId) {
 
     if (row) {
         const {user} = row;
-        const userDto = toUser(user);
+        const userEntity = toUser(user);
+        const leaderEntity = toLeader(user.leader);
 
         return {
             isValid: Boolean(row.get('id')),
-            user: userDto
+            user: userEntity,
+            leader: leaderEntity
         };
     } else {
         return {
