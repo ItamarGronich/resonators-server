@@ -9,6 +9,4 @@ express.get('/leader_clinics', routeHandler(async (request, response) => {
 
     response.status(200);
     response.json(clinics);
-}, {
-    enforceLogin: true
 }));

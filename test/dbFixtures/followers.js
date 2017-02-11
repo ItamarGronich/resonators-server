@@ -1,11 +1,14 @@
 import uuid from 'uuid/v4';
 import {followers} from '../../src/db/sequelize/models';
-import {barUser} from './users';
-import {fooLeader} from './leaders';
+import {barUser, putUser} from './users';
+import {fooLeader, bazLeader} from './leaders';
 import {clinic} from './clinics';
 
 export default () => {
-    return followers.create(barFollower);
+    return Promise.all([
+        followers.create(barFollower),
+        followers.create(putFollower)
+    ]);
 };
 
 export const barFollower = {
@@ -15,3 +18,11 @@ export const barFollower = {
     clinic_id: clinic.id,
     status: 1
 };
+
+export const putFollower = {
+    id: '82e2e63f-7983-4e85-a374-dbead0a0b1f6',
+    user_id: putUser.id,
+    leader_id: bazLeader.id,
+    clinic_id: clinic.id,
+    status: 1
+}

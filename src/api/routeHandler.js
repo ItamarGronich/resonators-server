@@ -1,6 +1,6 @@
 import enforceLogin from './enforceLogin';
 
-export default function routeHandler(cb, options = {}) {
+export default function routeHandler(cb, options = {enforceLogin: true}) {
     return async function (req, res, ...rest) {
         try {
             if (options.enforceLogin) {

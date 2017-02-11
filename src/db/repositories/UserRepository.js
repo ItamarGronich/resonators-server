@@ -1,6 +1,6 @@
 import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
-import {users as User} from '../sequelize/models';
+import {users as User, followers} from '../sequelize/models';
 
 class UserRepository extends Repository {
     constructor(...args) {
@@ -14,7 +14,7 @@ class UserRepository extends Repository {
     }
 
     async save(user, transaction) {
-        return await User.create(user, {transaction});
+        return await User.upsert(user, {transaction});
     }
 
     async findByEmail(email) {
@@ -31,6 +31,22 @@ class UserRepository extends Repository {
         }
 
         return null;
+    }
+
+    async findByFollowerId(followerId) {
+        const dbUser = await User.findOne({
+            include: [{
+                model: followers,
+                where: {id: followerId}
+            }]
+        });
+
+        if (!dbUser)
+            return null;
+
+        const user = dbToDomain.toUser(dbUser);
+        this.trackEntity(user);
+        return user;
     }
 }
 

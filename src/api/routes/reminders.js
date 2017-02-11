@@ -13,6 +13,4 @@ express.get('/leader_followers/:followerId/reminders', routeHandler(async (reque
 
     response.status(200);
     response.json(resonators);
-}, {
-    enforceLogin: true
 }));

@@ -4,8 +4,11 @@ import request from 'supertest';
 import {users, followers} from '../../src/db/sequelize/models';
 import {fooUserLogin, bazUserLogin} from '../dbFixtures/user_logins';
 import {fooLeader, bazLeader} from '../dbFixtures/leaders';
+import {putFollower} from '../dbFixtures/followers';
+import {putUser} from '../dbFixtures/users';
 import {clinic} from '../dbFixtures/clinics';
 import setLoginCookie from './setLoginCookie';
+import * as dbToDomain from '../../src/db/dbToDomain';
 import {assert} from 'chai';
 import bcrypt from 'bcrypt';
 
@@ -62,9 +65,33 @@ describe('leader_followers', () => {
                 assert.equal(dbFollower.get('user_id'),
                              res.body.user_id,
                              'inserted user_id doesn\'t match!');
-            });
+            })
+            .catch(done);
         })
-        .then(() => done())
-        .catch(done);
+        .end(done);
+    });
+
+    // it.skip('canot put unfollowed user');
+
+    it('put follower', done => {
+        request(app)
+        .put(`/leader_followers/${putFollower.id}`)
+        .set(...setLoginCookie(bazUserLogin.id))
+        .send({user: {email: 'uv@gmail.com', name:'ppp'}})
+        .expect(200)
+        .expect(res => {
+            return users.findById(putUser.id)
+            .then(row => {
+                const user = dbToDomain.toUser(row);
+                assert.deepEqual(user, {
+                    ...putUser,
+                    country: null,
+                    unsubscribed: null,
+                    email: 'uv@gmail.com',
+                    name: 'ppp'
+                });
+            })
+            .catch(done);
+        }).end(done)
     });
 });

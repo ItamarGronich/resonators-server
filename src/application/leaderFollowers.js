@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import {followers, users, leaders} from '../db/sequelize/models';
 import followerRepository from '../db/repositories/FollowerRepository';
+import userRepository from '../db/repositories/UserRepository';
 import User from '../domain/entities/user';
 import Follower from '../domain/entities/follower';
 import * as dtoFactory from './dto/index';
@@ -31,4 +32,11 @@ export async function addLeaderFollower({leader_id, clinic_id, email, name, pass
 
     const newFollower = await followerRepository.findById(follower.id);
     return dtoFactory.toFollower(newFollower);
+}
+
+export async function updateFollowerUser(followerId, newUserDetails) {
+    const user = await userRepository.findByFollowerId(followerId);
+    user.email = newUserDetails.email;
+    user.name = newUserDetails.name;
+    await getUow().commit();
 }

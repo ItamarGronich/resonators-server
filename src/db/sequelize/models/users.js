@@ -18,6 +18,7 @@ module.exports = function(sequelize, DataTypes) {
         classMethods: {
             associate: function(models) {
                 users.hasOne(models.leaders);
+                users.hasOne(models.followers);
             }
         }
     });

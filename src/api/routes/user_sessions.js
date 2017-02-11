@@ -23,6 +23,8 @@ express.post('/user_sessions', routeHandler(async (request, response) => {
             isValid
         }
     });
+}, {
+    enforceLogin: false
 }));
 
 express.get('/user_sessions', routeHandler(async (request, response) => {
@@ -34,6 +36,4 @@ express.get('/user_sessions', routeHandler(async (request, response) => {
             isValid: true
         }
     });
-}, {
-    enforceLogin: true
 }));
