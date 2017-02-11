@@ -6,6 +6,9 @@ import {fooUser} from '../dbFixtures/users';
 import {barFollower} from '../dbFixtures/followers';
 import {resonator} from '../dbFixtures/resonators';
 import {fooLeader} from '../dbFixtures/leaders';
+import {question1} from '../dbFixtures/questions';
+import {question1Answer1} from '../dbFixtures/answers';
+import {resonatorQuestion1} from '../dbFixtures/resonator_questions';
 import setLoginCookie from './setLoginCookie';
 import {assert} from 'chai';
 import moment from 'moment';
@@ -33,7 +36,7 @@ describe('reminders', () => {
         .expect(res => {
             const resonators = res.body;
 
-            assert.deepEqual(resonators.map(r => _.omit(r, 'created_at', 'updated_at', 'resonator_attachments')), [{
+            assert.deepEqual(resonators.map(r => _.omit(r, 'created_at', 'updated_at', 'items', 'questions')), [{
                 id: resonator.id,
                 leader_id: fooLeader.id,
                 follower_id: barFollower.id,
@@ -50,7 +53,7 @@ describe('reminders', () => {
                 description: 'a description'
             }]);
 
-            assert.deepEqual(resonators[0].resonator_attachments.map(ra => _.omit(ra, 'created_at', 'updated_at')), [{
+            assert.deepEqual(resonators[0].items.map(ra => _.omit(ra, 'created_at', 'updated_at')), [{
                 id: 'c3f264e1-0550-45e9-8a8f-357656ae7d49',
                 link: 'a link',
                 title: 'an image',
@@ -60,6 +63,27 @@ describe('reminders', () => {
                 owner_id: fooUser.id,
                 owner_role: 'leader',
                 resonator_id: resonator.id
+            }]);
+
+            assert.deepEqual(resonators[0].questions.map(q => _.omit(q, 'created_at', 'updated_at')), [{
+                id: resonatorQuestion1.id,
+                question_id: question1.id,
+                removed: resonatorQuestion1.removed,
+                resonator_id: resonator.id,
+                question: {
+                    id: question1.id,
+                    clinic_id: question1.clinic_id,
+                    leader_id: question1.leader_id,
+                    question_kind: question1.question_kind,
+                    description: question1.description,
+                    title: question1.title,
+                    removed: question1.removed,
+                    answers: [{
+                        id: question1Answer1.id,
+                        body: question1Answer1.body,
+                        rank: question1Answer1.rank
+                    }]
+                }
             }]);
         })
         .then(() => done())

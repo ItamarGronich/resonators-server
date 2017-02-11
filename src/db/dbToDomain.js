@@ -37,6 +37,7 @@ export function toFollower(r) {
 
 export function toResonator(r) {
     const resonator_attachments = (r.resonator_attachments || []).map(toResonatorAttachment);
+    const resonator_questions = (r.resonator_questions || []).map(toResonatorQuestion);
 
     return new Resonator({
         id: r.get('id'),
@@ -53,7 +54,8 @@ export function toResonator(r) {
         repeat_days: r.get('repeat_days'),
         last_pop_time: r.get('last_pop_time'),
         disable_copy_to_leader: r.get('disable_copy_to_leader'),
-        resonator_attachments,
+        items: resonator_attachments,
+        questions: resonator_questions,
         created_at: r.get('created_at'),
         updated_at: r.get('updated_at')
     });
@@ -73,4 +75,41 @@ function toResonatorAttachment(r) {
         created_at: r.get('created_at'),
         updated_at: r.get('updated_at')
     });
+}
+
+function toResonatorQuestion(r) {
+    const question = toQuestion(r.get('question'));
+
+    return {
+        id: r.get('id'),
+        question_id: r.get('question_id'),
+        resonator_id: r.get('resonator_id'),
+        removed: r.get('removed'),
+        created_at: r.get('created_at'),
+        updated_at: r.get('updated_at'),
+        question
+    };
+}
+
+export function toQuestion(r) {
+    const answers = (r.answers || []).map(toAnswer);
+
+    return {
+        id: r.get('id'),
+        leader_id: r.get('leader_id'),
+        question_kind: r.get('question_kind'),
+        description: r.get('description'),
+        title: r.get('title'),
+        removed: r.get('removed'),
+        clinic_id: r.get('clinic_id'),
+        answers
+    };
+}
+
+function toAnswer(r) {
+    return {
+        id: r.get('id'),
+        body: r.get('body'),
+        rank: r.get('rank')
+    };
 }

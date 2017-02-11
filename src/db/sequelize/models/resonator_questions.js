@@ -12,7 +12,7 @@ module.exports = function(sequelize, DataTypes) {
         underscored: true,
         classMethods: {
             associate: function(models) {
-                resonator_questions.hasMany(models.questions);
+                resonator_questions.belongsTo(models.questions);
             }
         }
     });

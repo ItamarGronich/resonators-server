@@ -7,7 +7,8 @@ const loadOrder = [
     './resonators',
     './resonator_attachments',
     './questions',
-    './answers'
+    './answers',
+    './resonator_questions',
 ];
 
 const promiseChain = () => {

@@ -14,7 +14,8 @@ export default class Resonator {
         repeat_days,
         last_pop_time,
         disable_copy_to_leader,
-        resonator_attachments,
+        items,
+        questions,
         created_at,
         updated_at
     }) {
@@ -32,7 +33,8 @@ export default class Resonator {
         this.repeat_days = repeat_days;
         this.last_pop_time = last_pop_time;
         this.disable_copy_to_leader = disable_copy_to_leader;
-        this.resonator_attachments = resonator_attachments;
+        this.items = items;
+        this.questions = questions;
         this.created_at = created_at;
         this.updated_at = updated_at;
     }
