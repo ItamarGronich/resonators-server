@@ -2,6 +2,7 @@ import User from '../domain/entities/user';
 import Leader from '../domain/entities/leader';
 import Follower from '../domain/entities/follower';
 import Resonator from '../domain/entities/resonator';
+import ResonatorAttachment from '../domain/entities/resonatorAttachment';
 
 export function toUser(dbUser) {
     return new User({
@@ -35,6 +36,8 @@ export function toFollower(r) {
 }
 
 export function toResonator(r) {
+    const resonator_attachments = (r.resonator_attachments || []).map(toResonatorAttachment);
+
     return new Resonator({
         id: r.get('id'),
         leader_id: r.get('leader_id'),
@@ -50,5 +53,24 @@ export function toResonator(r) {
         repeat_days: r.get('repeat_days'),
         last_pop_time: r.get('last_pop_time'),
         disable_copy_to_leader: r.get('disable_copy_to_leader'),
+        resonator_attachments,
+        created_at: r.get('created_at'),
+        updated_at: r.get('updated_at')
+    });
+}
+
+function toResonatorAttachment(r) {
+    return new ResonatorAttachment({
+        id: r.get('id'),
+        resonator_id: r.get('resonator_id'),
+        media_format: r.get('media_format'),
+        media_id: r.get('media_id'),
+        title: r.get('title'),
+        visible: r.get('visible'),
+        owner_id: r.get('owner_id'),
+        owner_role: r.get('owner_role'),
+        link: r.get('link'),
+        created_at: r.get('created_at'),
+        updated_at: r.get('updated_at')
     });
 }

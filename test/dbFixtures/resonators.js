@@ -1,4 +1,3 @@
-import uuid from 'uuid/v4';
 import {resonators} from '../../src/db/sequelize/models';
 import {fooLeader} from './leaders';
 import {barFollower} from './followers';
