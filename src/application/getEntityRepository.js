@@ -2,7 +2,7 @@ import User from '../domain/entities/user';
 import Follower from '../domain/entities/follower';
 import Resonator from '../domain/entities/resonator';
 import userRepository from '../db/repositories/UserRepository';
-import followerRepository from  '../db/repositories/UserRepository';
+import followerRepository from  '../db/repositories/FollowerRepository';
 import resonatorRepository from  '../db/repositories/ResonatorRepository';
 
 export default function getEntityRepository(entity) {

@@ -13,6 +13,10 @@ class UserRepository extends Repository {
         };
     }
 
+    async save(user, transaction) {
+        return await User.create(user, {transaction});
+    }
+
     async findByEmail(email) {
         const dbUser = await User.findOne({
             where: {

@@ -1,9 +1,13 @@
 import _ from 'lodash';
 import app from '../../src/api/index';
 import request from 'supertest';
-import {fooUserLogin} from '../dbFixtures/user_logins';
+import {users, followers} from '../../src/db/sequelize/models';
+import {fooUserLogin, bazUserLogin} from '../dbFixtures/user_logins';
+import {fooLeader, bazLeader} from '../dbFixtures/leaders';
+import {clinic} from '../dbFixtures/clinics';
 import setLoginCookie from './setLoginCookie';
 import {assert} from 'chai';
+import bcrypt from 'bcrypt';
 
 describe('leader_followers', () => {
     it('get followers', done => {
@@ -32,5 +36,35 @@ describe('leader_followers', () => {
 
             done();
         });
+    });
+
+    it('add follower', done => {
+        request(app)
+        .post('/leader_followers')
+        .set(...setLoginCookie(bazUserLogin.id))
+        .send({clinic_id: clinic.id, email: 'newfollower@bar.baz', name: 'new follower', password: '1111'})
+        .expect(201)
+        .expect(res => {
+            assert.lengthOf(res.body.id, 36);
+            assert.lengthOf(res.body.user_id, 36);
+            assert.equal(res.body.clinic_id, clinic.id);
+            assert.equal(res.body.leader_id, bazLeader.id);
+            assert.equal(res.body.status, 2);
+
+            return users.findById(res.body.user_id)
+            .then(dbUser => {
+                const password = dbUser.get('pass');
+                const salt = dbUser.get('salt');
+                assert.equal(password, bcrypt.hashSync('1111', salt));
+            })
+            .then(() => followers.findById(res.body.id))
+            .then(dbFollower => {
+                assert.equal(dbFollower.get('user_id'),
+                             res.body.user_id,
+                             'inserted user_id doesn\'t match!');
+            });
+        })
+        .then(() => done())
+        .catch(done);
     });
 });

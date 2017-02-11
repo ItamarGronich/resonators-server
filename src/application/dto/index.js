@@ -8,10 +8,14 @@ export function toUser(user) {
 };
 
 export function toFollower(follower) {
-    return {
+    let dto = {
         ...follower,
-        user: toUser(follower.user)
     };
+
+    if (follower.user)
+        dto.user = toUser(follower.user);
+
+    return dto;
 }
 
 export function toResonator(resonator) {

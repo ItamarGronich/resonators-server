@@ -1,5 +1,5 @@
 import {UnitOfWork} from 'ddd-helpers';
-import sequelize from 'sequelize';
+import dbConn from '../db/sequelize/dbConnection';
 import userRepository from '../db/repositories/userRepository';
 import getEntityRepository from '../application/getEntityRepository';
 var createDomain = require('domain').create;
@@ -7,7 +7,7 @@ var createDomain = require('domain').create;
 var createUow = UnitOfWork(createTransaction, getEntityRepository);
 
 function createTransaction() {
-    return sequelize.transaction();
+    return dbConn.transaction();
 }
 
 export default function uowMiddleware(req, res, next) {

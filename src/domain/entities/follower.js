@@ -1,3 +1,5 @@
+import uuid from 'uuid/v4';
+
 export default class Follower {
     constructor({
         id,
@@ -9,7 +11,7 @@ export default class Follower {
         created_at,
         updated_at
     }) {
-        this.id = id;
+        this.id = id || uuid();
         this.user_id = user_id;
         this.user = user;
         this.leader_id = leader_id;

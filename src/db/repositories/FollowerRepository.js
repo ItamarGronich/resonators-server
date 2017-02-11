@@ -14,9 +14,13 @@ class FollowerRepository extends Repository {
         };
     }
 
+    async save(follower, transaction) {
+        return await followers.create(follower, {transaction});
+    }
+
     async findByLeaderUserId(leaderUserId) {
         const user = await users.findOne({
-            id: leaderUserId,
+            where: {id: leaderUserId},
 
             include: [{
                 model: leaders,
@@ -38,7 +42,7 @@ class FollowerRepository extends Repository {
     }
 
     async findById(id) {
-        const row = await followers.findOne({ id });
+        const row = await followers.findById(id);
 
         if (!row)
             return null;
