@@ -5,7 +5,9 @@ const loadOrder = [
     './clinics',
     './followers',
     './resonators',
-    './resonator_attachments'
+    './resonator_attachments',
+    './questions',
+    './answers'
 ];
 
 const promiseChain = () => {
@@ -15,5 +17,7 @@ const promiseChain = () => {
 };
 
 export default () => {
-    return promiseChain();
+    console.log('loading fixtures...')
+    return promiseChain()
+               .then(() => console.log('fixtures loaded.'));
 };
