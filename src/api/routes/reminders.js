@@ -4,13 +4,13 @@ import enforceLeaderFollowers from '../permissions/enforceLeaderFollowers';
 import {getResonators} from '../../application/resonators';
 
 express.get('/leader_followers/:followerId/reminders', routeHandler(async (request, response) => {
-    const {leader} = request.appSession;
-    const {followerId} = request.params;
-
-    if (!await enforceLeaderFollowers({request, response, leaderId: leader.id, followerId})) return;
-
     const resonators = await getResonators(request.params.followerId);
-
     response.status(200);
     response.json(resonators);
+}, {
+    enforceLeaderFollower: true
+}));
+
+express.get('/leader_followers/:followerId/reminders', routeHandler(async (request, response) => {
+
 }));

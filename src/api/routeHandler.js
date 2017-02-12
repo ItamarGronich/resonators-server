@@ -1,17 +1,12 @@
-import enforceLogin from './enforceLogin';
+import enforcePermissionPolicy from './permissions';
 
-export default function routeHandler(cb, options = {enforceLogin: true}) {
+export default function routeHandler(cb, options) {
+    options = {enforceLogin: true, ...options};
+
     return async function (req, res, ...rest) {
         try {
-            if (options.enforceLogin) {
-                const loginResult = await enforceLogin(req, res);
-
-                req.appSession = loginResult;
-
-                if (!loginResult) {
-                    return;
-                }
-            }
+            if (!await enforcePermissionPolicy(req, res, options))
+                return;
 
             return await cb(req, res, ...rest);
         } catch (err) {

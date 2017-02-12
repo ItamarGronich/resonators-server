@@ -71,7 +71,14 @@ describe('leader_followers', () => {
         .end(done);
     });
 
-    // it.skip('canot put unfollowed user');
+    it('cannot put unfollowed user', done => {
+        request(app)
+        .put(`/leader_followers/${putFollower.id}`)
+        .set(...setLoginCookie(fooUserLogin.id))
+        .send({user: {email: 'uv@gmail.com', name:'ppp'}})
+        .expect(403)
+        .end(done);
+    });
 
     it('put follower', done => {
         request(app)

@@ -1,4 +1,4 @@
-import relogin from '../application/relogin';
+import relogin from '../../application/relogin';
 
 export default async function enforceLogin(request, response) {
     const {loginId} = request.cookies;
@@ -12,10 +12,10 @@ export default async function enforceLogin(request, response) {
 
     let result;
 
-    if (!reloginResult.isValid)
-        result = sendLoginFailed(response);
-    else
+    if (reloginResult.isValid)
         result = reloginResult;
+    else
+        sendLoginFailed(response);
 
     request.appSession = result;
     return result;

@@ -24,11 +24,13 @@ express.post('/leader_followers', routeHandler(async (request, response) => {
 }));
 
 express.put('/leader_followers/:followerId', routeHandler(async (request, response) => {
-    const {user: userRequest} = request.body;
+    const {user: userRequest, leader} = request.body;
     const {followerId} = request.params;
 
     await updateFollowerUser(followerId, userRequest);
 
     response.status(200);
     response.json({});
+}, {
+    enforceLeaderFollower: true
 }));
