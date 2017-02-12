@@ -18,14 +18,30 @@ class ResonatorsRepository extends Repository {
     }
 
     toDbEntity(resonator) {
+        const repeat_days = (resonator.repeat_days || {}).reduce((acc, cur) => {
+            return acc + ',' + cur;
+        }, '').slice(1);
+
         return {
-            ...resonator
+            ...resonator,
+            repeat_days
         };
+    }
+
+    async save(resonator, tran) {
+        return resonators.upsert(resonator, tran);
+    }
+
+    async findById(resonatorId) {
+        const row = await resonators.findById(resonatorId);
+        return dbToDomain.toResonator(row);
     }
 
     async findByFollowerId(followerId) {
         const rows = await resonators.findAll({
-            follower_id: followerId,
+            where: {
+                follower_id: followerId
+            },
             include: [
                 resonator_attachments, {
                 model: resonator_questions,

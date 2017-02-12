@@ -3,9 +3,9 @@ import app from '../../src/api/index';
 import request from 'supertest';
 import {fooUserLogin, bazUserLogin} from '../dbFixtures/user_logins';
 import {fooUser} from '../dbFixtures/users';
-import {barFollower} from '../dbFixtures/followers';
+import {barFollower, putFollower} from '../dbFixtures/followers';
 import {resonator} from '../dbFixtures/resonators';
-import {fooLeader} from '../dbFixtures/leaders';
+import {fooLeader, bazLeader} from '../dbFixtures/leaders';
 import {question1} from '../dbFixtures/questions';
 import {question1Answer1} from '../dbFixtures/answers';
 import {resonatorQuestion1} from '../dbFixtures/resonator_questions';
@@ -41,11 +41,8 @@ describe('reminders', () => {
                 leader_id: fooLeader.id,
                 follower_id: barFollower.id,
                 pop_email: false,
-                pop_location_lat: 1.5,
-                pop_location_lng: 3.4,
                 pop_time: moment('2016-04-03 14:00:00').toISOString(),
-                repeat_days: '1,2,3,4,5',
-                last_pop_time: null,
+                repeat_days: [1,2,3,4,5],
                 disable_copy_to_leader: false,
                 content: 'a content',
                 link: 'a link',
@@ -88,5 +85,38 @@ describe('reminders', () => {
         })
         .then(() => done())
         .catch(done);
+    });
+
+    it('create resonator', done => {
+        const resonator = {
+            title: 'title',
+            content: 'content',
+            description: 'description',
+            disable_copy_to_leader: true,
+            follower_id: putFollower.id,
+            link: 'link',
+            pop_email: true,
+            pop_time: "2017-02-12T11:06:47.255Z",
+            repeat_days: [1,2,3]
+        };
+
+        request(app)
+        .post(`/leader_followers/${putFollower.id}/reminders`)
+        .set(...setLoginCookie(bazUserLogin.id))
+        .send(resonator)
+        .expect(201)
+        .expect(res => {
+            assert.deepEqual(_.omit(res.body, 'id', 'created_at', 'updated_at'), {
+                ...resonator,
+                leader_id: bazLeader.id,
+                questions: [],
+                items: []
+            });
+
+            assert.lengthOf(res.body.id, 36);
+            assert.isOk(res.body.created_at);
+            assert.isOk(res.body.updated_at);
+        })
+        .end(done);
     });
 });

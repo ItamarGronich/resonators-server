@@ -38,6 +38,7 @@ export function toFollower(r) {
 export function toResonator(r) {
     const resonator_attachments = (r.resonator_attachments || []).map(toResonatorAttachment);
     const resonator_questions = (r.resonator_questions || []).map(toResonatorQuestion);
+    const repeat_days = (r.get('repeat_days') || []).split(',').map(s => parseInt(s));
 
     return new Resonator({
         id: r.get('id'),
@@ -51,7 +52,7 @@ export function toResonator(r) {
         pop_location_lat: r.get('pop_location_lat'),
         pop_location_lng: r.get('pop_location_lng'),
         pop_time: r.get('pop_time'),
-        repeat_days: r.get('repeat_days'),
+        repeat_days,
         last_pop_time: r.get('last_pop_time'),
         disable_copy_to_leader: r.get('disable_copy_to_leader'),
         items: resonator_attachments,

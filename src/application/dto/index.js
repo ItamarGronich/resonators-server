@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export function toUser(user) {
     return {
         name: user.name,
@@ -19,7 +21,23 @@ export function toFollower(follower) {
 }
 
 export function toResonator(resonator) {
-    return {
-        ...resonator
-    };
+    const dto = _.pick(resonator,
+                       'id',
+                       'leader_id',
+                       'follower_id',
+                       'title',
+                       'content',
+                       'description',
+                       'link',
+                       'disable_copy_to_leader',
+                       'follower_id',
+                       'pop_email',
+                       'pop_time',
+                       'repeat_days',
+                       'items',
+                       'questions',
+                       'created_at',
+                       'updated_at'
+                      );
+    return dto;
 }
