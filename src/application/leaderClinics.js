@@ -2,7 +2,9 @@ import {clinics} from '../db/sequelize/models';
 
 export async function getLeaderClinics(user_id) {
     const rows = await clinics.findAll({
-        user_id
+        where: {
+            user_id
+        }
     });
 
     const foundClinics = rows.map(r => ({

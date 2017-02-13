@@ -11,47 +11,59 @@ import setLoginCookie from './setLoginCookie';
 import * as dbToDomain from '../../src/db/dbToDomain';
 import {assert} from 'chai';
 import bcrypt from 'bcrypt';
+import generateFixtures from '../dbFixtures/fixtureGenerator';
 
 describe('leader_followers', () => {
-    it('get followers', done => {
-        request(app)
-        .get('/leader_followers')
-        .set(...setLoginCookie(fooUserLogin.id))
-        .end((err, res) => {
-            if (err) return done(err);
+    it('get followers', async () => {
+        const gen = generateFixtures().generateUserLogin();
+        const userLogin = gen.last();
+        const user = userLogin.user;
+        const leader = gen.generateLeader({user}).last();
+        const clinic = gen.generateClinic({user}).last();
+        const follower = gen.generateFollower({leader, clinic}).last();
+        await gen.done();
 
+        await request(app)
+        .get('/leader_followers')
+        .set(...setLoginCookie(userLogin.json.id))
+        .expect((res) => {
             assert.deepEqual(res.body.map(f => _.omit(f, 'updated_at', 'created_at')), [{
-                id: '37d097a3-5397-4424-bdfb-0aebed7bafaa',
-                user_id: '57394531-d688-463d-8460-b8642bc70bc8',
-                clinic_id: '0a2f1d72-0b4b-4a21-9873-bae07a2ea3e3',
-                leader_id: '076123b9-4d90-4272-8f64-23c2d1de9057',
+                id: follower.json.id,
+                user_id: follower.user.json.id,
+                clinic_id: clinic.json.id,
+                leader_id: leader.json.id,
                 status: 1,
                 user: {
                     country: null,
-                    email: 'bar@baz.com',
-                    name: 'bar',
+                    email: follower.user.json.email,
+                    name: follower.user.json.name,
                     unsubscribed: null
                 }
             }]);
 
             assert.isOk(res.body[0].created_at);
             assert.isOk(res.body[0].updated_at);
-
-            done();
         });
     });
 
-    it('add follower', done => {
+    it('add follower', async (done) => {
+        const gen = generateFixtures();
+        const userLogin = gen.generateUserLogin().last();
+        const user = userLogin.user;
+        const leader = gen.generateLeader({user}).last();
+        const clinic = gen.generateClinic({user}).last();
+        await gen.done();
+
         request(app)
         .post('/leader_followers')
-        .set(...setLoginCookie(bazUserLogin.id))
-        .send({clinic_id: clinic.id, email: 'newfollower@bar.baz', name: 'new follower', password: '1111'})
+        .set(...setLoginCookie(userLogin.json.id))
+        .send({clinic_id: clinic.json.id, email: 'newfollower@bar.baz', name: 'new follower', password: '1111'})
         .expect(201)
         .expect(res => {
             assert.lengthOf(res.body.id, 36);
             assert.lengthOf(res.body.user_id, 36);
-            assert.equal(res.body.clinic_id, clinic.id);
-            assert.equal(res.body.leader_id, bazLeader.id);
+            assert.equal(res.body.clinic_id, clinic.json.id);
+            assert.equal(res.body.leader_id, leader.json.id);
             assert.equal(res.body.status, 2);
 
             return users.findById(res.body.user_id)
@@ -65,8 +77,7 @@ describe('leader_followers', () => {
                 assert.equal(dbFollower.get('user_id'),
                              res.body.user_id,
                              'inserted user_id doesn\'t match!');
-            })
-            .catch(done);
+            });
         })
         .end(done);
     });

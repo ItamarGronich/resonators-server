@@ -15,7 +15,7 @@ export default async function relogin(loginId) {
     if (row) {
         const {user} = row;
         const userEntity = toUser(user);
-        const leaderEntity = toLeader(user.leader);
+        const leaderEntity = user.leader && toLeader(user.leader);
 
         return {
             isValid: Boolean(row.get('id')),

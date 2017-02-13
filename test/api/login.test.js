@@ -1,8 +1,8 @@
 import app from '../../src/api/index';
-import {user_logins as UserLogin} from '../../src/db/sequelize/models';
 import db from '../../src/db/sequelize/dbConnection';
 import request from 'supertest';
 import {assert} from 'chai';
+import generateFixtures from '../dbFixtures/fixtureGenerator';
 const knex = require('knex')({});
 
 describe('login', () => {
@@ -12,36 +12,40 @@ describe('login', () => {
             .expect(200, {loginResult: { isValid: false, user: null }}, done);
     });
 
-    it('successful login', done => {
-        request(app)
+    it('successful login', async () => {
+        const [userLogin] = await generateFixtures()
+                            .generateUserLogin()
+                            .done();
+
+         await request(app)
             .post('/user_sessions')
-            .send({ email: 'foo@bar.baz', password: '1234'})
+            .send({ email: userLogin.user.json.email, password: '1234'})
             .expect(200, {
                 loginResult: {
                     isValid: true,
                     user: {
-                        email: 'foo@bar.baz',
-                        name: 'foo',
+                        email: userLogin.user.json.email,
+                        name: userLogin.user.json.name,
                         country: null,
                         unsubscribed: null
                     }
                 }
             })
-            .end((err, res) => {
-                if (err) return done(err);
-
+            .expect((res) => {
                 assert.match(res.headers['set-cookie'][0],
                              /loginId=.+; Max\-Age=\d+;/,
                              'set cookie match failed');
-
-                done();
             });
     });
 
-    it('relogin with cookie', done => {
+    it('relogin with cookie', async done => {
+        const [userLogin] = await generateFixtures()
+                            .generateUserLogin()
+                            .done();
+
         request(app)
             .post('/user_sessions')
-            .send({ email: 'foo@bar.baz', password: '1234'})
+            .send({ email: userLogin.user.json.email, password: '1234'})
             .end((err, res) => {
                 if (err) return done(err);
 
@@ -55,8 +59,8 @@ describe('login', () => {
                         loginResult: {
                             isValid: true,
                             user: {
-                                name: 'foo',
-                                email: 'foo@bar.baz',
+                                name: userLogin.user.json.name,
+                                email: userLogin.user.json.email,
                                 unsubscribed: null,
                                 country: null
                             }
@@ -73,19 +77,21 @@ describe('login', () => {
             }, done);
     });
 
-    it('failed login', done => {
+    it('failed login', async done => {
+        const [userLogin] = await generateFixtures()
+                            .generateUserLogin()
+                            .done();
+
         request(app)
             .post('/user_sessions')
-            .send({ email: 'foo@bar.baz', password: '12345'})
+            .send({ email: userLogin.user.json.email, password: '12345'})
             .expect(200, {
                 loginResult: {
                     isValid: false,
                     user: null
                 }
             })
-            .end((err, res) => {
-                if (err) return done(err);
-
+            .expect((res) => {
                 const cookies = res.headers['set-cookie'];
 
                 if (cookies)
@@ -93,27 +99,25 @@ describe('login', () => {
                         assert(cookie.indexOf('loginId') === -1,
                                'loginId was present in a cookie - it should not!');
                     });
-
-                done();
-            });
+            }).end(done);
     });
 
-    it('successful login - insert into UserLogin', done => {
+    it('successful login - insert into UserLogin', async done => {
+        const [userLogin] = await generateFixtures()
+                            .generateUserLogin()
+                            .done();
+
         request(app)
         .post('/user_sessions')
-        .send({ email: 'foo@bar.baz', password: '1234'})
-        .end((err, res) => {
-            if (err) return done(err);
-
+        .send({ email: userLogin.user.json.email, password: '1234'})
+        .expect((res) => {
             const sql = knex('users')
             .join('user_logins', 'users.id', 'user_logins.user_id')
-            .where('users.email', 'foo@bar.baz')
+            .where('users.email', userLogin.user.json.email)
             .toString();
 
             db.query(sql)
             .spread(rows => assert.isAbove(rows.length, 0))
-            .then(done)
-            .catch(done);
-        });
+        }).end(done);
     })
 });
