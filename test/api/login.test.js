@@ -19,13 +19,13 @@ describe('login', () => {
 
          await request(app)
             .post('/user_sessions')
-            .send({ email: userLogin.user.json.email, password: '1234'})
+            .send({ email: userLogin.user.email, password: '1234'})
             .expect(200, {
                 loginResult: {
                     isValid: true,
                     user: {
-                        email: userLogin.user.json.email,
-                        name: userLogin.user.json.name,
+                        email: userLogin.user.email,
+                        name: userLogin.user.name,
                         country: null,
                         unsubscribed: null
                     }
@@ -45,7 +45,7 @@ describe('login', () => {
 
         request(app)
             .post('/user_sessions')
-            .send({ email: userLogin.user.json.email, password: '1234'})
+            .send({ email: userLogin.user.email, password: '1234'})
             .end((err, res) => {
                 if (err) return done(err);
 
@@ -59,8 +59,8 @@ describe('login', () => {
                         loginResult: {
                             isValid: true,
                             user: {
-                                name: userLogin.user.json.name,
-                                email: userLogin.user.json.email,
+                                name: userLogin.user.name,
+                                email: userLogin.user.email,
                                 unsubscribed: null,
                                 country: null
                             }
@@ -84,7 +84,7 @@ describe('login', () => {
 
         request(app)
             .post('/user_sessions')
-            .send({ email: userLogin.user.json.email, password: '12345'})
+            .send({ email: userLogin.user.email, password: '12345'})
             .expect(200, {
                 loginResult: {
                     isValid: false,
@@ -109,11 +109,11 @@ describe('login', () => {
 
         request(app)
         .post('/user_sessions')
-        .send({ email: userLogin.user.json.email, password: '1234'})
+        .send({ email: userLogin.user.email, password: '1234'})
         .expect((res) => {
             const sql = knex('users')
             .join('user_logins', 'users.id', 'user_logins.user_id')
-            .where('users.email', userLogin.user.json.email)
+            .where('users.email', userLogin.user.email)
             .toString();
 
             db.query(sql)
