@@ -66,6 +66,7 @@ function toResonatorAttachment(r) {
     return new ResonatorAttachment({
         id: r.get('id'),
         resonator_id: r.get('resonator_id'),
+        media_kind: r.get('media_kind'),
         media_format: r.get('media_format'),
         media_id: r.get('media_id'),
         title: r.get('title'),

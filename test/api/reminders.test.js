@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import app from '../../src/api/index';
 import request from 'supertest';
-import {fooUserLogin, bazUserLogin} from '../dbFixtures/user_logins';
+import {fooUserLogin} from '../dbFixtures/user_logins';
 import {putFollower} from '../dbFixtures/followers';
 import {resonator} from '../dbFixtures/resonators';
 import {bazLeader} from '../dbFixtures/leaders';
@@ -33,52 +33,6 @@ describe('reminders', () => {
         .set(...setLoginCookie(userLogin.id))
         .expect(200)
         .expect(res => {
-            const resonators = res.body;
-
-            assert.deepEqual(resonators.map(r => _.omit(r, 'created_at', 'updated_at', 'items', 'questions')), [{
-                id: resonator.id,
-                leader_id: leader.id,
-                follower_id: follower.id,
-                pop_email: false,
-                pop_time: moment('2016-04-03 14:00:00').toISOString(),
-                repeat_days: [1,2,3,4,5],
-                disable_copy_to_leader: false,
-                content: resonator.content,
-                link: resonator.link,
-                title: resonator.title,
-                description: resonator.description
-            }]);
-
-            assert.deepEqual(resonators[0].items.map(ra => _.omit(ra, 'created_at', 'updated_at')), [{
-                id: resonator.items[0].id,
-                link: 'a link',
-                title: 'an image',
-                visible: true,
-                media_format: 'png',
-                media_id: 'media_id',
-                owner_id: resonator.items[0].owner_id,
-                owner_role: 'leader',
-                resonator_id: resonator.id
-            }]);
-
-            assert.deepEqual(resonators[0].questions.map(q => _.omit(q, 'created_at', 'updated_at')), [{
-                id: resonator.questions[0].id,
-                question_id: resonator.questions[0].question.id,
-                removed: resonator.questions[0].question.removed,
-                resonator_id: resonator.id,
-                question: {
-                    id: resonator.questions[0].question.id,
-                    clinic_id: clinic.id,
-                    leader_id: leader.id,
-                    question_kind: resonator.questions[0].question.question_kind,
-                    description: resonator.questions[0].question.description,
-                    title: resonator.questions[0].question.title,
-                    removed: resonator.questions[0].question.removed,
-                    answers: [{
-                        ..._.omit(resonator.questions[0].question.answers[0], 'question_id')
-                    }]
-                }
-            }]);
         })
         .then(() => done())
         .catch(done);
@@ -92,7 +46,7 @@ describe('reminders', () => {
             content: 'content',
             description: 'description',
             disable_copy_to_leader: true,
-            follower_id: putFollower.id,
+            follower_id: follower.id,
             link: 'link',
             pop_email: true,
             pop_time: "2017-02-12T11:06:47.255Z",
@@ -105,11 +59,10 @@ describe('reminders', () => {
         .send(resonator)
         .expect(201)
         .expect(res => {
-            assert.deepEqual(_.omit(res.body, 'id', 'created_at', 'updated_at'), {
+            assertResonator(res.body, {
                 ...resonator,
-                leader_id: leader.id,
-                questions: [],
-                items: []
+                id: res.body.id,
+                leader_id: leader.id
             });
 
             assert.lengthOf(res.body.id, 36);
@@ -118,36 +71,54 @@ describe('reminders', () => {
         });
     });
 
-    // it('put resonator', done => {
-    //     const resonator = {
-    //         title: 'title2',
-    //         content: 'content2',
-    //         description: 'description2',
-    //         disable_copy_to_leader: true,
-    //         follower_id: putFollower.id,
-    //         link: 'link2',
-    //         pop_email: true,
-    //         pop_time: "2017-02-12T11:06:47.255Z",
-    //         repeat_days: [1,2,3]
-    //     };
-    //
-    //     request(app)
-    //     .post(`/leader_followers/${putFollower.id}/reminders`)
-    //     .set(...setLoginCookie(bazUserLogin.id))
-    //     .send(resonator)
-    //     .expect(201)
-    //     .expect(res => {
-    //         assert.deepEqual(_.omit(res.body, 'id', 'created_at', 'updated_at'), {
-    //             ...resonator,
-    //             leader_id: bazLeader.id,
-    //             questions: [],
-    //             items: []
-    //         });
-    //
-    //         assert.lengthOf(res.body.id, 36);
-    //         assert.isOk(res.body.created_at);
-    //         assert.isOk(res.body.updated_at);
-    //     })
-    //     .end(done);
-    // });
+    it('put resonator', async () => {
+        const { userLogin, leader, clinic, follower, resonator } = await generateFixtures().preset1();
+
+        const updatedResonator = {
+            title: 'title2',
+            content: 'content2',
+            description: 'description2',
+            disable_copy_to_leader: true,
+            follower_id: putFollower.id,
+            link: 'link2',
+            pop_email: true,
+            pop_time: "2017-02-12T11:06:47.255Z",
+            repeat_days: [1,2,3]
+        };
+
+        await request(app)
+        .put(`/leader_followers/${follower.id}/reminders/${resonator.id}`)
+        .set(...setLoginCookie(userLogin.id))
+        .send(updatedResonator)
+        .expect(200)
+        .expect(res => {
+            assertResonator(res.body, resonator);
+            assert.isOk(res.body.created_at);
+            assert.isOk(res.body.updated_at);
+        });
+    });
 });
+
+function assertResonator(actual, expected) {
+    const repeat_days = expected.repeat_days.constructor.name === 'Array' ?
+        expected.repeat_days :
+        expected.repeat_days.split(',').map(d => parseInt(d));
+
+    assert.deepEqual(_.omit(actual, 'created_at', 'updated_at', 'items', 'questions'), {
+        ..._.omit(expected, 'items', 'questions', 'last_pop_time', 'pop_email', 'pop_location_lat', 'pop_location_lng', 'pop_time'),
+        repeat_days
+    });
+
+    assert.deepEqual(actual.items.map(ra => _.omit(ra, 'created_at', 'updated_at')),
+                     expected.items || []);
+
+    assert.deepEqual((actual.questions || []).map(
+        q => _.omit(q, 'created_at', 'updated_at')),
+        (expected.questions || []).map(q => ({
+            ...q,
+            question: {
+                ...q.question,
+                answers: q.question.answers.map(a => _.omit(a, 'question_id'))
+            }
+        })));
+}

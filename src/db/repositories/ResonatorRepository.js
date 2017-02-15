@@ -33,7 +33,17 @@ class ResonatorsRepository extends Repository {
     }
 
     async findById(resonatorId) {
-        const row = await resonators.findById(resonatorId);
+        const row = await resonators.findOne({
+            where: {
+                id: resonatorId
+            },
+            include: this.queryInclude()
+        });
+
+        if (!row) {
+            return null;
+        }
+
         return dbToDomain.toResonator(row);
     }
 
@@ -42,14 +52,7 @@ class ResonatorsRepository extends Repository {
             where: {
                 follower_id: followerId
             },
-            include: [
-                resonator_attachments, {
-                model: resonator_questions,
-                include: [{
-                    model: questions,
-                    include: [answers]
-                }]
-            }]
+            include: this.queryInclude()
         });
 
         if (!rows)
@@ -60,6 +63,18 @@ class ResonatorsRepository extends Repository {
         foundResonators.forEach(resonator => this.trackEntity(resonator));
 
         return foundResonators;
+    }
+
+    queryInclude() {
+        return [
+            resonator_attachments, {
+                model: resonator_questions,
+                include: [{
+                    model: questions,
+                    include: [answers]
+                }]
+            }
+        ];
     }
 }
 

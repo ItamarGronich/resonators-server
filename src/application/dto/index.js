@@ -31,8 +31,6 @@ export function toResonator(resonator) {
                        'link',
                        'disable_copy_to_leader',
                        'follower_id',
-                       'pop_email',
-                       'pop_time',
                        'repeat_days',
                        'items',
                        'questions',
