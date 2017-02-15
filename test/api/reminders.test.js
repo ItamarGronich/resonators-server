@@ -26,16 +26,29 @@ describe('reminders', () => {
     });
 
     it('get followers\' resonators', async done => {
-        const { userLogin, leader, clinic, follower, resonator } = await generateFixtures().preset1();
+        const { userLogin, follower, resonator } = await generateFixtures().preset1();
 
         request(app)
         .get(`/leader_followers/${follower.id}/reminders`)
         .set(...setLoginCookie(userLogin.id))
         .expect(200)
         .expect(res => {
+            assertResonator(res.body[0], resonator);
         })
         .then(() => done())
         .catch(done);
+    });
+
+    it('get a single follower resonator', async () => {
+        const {userLogin, follower, resonator} = await generateFixtures().preset1();
+
+        await request(app)
+        .get(`/leader_followers/${follower.id}/reminders/${resonator.id}`)
+        .set(...setLoginCookie(userLogin.id))
+        .expect(200)
+        .expect(res => {
+            assertResonator(res.body, resonator);
+        });
     });
 
     it('create resonator', async () => {
@@ -72,7 +85,7 @@ describe('reminders', () => {
     });
 
     it('put resonator', async () => {
-        const { userLogin, leader, clinic, follower, resonator } = await generateFixtures().preset1();
+        const { userLogin, follower, resonator } = await generateFixtures().preset1();
 
         const updatedResonator = {
             title: 'title2',
@@ -95,6 +108,22 @@ describe('reminders', () => {
             assertResonator(res.body, resonator);
             assert.isOk(res.body.created_at);
             assert.isOk(res.body.updated_at);
+        });
+    });
+
+    it.skip('add resonator criteria', async done => {
+        const { userLogin, follower, resonator } = await generateFixture().preset1();
+        const [ question ] = await generateFixture().generateQuestion().done();
+
+        request(app)
+        .post(`/leader_followers/${follower.id}/reminders/${resonator.id}/criteria`)
+        .set(...setLoginCookie(userLogin.id))
+        .send({
+            question: question.id,
+            reminder_id: resonator.id
+        })
+        .expect(200)
+        .expect(res => {
         });
     });
 });

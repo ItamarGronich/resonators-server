@@ -11,6 +11,12 @@ export async function getResonators(followerId) {
     return resonatorsDto;
 }
 
+export async function getResonator(reminderId) {
+    const resonator = await resonatorRepository.findById(reminderId);
+    const dto = dtoFactory.toResonator(resonator);
+    return dto;
+}
+
 export async function createResonator(leader_id, resonatorRequest) {
     const uow = getUow();
     const resonator = new Resonator({

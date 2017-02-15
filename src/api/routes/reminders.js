@@ -1,12 +1,20 @@
 import express from '../express';
 import routeHandler from '../routeHandler';
 import enforceLeaderFollowers from '../permissions/enforceLeaderFollowers';
-import {getResonators, createResonator, updateResonator} from '../../application/resonators';
+import {getResonators, getResonator, createResonator, updateResonator} from '../../application/resonators';
 
 express.get('/leader_followers/:followerId/reminders', routeHandler(async (request, response) => {
     const resonators = await getResonators(request.params.followerId);
     response.status(200);
     response.json(resonators);
+}, {
+    enforceLeaderFollower: true
+}));
+
+express.get('/leader_followers/:followerId/reminders/:reminderId', routeHandler(async (request, response) => {
+    const resonator = await getResonator(request.params.reminderId);
+    response.status(200);
+    response.json(resonator);
 }, {
     enforceLeaderFollower: true
 }));

@@ -30,6 +30,7 @@ export default function generateFixtures() {
         generateLeader: (...args) => generateFixture(generateLeader(...args)),
         generateClinic: (...args) => generateFixture(generateClinic(...args)),
         generateFollower: (...args) => generateFixture(generateFollower(...args)),
+        generateQuestion: (...args) => generateFixture(generateQuestion(...args)),
         last: () => _.last(fixtureList),
         fixtures: () => fixtureList,
         done() {
