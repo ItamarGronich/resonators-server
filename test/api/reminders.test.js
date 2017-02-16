@@ -111,20 +111,42 @@ describe('reminders', () => {
         });
     });
 
-    it.skip('add resonator criteria', async done => {
-        const { userLogin, follower, resonator } = await generateFixture().preset1();
-        const [ question ] = await generateFixture().generateQuestion().done();
+    it('add resonator criteria', async done => {
+        const { userLogin, leader, clinic, follower, resonator } = await generateFixtures().preset1();
+        const [ question ] = await generateFixtures().generateQuestion({
+            leader, clinic
+        }).done();
 
-        request(app)
+        await request(app)
         .post(`/leader_followers/${follower.id}/reminders/${resonator.id}/criteria`)
         .set(...setLoginCookie(userLogin.id))
         .send({
-            question: question.id,
+            question_id: question.id,
             reminder_id: resonator.id
         })
         .expect(200)
-        .expect(res => {
-        });
+        .expect((res) => {
+            request(app)
+            .get(`/leader_followers/${follower.id}/reminders/${resonator.id}`)
+            .set(...setLoginCookie(userLogin.id))
+            .expect(200)
+            .expect(res => {
+                assertResonator(_.omit(res.body, 'questions'), _.omit(resonator, 'questions'));
+
+                const newQuestion = res.body.questions[1];
+                assertResonatorQuestions(res.body.questions,
+                                         resonator.questions.concat({
+                                             id: newQuestion.id,
+                                             question,
+                                             question_id: question.id,
+                                             resonator_id: resonator.id,
+                                             removed: null
+                                         }));
+            })
+            .then(() => done())
+            .catch(done)
+        })
+        .catch(done);
     });
 });
 
@@ -141,9 +163,13 @@ function assertResonator(actual, expected) {
     assert.deepEqual(actual.items.map(ra => _.omit(ra, 'created_at', 'updated_at')),
                      expected.items || []);
 
-    assert.deepEqual((actual.questions || []).map(
+    assertResonatorQuestions(actual.questions, expected.questions);
+}
+
+function assertResonatorQuestions(q1 = [], q2 = []) {
+    assert.deepEqual(q1.map(
         q => _.omit(q, 'created_at', 'updated_at')),
-        (expected.questions || []).map(q => ({
+        q2.map(q => ({
             ...q,
             question: {
                 ...q.question,

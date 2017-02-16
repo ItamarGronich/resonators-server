@@ -14,7 +14,7 @@ class FollowerRepository extends Repository {
         };
     }
 
-    async save(follower, transaction) {
+    async save(follower, transaction, lastFollower) {
         return await followers.create(follower, {transaction});
     }
 

@@ -1,9 +1,11 @@
 import {resonators as resonatorsDb} from '../db/sequelize/models';
 import Resonator from '../domain/entities/resonator';
 import resonatorRepository from '../db/repositories/ResonatorRepository';
+import questionRepository from '../db/repositories/QuestionRepository';
 import * as dtoFactory from './dto/index';
 import updatePermittedFields from './updatePermittedFields';
 import getUow from './getUow';
+
 
 export async function getResonators(followerId) {
     const resonators = await resonatorRepository.findByFollowerId(followerId);
@@ -45,4 +47,19 @@ export async function updateResonator(resonator_id, updatedFields) {
 
     const savedResonator = dtoFactory.toResonator(await resonatorRepository.findById(resonator_id));
     return savedResonator;
+}
+
+export async function addQuestionToResonator(resonator_id, question_id) {
+    const [resonator, question] = await Promise.all([
+        resonatorRepository.findById(resonator_id),
+        questionRepository.findById(question_id)
+    ]);
+
+    if (!resonator || !question)
+        return null;
+
+    resonator.addQuestion(question_id);
+
+    await getUow().commit();
+    return true;
 }

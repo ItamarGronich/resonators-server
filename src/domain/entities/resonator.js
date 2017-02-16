@@ -40,12 +40,20 @@ export default class Resonator {
         this.repeat_days = repeat_days;
         this.last_pop_time = last_pop_time;
         this.disable_copy_to_leader = disable_copy_to_leader;
-        this.items = items;
-        this.questions = questions;
+        this.items = items || [];
+        this.questions = questions || [];
         this.created_at = created_at;
         this.updated_at = updated_at;
 
         if (!id)
             this.id = uuid();
+    }
+
+    addQuestion(question_id) {
+        this.questions.push({
+            id: uuid(),
+            question_id,
+            resonator_id: this.id
+        });
     }
 }
