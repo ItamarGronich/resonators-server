@@ -9,6 +9,7 @@ import setLoginCookie from './setLoginCookie';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 import {assert} from 'chai';
 import moment from 'moment';
+import supertestWrapper from './supertestWrapper';
 
 describe('reminders', () => {
     it('block unauthorized leader', async() => {
@@ -111,42 +112,48 @@ describe('reminders', () => {
         });
     });
 
-    it('add resonator criteria', async done => {
+    it.only('add resonator criteria', async () => {
         const { userLogin, leader, clinic, follower, resonator } = await generateFixtures().preset1();
         const [ question ] = await generateFixtures().generateQuestion({
             leader, clinic
         }).done();
 
-        await request(app)
-        .post(`/leader_followers/${follower.id}/reminders/${resonator.id}/criteria`)
-        .set(...setLoginCookie(userLogin.id))
-        .send({
-            question_id: question.id,
-            reminder_id: resonator.id
-        })
-        .expect(200)
-        .expect((res) => {
-            request(app)
-            .get(`/leader_followers/${follower.id}/reminders/${resonator.id}`)
-            .set(...setLoginCookie(userLogin.id))
-            .expect(200)
-            .expect(res => {
-                assertResonator(_.omit(res.body, 'questions'), _.omit(resonator, 'questions'));
+        const response = await supertestWrapper({
+            app,
+            method: 'post',
+            url: `/leader_followers/${follower.id}/reminders/${resonator.id}/criteria`,
+            cookie: `loginId=${userLogin.id}`,
+            body: {
+                question_id: question.id,
+                reminder_id: resonator.id
+            }
+        });
 
-                const newQuestion = res.body.questions[1];
-                assertResonatorQuestions(res.body.questions,
-                                         resonator.questions.concat({
-                                             id: newQuestion.id,
-                                             question,
-                                             question_id: question.id,
-                                             resonator_id: resonator.id,
-                                             removed: null
-                                         }));
+        assert.equal(response.status, 200);
+
+        const response2 = await supertestWrapper({
+            app,
+            method: 'get',
+            url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
+            cookie: `loginId=${userLogin.id}`
+        });
+
+        assert.equal(response2.status, 200);
+
+        assertResonator(_.omit(response2.body, 'questions'), _.omit(resonator, 'questions'));
+
+        const newQuestion = response2.body.questions[1];
+
+        assertResonatorQuestions(
+            response2.body.questions,
+            resonator.questions.concat({
+                id: newQuestion.id,
+                question,
+                question_id: question.id,
+                resonator_id: resonator.id,
+                removed: null
             })
-            .then(() => done())
-            .catch(done)
-        })
-        .catch(done);
+        );
     });
 });
 
