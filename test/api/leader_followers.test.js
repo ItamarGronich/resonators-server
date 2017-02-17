@@ -1,6 +1,4 @@
 import _ from 'lodash';
-import app from '../../src/api/index';
-import request from 'supertest';
 import {users, followers} from '../../src/db/sequelize/models';
 import {fooUserLogin} from '../dbFixtures/user_logins';
 import {putFollower} from '../dbFixtures/followers';
@@ -10,94 +8,100 @@ import * as dbToDomain from '../../src/db/dbToDomain';
 import {assert} from 'chai';
 import bcrypt from 'bcrypt';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
+import supertestWrapper from './supertestWrapper';
 
 describe('leader_followers', () => {
     it('get followers', async () => {
         const { user, userLogin, leader, clinic, follower } = await generateFixtures().preset1();
 
-        await request(app)
-        .get('/leader_followers')
-        .set(...setLoginCookie(userLogin.id))
-        .expect((res) => {
-            assert.deepEqual(res.body.map(f => _.omit(f, 'updated_at', 'created_at')), [{
-                id: follower.id,
-                user_id: follower.user.id,
-                clinic_id: clinic.id,
-                leader_id: leader.id,
-                status: 1,
-                user: {
-                    country: null,
-                    email: follower.user.email,
-                    name: follower.user.name,
-                    unsubscribed: null
-                }
-            }]);
-
-            assert.isOk(res.body[0].created_at);
-            assert.isOk(res.body[0].updated_at);
+        const {status, body} = await supertestWrapper({
+            method: 'get',
+            url: '/leader_followers',
+            cookie: `loginId=${userLogin.id}`
         });
+
+        assert.equal(status, 200);
+
+        assert.deepEqual(body.map(f => _.omit(f, 'updated_at', 'created_at')), [{
+            id: follower.id,
+            user_id: follower.user.id,
+            clinic_id: clinic.id,
+            leader_id: leader.id,
+            status: 1,
+            user: {
+                country: null,
+                email: follower.user.email,
+                name: follower.user.name,
+                unsubscribed: null
+            }
+        }]);
+
+        assert.isOk(body[0].created_at);
+        assert.isOk(body[0].updated_at);
     });
 
-    it('add follower', async (done) => {
+    it('add follower', async () => {
         const { user, userLogin, leader, clinic } = await generateFixtures().preset1();
 
-        request(app)
-        .post('/leader_followers')
-        .set(...setLoginCookie(userLogin.id))
-        .send({clinic_id: clinic.id, email: 'newfollower@bar.baz', name: 'new follower', password: '1111'})
-        .expect(201)
-        .expect(res => {
-            assert.lengthOf(res.body.id, 36);
-            assert.lengthOf(res.body.user_id, 36);
-            assert.equal(res.body.clinic_id, clinic.id);
-            assert.equal(res.body.leader_id, leader.id);
-            assert.equal(res.body.status, 2);
+        const {status, body} = await supertestWrapper({
+            method: 'post',
+            url: '/leader_followers',
+            cookie: `loginId=${userLogin.id}`,
+            body: {
+                clinic_id: clinic.id,
+                email: 'newfollower@bar.baz',
+                name: 'new follower',
+                password: '1111'
+            }
+        });
+        assert.equal(status, 201);
+        assert.lengthOf(body.id, 36);
+        assert.lengthOf(body.user_id, 36);
+        assert.equal(body.clinic_id, clinic.id);
+        assert.equal(body.leader_id, leader.id);
+        assert.equal(body.status, 2);
 
-            return users.findById(res.body.user_id)
-            .then(dbUser => {
-                const password = dbUser.get('pass');
-                const salt = dbUser.get('salt');
-                assert.equal(password, bcrypt.hashSync('1111', salt));
-            })
-            .then(() => followers.findById(res.body.id))
-            .then(dbFollower => {
-                assert.equal(dbFollower.get('user_id'),
-                             res.body.user_id,
-                             'inserted user_id doesn\'t match!');
-            });
-        })
-        .end(done);
+        const dbUser = await users.findById(body.user_id);
+        const password = dbUser.get('pass');
+        const salt = dbUser.get('salt');
+        assert.equal(password, bcrypt.hashSync('1111', salt));
+        const dbFollower = await followers.findById(body.id);
+        assert.equal(dbFollower.get('user_id'),
+                     body.user_id,
+                     'inserted user_id doesn\'t match!');
     });
 
-    it('cannot put unfollowed user', done => {
-        request(app)
-        .put(`/leader_followers/${putFollower.id}`)
-        .set(...setLoginCookie(fooUserLogin.id))
-        .send({user: {email: 'uv@gmail.com', name:'ppp'}})
-        .expect(403)
-        .end(done);
+    it('cannot put unfollowed user', async () => {
+        const {status, body} = await supertestWrapper({
+            method: 'put',
+            url: `/leader_followers/${putFollower.id}`,
+            cookie: `loginId=${fooUserLogin.id}`,
+            body: {user: {email: 'uv@gmail.com', name:'ppp'}}
+        });
+
+        assert.equal(status, 403);
     });
 
-    it('put follower', async done => {
+    it('put follower', async () => {
         const { user, userLogin, leader, follower } = await generateFixtures().preset1();
 
-        request(app)
-        .put(`/leader_followers/${follower.id}`)
-        .set(...setLoginCookie(userLogin.id))
-        .send({user: {email: 'uv@gmail.com', name:'ppp'}})
-        .expect(200)
-        .expect(res => {
-            return users.findById(follower.user.id)
-            .then(row => {
-                const user = dbToDomain.toUser(row);
-                assert.deepEqual(user, {
-                    ...follower.user,
-                    country: null,
-                    unsubscribed: null,
-                    email: 'uv@gmail.com',
-                    name: 'ppp'
-                });
-            })
-        }).end(done)
+        const {status, body} = await supertestWrapper({
+            method: 'put',
+            url: `/leader_followers/${follower.id}`,
+            body: {user: {email: 'uv@gmail.com', name:'ppp'}},
+            cookie: `loginId=${userLogin.id}`
+        });
+
+        assert.equal(status, 200);
+
+        const row = await users.findById(follower.user.id)
+        const dbUser = dbToDomain.toUser(row);
+        assert.deepEqual(dbUser, {
+            ...follower.user,
+            country: null,
+            unsubscribed: null,
+            email: 'uv@gmail.com',
+            name: 'ppp'
+        });
     });
 });

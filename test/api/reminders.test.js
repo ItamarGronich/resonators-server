@@ -1,6 +1,4 @@
 import _ from 'lodash';
-import app from '../../src/api/index';
-import request from 'supertest';
 import {fooUserLogin} from '../dbFixtures/user_logins';
 import {putFollower} from '../dbFixtures/followers';
 import {resonator} from '../dbFixtures/resonators';
@@ -12,44 +10,46 @@ import moment from 'moment';
 import supertestWrapper from './supertestWrapper';
 
 describe('reminders', () => {
-    it('block unauthorized leader', async() => {
+    it('block unauthorized leader', async () => {
         const { userLogin, follower } = await generateFixtures().preset1();
 
-        await request(app)
-        .get(`/leader_followers/${follower.id}/reminders`)
-        .set(...setLoginCookie(fooUserLogin.id))
-        .expect(403)
-        .expect(res => {
-            assert.deepEqual(res.body, {
-                status: 'leader is not permitted to view or edit the given follower.'
-            });
+        const {status, body} = await supertestWrapper({
+            url: `/leader_followers/${follower.id}/reminders`,
+            method: 'get',
+            cookie: `loginId=${fooUserLogin.id}`
+        });
+
+        assert.equal(status, 403);
+
+        assert.deepEqual(body, {
+            status: 'leader is not permitted to view or edit the given follower.'
         });
     });
 
-    it('get followers\' resonators', async done => {
+    it('get followers\' resonators', async () => {
         const { userLogin, follower, resonator } = await generateFixtures().preset1();
 
-        request(app)
-        .get(`/leader_followers/${follower.id}/reminders`)
-        .set(...setLoginCookie(userLogin.id))
-        .expect(200)
-        .expect(res => {
-            assertResonator(res.body[0], resonator);
-        })
-        .then(() => done())
-        .catch(done);
+        const {status, body} = await supertestWrapper({
+            method: 'get',
+            url: `/leader_followers/${follower.id}/reminders`,
+            cookie: `loginId=${userLogin.id}`
+        });
+
+        assert.equal(status, 200);
+        assertResonator(body[0], resonator);
     });
 
     it('get a single follower resonator', async () => {
         const {userLogin, follower, resonator} = await generateFixtures().preset1();
 
-        await request(app)
-        .get(`/leader_followers/${follower.id}/reminders/${resonator.id}`)
-        .set(...setLoginCookie(userLogin.id))
-        .expect(200)
-        .expect(res => {
-            assertResonator(res.body, resonator);
+        const {status, body} = await supertestWrapper({
+            method: 'get',
+            url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
+            cookie: `loginId=${userLogin.id}`
         });
+
+        assert.equal(status, 200);
+        assertResonator(body, resonator);
     });
 
     it('create resonator', async () => {
@@ -67,22 +67,23 @@ describe('reminders', () => {
             repeat_days: [1,2,3]
         };
 
-        await request(app)
-        .post(`/leader_followers/${follower.id}/reminders`)
-        .set(...setLoginCookie(userLogin.id))
-        .send(resonator)
-        .expect(201)
-        .expect(res => {
-            assertResonator(res.body, {
-                ...resonator,
-                id: res.body.id,
-                leader_id: leader.id
-            });
-
-            assert.lengthOf(res.body.id, 36);
-            assert.isOk(res.body.created_at);
-            assert.isOk(res.body.updated_at);
+        const {status, body} = await supertestWrapper({
+            method: 'post',
+            url: `/leader_followers/${follower.id}/reminders`,
+            body: resonator,
+            cookie: `loginId=${userLogin.id}`
         });
+
+        assert.equal(status, 201);
+        assertResonator(body, {
+            ...resonator,
+            id: body.id,
+            leader_id: leader.id
+        });
+
+        assert.lengthOf(body.id, 36);
+        assert.isOk(body.created_at);
+        assert.isOk(body.updated_at);
     });
 
     it('put resonator', async () => {
@@ -100,16 +101,16 @@ describe('reminders', () => {
             repeat_days: [1,2,3]
         };
 
-        await request(app)
-        .put(`/leader_followers/${follower.id}/reminders/${resonator.id}`)
-        .set(...setLoginCookie(userLogin.id))
-        .send(updatedResonator)
-        .expect(200)
-        .expect(res => {
-            assertResonator(res.body, resonator);
-            assert.isOk(res.body.created_at);
-            assert.isOk(res.body.updated_at);
+        const {status, body} = await supertestWrapper({
+            method: 'put',
+            url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
+            cookie: `loginId=${userLogin.id}`
         });
+
+        assert.equal(status, 200);
+        assertResonator(body, resonator);
+        assert.isOk(body.created_at);
+        assert.isOk(body.updated_at);
     });
 
     it('add resonator criteria', async () => {
@@ -119,7 +120,6 @@ describe('reminders', () => {
         }).done();
 
         const response = await supertestWrapper({
-            app,
             method: 'post',
             url: `/leader_followers/${follower.id}/reminders/${resonator.id}/criteria`,
             cookie: `loginId=${userLogin.id}`,
@@ -132,7 +132,6 @@ describe('reminders', () => {
         assert.equal(response.status, 200);
 
         const response2 = await supertestWrapper({
-            app,
             method: 'get',
             url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
             cookie: `loginId=${userLogin.id}`

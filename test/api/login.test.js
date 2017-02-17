@@ -1,15 +1,24 @@
-import app from '../../src/api/index';
 import db from '../../src/db/sequelize/dbConnection';
-import request from 'supertest';
 import {assert} from 'chai';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
+import supertestWrapper from '../api/supertestWrapper';
 const knex = require('knex')({});
 
 describe('login', () => {
-    it('login without credentials', done => {
-        request(app)
-            .post('/user_sessions')
-            .expect(200, {loginResult: { isValid: false, user: null }}, done);
+    it('login without credentials', async () => {
+        const {status, body} = await supertestWrapper({
+            method: 'post',
+            url: '/user_sessions'
+        });
+
+        assert.equal(status, 200);
+
+        assert.deepEqual(body, {
+            loginResult: {
+                isValid: false,
+                user: null
+            }
+        });
     });
 
     it('successful login', async () => {
@@ -17,109 +26,122 @@ describe('login', () => {
                             .generateUserLogin()
                             .done();
 
-         await request(app)
-            .post('/user_sessions')
-            .send({ email: userLogin.user.email, password: '1234'})
-            .expect(200, {
-                loginResult: {
-                    isValid: true,
-                    user: {
-                        email: userLogin.user.email,
-                        name: userLogin.user.name,
-                        country: null,
-                        unsubscribed: null
-                    }
+        const {status, body, headers} = await supertestWrapper({
+            method: 'post',
+            url: '/user_sessions',
+            body: { email: userLogin.user.email, password: '1234'}
+        });
+
+        assert.equal(status, 200);
+        assert.deepEqual(body, {
+            loginResult: {
+                isValid: true,
+                user: {
+                    email: userLogin.user.email,
+                    name: userLogin.user.name,
+                    country: null,
+                    unsubscribed: null
                 }
-            })
-            .expect((res) => {
-                assert.match(res.headers['set-cookie'][0],
-                             /loginId=.+; Max\-Age=\d+;/,
-                             'set cookie match failed');
-            });
+            }
+        });
+
+        assert.match(headers['set-cookie'][0],
+                     /loginId=.+; Max\-Age=\d+;/,
+                     'set cookie match failed');
     });
 
-    it('relogin with cookie', async done => {
+    it('relogin with cookie', async () => {
         const [userLogin] = await generateFixtures()
-                            .generateUserLogin()
-                            .done();
+        .generateUserLogin()
+        .done();
 
-        const req = request(app);
+        const {status, body, headers} = await supertestWrapper({
+            method: 'post',
+            url: '/user_sessions',
+            body: { email: userLogin.user.email, password: '1234'},
+        });
 
-        req
-        .post('/user_sessions')
-        .send({ email: userLogin.user.email, password: '1234'})
-        .end((err, res) => {
-            if (err) return done(err);
+        const matches = /loginId=(.+?);/.exec(headers['set-cookie'][0]);
+        const loginId = matches[1];
 
-            const matches = /loginId=(.+?);/.exec(res.headers['set-cookie'][0]);
-            const loginId = matches[1];
+        const getResponse = await supertestWrapper({
+            method: 'get',
+            url: '/user_sessions',
+            cookie: `loginId=${loginId}`
+        });
 
-            return req
-                .get('/user_sessions')
-                .set('Cookie', [`loginId=${loginId}`])
-                .expect(200, {
-                    loginResult: {
-                        isValid: true,
-                        user: {
-                            name: userLogin.user.name,
-                            email: userLogin.user.email,
-                            unsubscribed: null,
-                            country: null
-                        }
-                    }
-                }, done);
+        assert.equal(getResponse.status, 200);
+        assert.deepEqual(getResponse.body, {
+            loginResult: {
+                isValid: true,
+                user: {
+                    name: userLogin.user.name,
+                    email: userLogin.user.email,
+                    unsubscribed: null,
+                    country: null
+                }
+            }
         });
     });
 
-    it('relogin without cookie', done => {
-        request(app)
-            .get('/user_sessions')
-            .expect(403, {
-                status: 'Must be logged in for using this call.'
-            }, done);
+    it('relogin without cookie', async () => {
+        const {status, body} = await supertestWrapper({
+            method: 'get',
+            url: '/user_sessions'
+        });
+
+        assert.equal(status, 403);
+        assert.deepEqual(body, {
+            status: 'Must be logged in for using this call.'
+        });
     });
 
-    it('failed login', async done => {
+    it('failed login', async () => {
         const [userLogin] = await generateFixtures()
                             .generateUserLogin()
                             .done();
 
-        request(app)
-            .post('/user_sessions')
-            .send({ email: userLogin.user.email, password: '12345'})
-            .expect(200, {
-                loginResult: {
-                    isValid: false,
-                    user: null
-                }
-            })
-            .expect((res) => {
-                const cookies = res.headers['set-cookie'];
+        const {status, body, headers} = await supertestWrapper({
+            method: 'post',
+            url: '/user_sessions',
+            body: { email: userLogin.user.email, password: '12345'}
+        });
 
-                if (cookies)
-                    cookies.forEach(cookie => {
-                        assert(cookie.indexOf('loginId') === -1,
-                               'loginId was present in a cookie - it should not!');
-                    });
-            }).end(done);
+        assert.equal(status, 200);
+        assert.deepEqual(body, {
+            loginResult: {
+                isValid: false,
+                user: null
+            }
+        });
+
+        const cookies = headers['set-cookie'];
+
+        if (cookies) {
+            cookies.forEach(cookie => {
+                assert(cookie.indexOf('loginId') === -1,
+                       'loginId was present in a cookie - it should not!');
+            });
+        }
     });
 
-    it('successful login - insert into UserLogin', async done => {
+    it('successful login - insert into UserLogin', async () => {
         const [userLogin] = await generateFixtures()
                             .generateUserLogin()
                             .done();
 
-        request(app)
-        .post('/user_sessions')
-        .send({ email: userLogin.user.email, password: '1234'})
-        .expect((res) => {
-            const sql = knex('users')
-            .join('user_logins', 'users.id', 'user_logins.user_id')
-            .where('users.email', userLogin.user.email)
-            .toString();
 
-            db.query(sql)
-            .spread(rows => assert.isAbove(rows.length, 0))
-        }).end(done);
+        const {status, body} = await supertestWrapper({
+            method: 'post',
+            url: '/user_sessions',
+            body: { email: userLogin.user.email, password: '1234'}
+        });
+
+        const sql = knex('users')
+        .join('user_logins', 'users.id', 'user_logins.user_id')
+        .where('users.email', userLogin.user.email)
+        .toString();
+
+        await db.query(sql).spread(rows => assert.isAbove(rows.length, 0))
     })
 });
