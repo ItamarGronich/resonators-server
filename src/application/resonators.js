@@ -4,6 +4,7 @@ import resonatorRepository from '../db/repositories/ResonatorRepository';
 import questionRepository from '../db/repositories/QuestionRepository';
 import * as dtoFactory from './dto/index';
 import updatePermittedFields from './updatePermittedFields';
+import s3 from '../s3';
 import getUow from './getUow';
 
 export async function getResonators(followerId) {
@@ -70,6 +71,21 @@ export async function removeQuestionFromResonator(resonator_id, question_id) {
         return null;
 
     resonator.removeQuestion(question_id);
+
+    await getUow().commit();
+
+    return true;
+}
+
+export async function addItemToResonator(resonator_id, item, stream) {
+    const resonator = await resonatorRepository.findById(resonator_id);
+
+    if (!resonator)
+        return null;
+
+    const attachment = resonator.addItem(item);
+
+    await s3.uploadImage(attachment.id, stream);
 
     await getUow().commit();
 

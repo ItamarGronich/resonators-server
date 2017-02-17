@@ -5,3 +5,4 @@ node_modules
 static/common.bundle.*.js
 static/common.bundle.*.json
 npm-debug.log.*
+secrets.js

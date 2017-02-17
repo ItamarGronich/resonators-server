@@ -1,4 +1,5 @@
 import uuid from 'uuid/v4';
+import ResonatorAttachment from './resonatorAttachment';
 
 export default class Resonator {
     constructor({
@@ -55,6 +56,14 @@ export default class Resonator {
             question_id,
             resonator_id: this.id
         });
+    }
+
+    addItem(item) {
+        const attachment = new ResonatorAttachment(item);
+        attachment.resonator_id = this.id;
+        attachment.visible = true;
+        this.items.push(attachment);
+        return attachment;
     }
 
     removeQuestion(question_id) {

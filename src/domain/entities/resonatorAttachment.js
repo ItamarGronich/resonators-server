@@ -1,3 +1,5 @@
+import uuid from 'uuid/v4';
+
 export default class ResonatorAttachment {
     constructor({
         id,
@@ -25,5 +27,8 @@ export default class ResonatorAttachment {
         this.link = link;
         this.created_at = created_at;
         this.updated_at = updated_at;
+
+        if (!id)
+            this.id = uuid();
     }
 }

@@ -1,5 +1,7 @@
+import base from './base';
 import dev from './dev';
 import test from './test';
+import prod from './prod';
 
 const env = process.env.ENV || 'dev';
 
@@ -20,4 +22,4 @@ switch (env) {
         break;
 }
 
-export default cfg;
+export default Object.assign({}, cfg, base);

@@ -11,6 +11,7 @@ import {
 } from '../sequelize/models';
 
 import Resonators from '../../domain/entities/resonator';
+import addRemoveChangedEntities from './addedRemovedEntities';
 
 class ResonatorsRepository extends Repository {
     constructor(...args) {
@@ -28,46 +29,27 @@ class ResonatorsRepository extends Repository {
         };
     }
 
-    getQuestionsDiff(resonator, lastResonator) {
-        const curQuestions = resonator.questions || [];
-        const prevQuestions = lastResonator.questions || [];
-
-        return [...curQuestions, ...prevQuestions].reduce((acc, cur) => {
-            if (!_.find(prevQuestions, q => q.id === cur.id))
-                acc.addedQuestions.push(cur);
-            else if (!_.find(curQuestions, q => q.id === cur.id))
-                acc.removedQuestions.push(cur);
-
-            return acc;
-        }, {
-            addedQuestions: [],
-            removedQuestions: []
-        });
-    }
-
     save(resonator, tran, lastResonator) {
         const upsertPromise = resonators.upsert(resonator, tran);
-        let questionsPromises = [];
-
-        questionsPromises = this.saveQuestions(resonator, lastResonator);
-
-        return Promise.all([upsertPromise, ...questionsPromises]);
+        const questionsPromises = this.saveQuestions(resonator, lastResonator);
+        const itemsPromises = this.saveItems(resonator, lastResonator);
+        return Promise.all([upsertPromise, ...questionsPromises, ...itemsPromises]);
     }
 
     saveQuestions(resonator, lastResonator) {
-        const {
-            addedQuestions,
-            removedQuestions
-        } = this.getQuestionsDiff(resonator, lastResonator);
+        return addRemoveChangedEntities({
+            currentGroup: resonator.questions,
+            previousGroup: lastResonator.questions,
+            dbModel: resonator_questions
+        });
+    }
 
-        const addQuestionsPromises = addedQuestions.map(q => resonator_questions.create(q));
-        const removedQuestionsPromises = removedQuestions.map(q => resonator_questions.destroy({
-            where: {
-                id: q.id
-            }
-        }));
-
-        return [...addQuestionsPromises, ...removedQuestionsPromises];
+    saveItems(resonator, lastResonator) {
+        return addRemoveChangedEntities({
+            currentGroup: resonator.items,
+            previousGroup: lastResonator.items,
+            dbModel: resonator_attachments
+        });
     }
 
     async findById(resonatorId) {

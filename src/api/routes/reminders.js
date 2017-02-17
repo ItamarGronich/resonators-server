@@ -1,7 +1,10 @@
 import express from '../express';
 import routeHandler from '../routeHandler';
 import enforceLeaderFollowers from '../permissions/enforceLeaderFollowers';
+import multer from 'multer';
 import * as service from '../../application/resonators';
+
+const upload = multer();
 
 express.get('/leader_followers/:followerId/reminders', routeHandler(async (request, response) => {
     const resonators = await service.getResonators(request.params.followerId);
@@ -72,3 +75,40 @@ express.delete('/leader_followers/:followerId/reminders/:reminderId/criteria/:cr
 }, {
     enforceLeaderFollower: true
 }));
+
+(() => {
+    var itemsUpload = upload.fields([{
+        name: 'follower_id'
+    }, {
+        name: 'reminder_id'
+    }, {
+        name: 'media_kind'
+    }, {
+        name: 'media_title'
+    }, {
+        name: 'media_data'
+    }]);
+
+    express.post('/leader_followers/:followerId/reminders/:reminderId/items', itemsUpload, routeHandler(async (request, response) => {
+        const {
+            follower_id,
+            reminder_id,
+            media_kind,
+            media_title
+        } = request.body;
+
+        const mediaData = request.files.media_data;
+
+        await service.addItemToResonator(reminder_id, {
+            follower_id,
+            reminder_id,
+            media_kind,
+            title: media_title
+        }, mediaData[0].buffer);
+
+        response.status(201);
+        response.json({});
+    }, {
+        enforceLeaderFollower: true
+    }));
+})();

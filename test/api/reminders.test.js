@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import path from 'path';
 import {fooUserLogin} from '../dbFixtures/user_logins';
 import {putFollower} from '../dbFixtures/followers';
 import {resonator} from '../dbFixtures/resonators';
@@ -156,7 +157,7 @@ describe('reminders', () => {
     });
 
     it('remove resonator criteria', async () => {
-        const { userLogin, leader, clinic, follower, resonator } = await generateFixtures().preset1();
+        const { userLogin, follower, resonator } = await generateFixtures().preset1();
 
         const response = await supertestWrapper({
             method: 'delete',
@@ -174,6 +175,59 @@ describe('reminders', () => {
 
         assertResonator(_.omit(updatedResonator, 'questions'), _.omit(resonator, 'questions'));
         assertResonatorQuestions(updatedResonator.questions, []);
+    });
+
+    it('add resonator image', async () => {
+        const { userLogin, follower, resonator } = await generateFixtures().preset1();
+
+        const attachment = {
+            kind: 'image/png',
+            path: path.resolve(__dirname, '../image.jpg')
+        };
+
+        const fields = {
+            follower_id: follower.id,
+            reminder_id: resonator.id,
+            media_kind: 'image',
+            media_title: 'image title'
+        };
+
+        const response = await supertestWrapper({
+            method: 'post',
+            url: `/leader_followers/${follower.id}/reminders/${resonator.id}/items`,
+            cookie: `loginId=${userLogin.id}`,
+            fields,
+            attachment
+        });
+
+        assert.equal(response.status, 201);
+
+        const updatedResonatorResponse = await supertestWrapper({
+            method: 'get',
+            url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
+            cookie: `loginId=${userLogin.id}`
+        });
+
+        const newItem = updatedResonatorResponse.body.items[0];
+
+        assert.lengthOf(newItem.id, 36);
+
+        assertResonator(updatedResonatorResponse.body,
+                        {
+                            ...resonator,
+                            items: [{
+                                id: newItem.id,
+                                resonator_id: resonator.id,
+                                media_kind: 'image',
+                                link: null,
+                                media_format: null,
+                                media_id: null,
+                                owner_id: null,
+                                owner_role: null,
+                                title: 'image title',
+                                visible: true
+                            }].concat(resonator.items)
+                        });
     });
 });
 
