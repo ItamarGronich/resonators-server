@@ -43,30 +43,32 @@ describe('login', () => {
                             .generateUserLogin()
                             .done();
 
-        request(app)
-            .post('/user_sessions')
-            .send({ email: userLogin.user.email, password: '1234'})
-            .end((err, res) => {
-                if (err) return done(err);
+        const req = request(app);
 
-                const matches = /loginId=(.+?);/.exec(res.headers['set-cookie'][0]);
-                const loginId = matches[1];
+        req
+        .post('/user_sessions')
+        .send({ email: userLogin.user.email, password: '1234'})
+        .end((err, res) => {
+            if (err) return done(err);
 
-                return request(app)
-                    .get('/user_sessions')
-                    .set('Cookie', [`loginId=${loginId}`])
-                    .expect(200, {
-                        loginResult: {
-                            isValid: true,
-                            user: {
-                                name: userLogin.user.name,
-                                email: userLogin.user.email,
-                                unsubscribed: null,
-                                country: null
-                            }
+            const matches = /loginId=(.+?);/.exec(res.headers['set-cookie'][0]);
+            const loginId = matches[1];
+
+            return req
+                .get('/user_sessions')
+                .set('Cookie', [`loginId=${loginId}`])
+                .expect(200, {
+                    loginResult: {
+                        isValid: true,
+                        user: {
+                            name: userLogin.user.name,
+                            email: userLogin.user.email,
+                            unsubscribed: null,
+                            country: null
                         }
-                    }, done);
-            });
+                    }
+                }, done);
+        });
     });
 
     it('relogin without cookie', done => {

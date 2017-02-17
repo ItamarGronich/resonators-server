@@ -1,18 +1,25 @@
 import request from 'supertest';
 
-export default function supertestWrapper({ app, url, method, body, cookie }) {
-    return new Promise((resolve, reject) => {
-        let req = request(app);
+let _request;
 
-        req = req[method].call(req, url);
+export default function supertestWrapper({ url, method, body, cookie }) {
+    if (!_request)
+        throw new Error('need to init supertest with the express app before using it!');
+
+    return new Promise((resolve, reject) => {
+        const req = _request[method].call(_request, url);
 
         if (cookie)
-            req = req.set('Cookie', cookie);
+            req.set('Cookie', cookie);
 
         if (body)
-            req = req.send(body);
+            req.send(body);
 
         req.expect(resolve)
            .catch(reject);
     });
+}
+
+export function init(app) {
+    _request = request(app);
 }

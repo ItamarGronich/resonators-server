@@ -64,7 +64,7 @@ export default function generateFixtures() {
     return api;
 
     function randStr(str) {
-        const uuidSuffix = uuid().substring(0, 4);
+        const uuidSuffix = uuid();
         return `${str}_${uuidSuffix}`;
     }
 
