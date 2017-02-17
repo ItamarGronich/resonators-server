@@ -56,4 +56,8 @@ export default class Resonator {
             resonator_id: this.id
         });
     }
+
+    removeQuestion(question_id) {
+        this.questions = this.questions.filter(q => q.id !== question_id);
+    }
 }

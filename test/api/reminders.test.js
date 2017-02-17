@@ -154,6 +154,27 @@ describe('reminders', () => {
             })
         );
     });
+
+    it('remove resonator criteria', async () => {
+        const { userLogin, leader, clinic, follower, resonator } = await generateFixtures().preset1();
+
+        const response = await supertestWrapper({
+            method: 'delete',
+            url: `/leader_followers/${follower.id}/reminders/${resonator.id}/criteria/${resonator.questions[0].id}`,
+            cookie: `loginId=${userLogin.id}`,
+        });
+
+        assert.equal(response.status, 200);
+
+        const {body: updatedResonator} = await supertestWrapper({
+            method: 'get',
+            url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
+            cookie: `loginId=${userLogin.id}`
+        });
+
+        assertResonator(_.omit(updatedResonator, 'questions'), _.omit(resonator, 'questions'));
+        assertResonatorQuestions(updatedResonator.questions, []);
+    });
 });
 
 function assertResonator(actual, expected) {

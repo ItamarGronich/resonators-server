@@ -6,7 +6,6 @@ import * as dtoFactory from './dto/index';
 import updatePermittedFields from './updatePermittedFields';
 import getUow from './getUow';
 
-
 export async function getResonators(followerId) {
     const resonators = await resonatorRepository.findByFollowerId(followerId);
     const resonatorsDto = resonators.map(dtoFactory.toResonator);
@@ -61,5 +60,18 @@ export async function addQuestionToResonator(resonator_id, question_id) {
     resonator.addQuestion(question_id);
 
     await getUow().commit();
+    return true;
+}
+
+export async function removeQuestionFromResonator(resonator_id, question_id) {
+    const resonator = await resonatorRepository.findById(resonator_id);
+
+    if (!resonator)
+        return null;
+
+    resonator.removeQuestion(question_id);
+
+    await getUow().commit();
+
     return true;
 }

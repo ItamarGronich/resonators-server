@@ -49,9 +49,7 @@ class ResonatorsRepository extends Repository {
         const upsertPromise = resonators.upsert(resonator, tran);
         let questionsPromises = [];
 
-        if (resonator.questions.length > 0) {
-            questionsPromises = this.saveQuestions(resonator, lastResonator);
-        }
+        questionsPromises = this.saveQuestions(resonator, lastResonator);
 
         return Promise.all([upsertPromise, ...questionsPromises]);
     }
