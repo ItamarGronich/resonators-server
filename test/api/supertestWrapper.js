@@ -12,7 +12,7 @@ export default function supertestWrapper({ app, url, method, body, cookie }) {
         if (body)
             req = req.send(body);
 
-        req.expect((body) => resolve(body))
+        req.expect(resolve)
            .catch(reject);
     });
 }

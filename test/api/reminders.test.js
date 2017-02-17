@@ -112,7 +112,7 @@ describe('reminders', () => {
         });
     });
 
-    it.only('add resonator criteria', async () => {
+    it('add resonator criteria', async () => {
         const { userLogin, leader, clinic, follower, resonator } = await generateFixtures().preset1();
         const [ question ] = await generateFixtures().generateQuestion({
             leader, clinic
