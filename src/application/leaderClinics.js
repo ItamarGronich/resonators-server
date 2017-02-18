@@ -1,6 +1,9 @@
+import _ from 'lodash';
 import {clinics} from '../db/sequelize/models';
 import questionsRepository from '../db/repositories/QuestionRepository';
+import Question from '../domain/entities/question';
 import * as dtoFactory from './dto';
+import getUow from './getUow';
 
 export async function getLeaderClinics(user_id) {
     const rows = await clinics.findAll({
@@ -28,5 +31,26 @@ export async function getLeaderClinicsCriteria(leader_id, clinic_id) {
     else
         questions = await questionsRepository.findByClinic(clinic_id);
 
-    return questions.map(dtoFactory.toQuestion);
+    return _(questions)
+            .map(dtoFactory.toQuestion)
+            .orderBy(q => q.created_at, 'desc')
+            .value();
+}
+
+export async function addQuestionToClinic(clinic_id, leader_id, questionRequest) {
+    const uow = getUow();
+
+    const question = new Question({
+        ...questionRequest,
+        clinic_id,
+        leader_id
+    });
+
+    uow.trackEntity(question, {isNew: true});
+
+    await uow.commit();
+
+    const savedQuestion = await questionsRepository.findById(question.id);
+
+    return dtoFactory.toQuestion(savedQuestion);
 }

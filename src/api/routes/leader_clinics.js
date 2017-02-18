@@ -1,6 +1,10 @@
 import express from '../express';
 import routeHandler from '../routeHandler';
-import {getLeaderClinics, getLeaderClinicsCriteria} from '../../application/leaderClinics';
+import {
+    getLeaderClinics,
+    getLeaderClinicsCriteria,
+    addQuestionToClinic
+} from '../../application/leaderClinics';
 
 express.get('/leader_clinics', routeHandler(async (request, response) => {
     const {user} = request.appSession;
@@ -26,4 +30,13 @@ express.get('/leader_clinics/:clinicId/criteria', routeHandler(async (request, r
         response.status(200);
 
     response.json(questions);
+}));
+
+express.post('/leader_clinics/:clinicId/criteria', routeHandler(async (request, response) => {
+    const {leader} = request.appSession;
+    const question = request.body;
+    const newQuestion = await addQuestionToClinic(request.params.clinicId, leader.id, question);
+
+    response.status(201);
+    response.json(newQuestion);
 }));

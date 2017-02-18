@@ -44,5 +44,8 @@ export function toResonator(resonator) {
 }
 
 export function toQuestion(question) {
-    return question;
+    return {
+        ...question,
+        answers: _.orderBy(question.answers, a => a.rank)
+    };
 }

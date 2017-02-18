@@ -60,9 +60,60 @@ describe('leader_clinics', () => {
 
         assertQuestions(response.body, questions);
     });
+
+    it('add clinic criteria', async () => {
+        const {userLogin, clinics, questions} = await generateFixtures().presetLeaderWithManyClinics();
+
+        const clinic = clinics[0];
+
+        const newQuestion = {
+            clinic_id: clinic.id,
+            description: 'question description',
+            question_kind: 'numeric',
+            title: 'a question',
+            answers: [{
+                rank: 1,
+                body: 'answer 1'
+            }, {
+                rank: 3,
+                body: 'answer 2'
+            }]
+        };
+
+        const response = await supertestWrapper({
+            method: 'post',
+            url: `/leader_clinics/${clinic.id}/criteria`,
+            cookie: `loginId=${userLogin.id}`,
+            body: newQuestion
+        });
+
+        assert.equal(response.status, 201);
+
+        newQuestion.id = response.body.id;
+        newQuestion.leader_id = response.body.leader_id;
+        newQuestion.removed = false;
+        newQuestion.answers = newQuestion.answers.map((a, i) => ({
+            ...a,
+            id: response.body.answers[i].id
+        }));
+
+        assertQuestions([response.body], [newQuestion]);
+
+        const clinicQuestionsResponse = await supertestWrapper({
+            method: 'get',
+            url: `/leader_clinics/${clinic.id}/criteria`,
+            cookie: `loginId=${userLogin.id}`
+        });
+
+        assertQuestions(clinicQuestionsResponse.body,
+                        [newQuestion].concat(questions[0]));
+    });
 });
 
 function assertQuestions(actual, expected) {
+    actual = _.orderBy(actual, q => q.id);
+    expected = _.orderBy(expected, q => q.id);
+
     const actualQuestions = actual.map(q => _.omit(q, 'created_at', 'updated_at'));
 
     assert.deepEqual(actualQuestions, expected.map(q => ({

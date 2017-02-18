@@ -2,6 +2,7 @@ import _ from 'lodash';
 import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
 import {questions, answers} from '../sequelize/models';
+import addRemoveChangedEntities from './addedRemovedEntities';
 
 class QuestionRepository extends Repository {
     constructor(...args) {
@@ -14,8 +15,24 @@ class QuestionRepository extends Repository {
         };
     }
 
-    async save(question) {
-        return await questions.create(question, {transaction});
+    toAnswersDbEntities(question = {answers: []}) {
+        return question.answers.map(a => ({
+            ...a,
+            question_id: question.id
+        }));
+    }
+
+    async save(question, transaction, lastQuestion) {
+        const self = this;
+        const questionPromise = questions.upsert(question, {transaction});
+
+        const addRemovedAnswersPromises = addRemoveChangedEntities({
+            currentGroup: self.toAnswersDbEntities(question),
+            previousGroup: self.toAnswersDbEntities(lastQuestion),
+            dbModel: answers
+        });
+
+        return Promise.all([questionPromise, ...addRemovedAnswersPromises]);
     }
 
     async findById(id) {
