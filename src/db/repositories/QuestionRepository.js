@@ -35,7 +35,7 @@ class QuestionRepository extends Repository {
     }
 
     async findByClinic(clinic_id) {
-        const rows = await questions.find({
+        const rows = await questions.findAll({
             where: {clinic_id},
             include: this.getInclude()
         });
@@ -43,13 +43,13 @@ class QuestionRepository extends Repository {
         if (!rows)
             return null;
 
-        const questions = rows.map(dbToDomain.toQuestion);
-        questions.forEach(q => this.trackEntity(q));
-        return questions;
+        const questionEntities = rows.map(dbToDomain.toQuestion);
+        questionEntities.forEach(q => this.trackEntity(q));
+        return questionEntities;
     }
 
     async findByLeader(leader_id) {
-        const rows = await questions.find({
+        const rows = await questions.findAll({
             where: {leader_id},
             include: this.getInclude()
         });
@@ -57,9 +57,9 @@ class QuestionRepository extends Repository {
         if (!rows)
             return null;
 
-        const questions = rows.map(dbToDomain.toQuestion);
-        questions.forEach(q => this.trackEntity(q));
-        return questions;
+        const questionEntities = rows.map(dbToDomain.toQuestion);
+        questionEntities.forEach(q => this.trackEntity(q));
+        return questionEntities;
     }
 
     getInclude() {

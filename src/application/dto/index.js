@@ -39,3 +39,7 @@ export function toResonator(resonator) {
                       );
     return dto;
 }
+
+export function toQuestion(question) {
+    return question;
+}

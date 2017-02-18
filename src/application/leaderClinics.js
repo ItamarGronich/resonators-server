@@ -1,4 +1,6 @@
 import {clinics} from '../db/sequelize/models';
+import questionsRepository from '../db/repositories/QuestionRepository';
+import * as dtoFactory from './dto';
 
 export async function getLeaderClinics(user_id) {
     const rows = await clinics.findAll({
@@ -16,4 +18,15 @@ export async function getLeaderClinics(user_id) {
     }));
 
     return foundClinics;
+}
+
+export async function getLeaderClinicsCriteria(leader_id, clinic_id) {
+    let questions;
+
+    if (!clinic_id)
+        questions = await questionsRepository.findByLeader(leader_id);
+    else
+        questions = await questionsRepository.findByClinic(clinic_id);
+
+    return questions.map(dtoFactory.toQuestion);
 }
