@@ -4,7 +4,7 @@ import {assert} from 'chai';
 import supertestWrapper from '../api/supertestWrapper';
 
 describe('render resonator', () => {
-    it.only('render resonator html', async () => {
+    it('render resonator html', async () => {
         const { userLogin, resonator } = await generateFixtures().preset1();
 
         const response = await supertestWrapper({
