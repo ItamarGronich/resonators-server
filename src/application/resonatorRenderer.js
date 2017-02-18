@@ -1,5 +1,6 @@
 import resonatorRepository from '../db/repositories/ResonatorRepository';
 import resonatorRenderer from '../emailRenderer';
+import cfg from '../cfg';
 
 export async function renderResonator(resonatorId) {
     const resonator = await resonatorRepository.findById(resonatorId);
@@ -7,5 +8,7 @@ export async function renderResonator(resonatorId) {
     if (!resonator)
         return null;
 
-    return resonatorRenderer(resonator);
+    const host = cfg.secrets.host;
+
+    return resonatorRenderer(resonator, host);
 }
