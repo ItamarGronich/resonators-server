@@ -59,6 +59,26 @@ export default function generateFixtures() {
                   };
               });
         },
+
+        presetLeaderWithManyClinics() {
+            const userLogin = generateUserLogin();
+            const user = userLogin.user;
+            const leader = generateLeader({user});
+            const clinic1 = generateClinic({user});
+            const clinic2 = generateClinic({user});
+            const questionClinic1 = generateQuestion({leader, clinic: clinic1});
+            const questionClinic2 = generateQuestion({leader, clinic: clinic2});
+
+            return Promise.all(queue).then(() => {
+                return {
+                    user,
+                    userLogin,
+                    leader,
+                    clinics: [clinic1, clinic2],
+                    questions: [questionClinic1, questionClinic2]
+                };
+            });
+        }
     }
 
     return api;

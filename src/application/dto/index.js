@@ -37,6 +37,9 @@ export function toResonator(resonator) {
                        'created_at',
                        'updated_at'
                       );
+
+    dto.items = _.orderBy(dto.items, i => i.created_at, 'desc');
+    dto.questions = _.orderBy(dto.questions, i => i.created_at, 'desc');
     return dto;
 }
 
