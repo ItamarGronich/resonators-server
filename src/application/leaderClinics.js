@@ -4,6 +4,7 @@ import questionsRepository from '../db/repositories/QuestionRepository';
 import Question from '../domain/entities/question';
 import * as dtoFactory from './dto';
 import getUow from './getUow';
+import updatePermittedFields from './updatePermittedFields';
 
 export async function getLeaderClinics(user_id) {
     const rows = await clinics.findAll({
@@ -52,5 +53,27 @@ export async function addQuestionToClinic(clinic_id, leader_id, questionRequest)
 
     const savedQuestion = await questionsRepository.findById(question.id);
 
+    return dtoFactory.toQuestion(savedQuestion);
+}
+
+export async function updateQuestion(questionRequest) {
+    const uow = getUow();
+
+    const question = await questionsRepository.findById(questionRequest.id);
+
+    if (!question)
+        return null;
+
+    updatePermittedFields(question, questionRequest, [
+        'clinic_id',
+        'description',
+        'title',
+        'question_kind',
+        'answers'
+    ]);
+
+    await uow.commit();
+
+    const savedQuestion = await questionsRepository.findById(question.id);
     return dtoFactory.toQuestion(savedQuestion);
 }
