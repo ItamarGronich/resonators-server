@@ -91,3 +91,16 @@ export async function addItemToResonator(resonator_id, item, stream) {
 
     return true;
 }
+
+export async function removeResonatorItem(resonator_id, item_id) {
+    const resonator = await resonatorRepository.findById(resonator_id);
+
+    if (!resonator)
+        return null;
+
+    resonator.removeItem(item_id);
+
+    await getUow().commit();
+
+    return true;
+}

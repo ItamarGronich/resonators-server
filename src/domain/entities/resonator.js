@@ -69,4 +69,8 @@ export default class Resonator {
     removeQuestion(question_id) {
         this.questions = this.questions.filter(q => q.id !== question_id);
     }
+
+    removeItem(itemId) {
+        this.items = this.items.filter(i => i.id !== itemId);
+    }
 }

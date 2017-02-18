@@ -229,6 +229,31 @@ describe('reminders', () => {
                             }].concat(resonator.items)
                         });
     });
+
+    it('remove resonator item', async () => {
+        const { userLogin, follower, resonator } = await generateFixtures().preset1();
+
+        const item = resonator.items[0]
+
+        const deleteResponse = await supertestWrapper({
+            method: 'delete',
+            url: `/leader_followers/${follower.id}/reminders/${resonator.id}/items/${item.id}`,
+            cookie: `loginId=${userLogin.id}`
+        });
+
+        assert.equal(deleteResponse.status, 200);
+
+        const getResponse = await supertestWrapper({
+            method: 'get',
+            url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
+            cookie: `loginId=${userLogin.id}`
+        });
+
+        assertResonator(getResponse.body, {
+            ...resonator,
+            items: resonator.items.filter(i => i.id !== item.id)
+        });
+    });
 });
 
 function assertResonator(actual, expected) {

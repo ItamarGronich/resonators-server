@@ -112,3 +112,18 @@ express.delete('/leader_followers/:followerId/reminders/:reminderId/criteria/:cr
         enforceLeaderFollower: true
     }));
 })();
+
+express.delete('/leader_followers/:followerId/reminders/:reminderId/items/:itemId', routeHandler(async (request, response) => {
+    const {reminderId, itemId} = request.params;
+
+    const result = await service.removeResonatorItem(reminderId, itemId);
+
+    if (!result)
+        response.status(422);
+    else
+        response.status(200);
+
+    response.json({});
+}, {
+    enforceLeaderFollower: true
+}));
