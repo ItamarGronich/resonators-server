@@ -33,6 +33,11 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.DATE
             }
+        }).then(function() {
+            return Promise.all([
+                queryInterface.addIndex('questions', ['clinic_id']),
+                queryInterface.addIndex('questions', ['leader_id']),
+            ]);
         });
     },
     down: function(queryInterface, Sequelize) {
