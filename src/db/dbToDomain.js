@@ -2,6 +2,7 @@ import User from '../domain/entities/user';
 import Leader from '../domain/entities/leader';
 import Follower from '../domain/entities/follower';
 import Resonator from '../domain/entities/resonator';
+import Question from '../domain/entities/question';
 import ResonatorAttachment from '../domain/entities/resonatorAttachment';
 
 export function toUser(dbUser) {
@@ -96,7 +97,7 @@ function toResonatorQuestion(r) {
 export function toQuestion(r) {
     const answers = (r.answers || []).map(toAnswer);
 
-    return {
+    return new Question({
         id: r.get('id'),
         leader_id: r.get('leader_id'),
         question_kind: r.get('question_kind'),
@@ -104,8 +105,10 @@ export function toQuestion(r) {
         title: r.get('title'),
         removed: r.get('removed'),
         clinic_id: r.get('clinic_id'),
+        created_at: r.get('created_at'),
+        updated_at: r.get('updated_at'),
         answers
-    };
+    });
 }
 
 function toAnswer(r) {

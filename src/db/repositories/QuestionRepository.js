@@ -19,15 +19,51 @@ class QuestionRepository extends Repository {
     }
 
     async findById(id) {
-        const question = await questions.findOne({
+        const dbQuestion = await questions.findOne({
             where: {id},
             include: [answers]
         });
 
-        if (!question)
+        if (!dbQuestion)
             return null;
 
-        return dbToDomain.toQuestion(question);
+        const question = dbToDomain.toQuestion(dbQuestion);
+
+        this.trackEntity(question);
+
+        return question;
+    }
+
+    async findByClinic(clinic_id) {
+        const rows = await questions.find({
+            where: {clinic_id},
+            include: this.getInclude()
+        });
+
+        if (!rows)
+            return null;
+
+        const questions = rows.map(dbToDomain.toQuestion);
+        questions.forEach(q => this.trackEntity(q));
+        return questions;
+    }
+
+    async findByLeader(leader_id) {
+        const rows = await questions.find({
+            where: {leader_id},
+            include: this.getInclude()
+        });
+
+        if (!rows)
+            return null;
+
+        const questions = rows.map(dbToDomain.toQuestion);
+        questions.forEach(q => this.trackEntity(q));
+        return questions;
+    }
+
+    getInclude() {
+        return [answers];
     }
 }
 

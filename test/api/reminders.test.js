@@ -249,7 +249,10 @@ function assertResonator(actual, expected) {
 
 function assertResonatorQuestions(q1 = [], q2 = []) {
     assert.deepEqual(q1.map(
-        q => _.omit(q, 'created_at', 'updated_at')),
+        q => _.omit(q, 'created_at', 'updated_at')).map(q => ({
+            ...q,
+            question: _.omit(q.question, 'created_at', 'updated_at')
+        })),
         q2.map(q => ({
             ...q,
             question: {
