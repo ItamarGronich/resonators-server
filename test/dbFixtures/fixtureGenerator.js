@@ -31,6 +31,7 @@ export default function generateFixtures() {
         generateClinic: (...args) => generateFixture(generateClinic(...args)),
         generateFollower: (...args) => generateFixture(generateFollower(...args)),
         generateQuestion: (...args) => generateFixture(generateQuestion(...args)),
+        generateResonator: (...args) => generateFixture(generateResonator(...args)),
         last: () => _.last(fixtureList),
         fixtures: () => fixtureList,
         done() {
@@ -114,7 +115,7 @@ export default function generateFixtures() {
         return entity;
     }
 
-    function generateLeader({user = generateUser()}) {
+    function generateLeader({user = generateUser()} = {}) {
         const entity = {
             user,
             id: uuid(),
@@ -129,7 +130,7 @@ export default function generateFixtures() {
         return entity;
     }
 
-    function generateClinic({user = generateUser()}) {
+    function generateClinic({user = generateUser()} = {}) {
         const entity = {
             user,
             id: uuid(),
@@ -146,7 +147,7 @@ export default function generateFixtures() {
         user = generateUser(),
         clinic = generateClinic(),
         leader = generateLeader()
-    }) {
+    } = {}) {
         const entity = {
             user,
             clinic,
@@ -168,7 +169,8 @@ export default function generateFixtures() {
         follower = generateFollower(),
         items,
         questions,
-        clinic
+        clinic = generateClinic(),
+        fields = {}
     }) {
         const id = uuid();
 
@@ -184,7 +186,7 @@ export default function generateFixtures() {
             resonator_id: id
         })];
 
-        const entity = {
+        const entity = Object.assign({}, {
             id,
             leader_id: leader.id,
             follower_id: follower.id,
@@ -201,7 +203,7 @@ export default function generateFixtures() {
             description: randStr('a description'),
             items,
             questions: resonatorQuestions
-        };
+        }, fields);
 
         queue.push(resonators.create(entity));
 
@@ -251,7 +253,7 @@ export default function generateFixtures() {
         leader,
         clinic,
         answers
-    }) {
+    } = {}) {
         const id = uuid();
         answers = answers || [generateAnswer({question_id: id})];
 

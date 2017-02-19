@@ -73,4 +73,8 @@ export default class Resonator {
     removeItem(itemId) {
         this.items = this.items.filter(i => i.id !== itemId);
     }
+
+    getImage() {
+        return '';
+    }
 }

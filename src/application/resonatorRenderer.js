@@ -8,7 +8,7 @@ export async function renderResonator(resonatorId) {
     if (!resonator)
         return null;
 
-    const host = cfg.secrets.host;
+    const host = cfg.host;
 
     return resonatorRenderer(resonator, host);
 }
