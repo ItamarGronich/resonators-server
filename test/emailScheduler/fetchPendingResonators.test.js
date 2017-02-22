@@ -1,5 +1,5 @@
 import {assert} from 'chai';
-import scheduleEmails from '../../src/emailScheduler/scheduleEmails';
+import fetchPendingResonators from '../../src/emailScheduler/fetchPendingEmails';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 
 describe('fetch pending resonators', () => {
@@ -50,7 +50,7 @@ describe('fetch pending resonators', () => {
             }})
         .done();
 
-        const resonatorIds = await scheduleEmails(() => new Date(now));
+        const resonatorIds = await fetchPendingResonators(() => new Date(now));
 
         if (result)
             assert.include(resonatorIds, r1.id);

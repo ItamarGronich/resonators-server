@@ -202,8 +202,10 @@ export default function generateFixtures() {
             title: randStr('a title'),
             description: randStr('a description'),
             items,
-            questions: resonatorQuestions
+            questions: resonatorQuestions,
         }, fields);
+
+        Object.defineProperty(entity, 'follower', {value: follower});
 
         queue.push(resonators.create(entity));
 

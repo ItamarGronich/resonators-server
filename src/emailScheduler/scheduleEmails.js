@@ -1,13 +1,55 @@
-import db from '../db/sequelize/dbConnection';
-import {resonators} from '../../src/db/sequelize/models';
+import fetchPendingResonators from './fetchPendingEmails';
+import {resonators, resonator_attachments, followers, users, resonator_questions, questions, answers} from '../db/sequelize/models';
+import * as dbToDomain from '../db/dbToDomain';
+import renderResonatorEmail from '../emailRenderer/index';
+import sendResonatorEmail from './sendResonatorEmail';
+import cfg from '../cfg';
 
-export default async function fetchPendingResonators(getNow = (() => new Date())) {
-    const now = "'" + getNow().toJSON() + "'";
+export default async function scheduleEmails(getNow) {
+    console.log('[emailScheduler] fetching pending resonators');
+    const resonatorIds = await fetchPendingResonators(getNow);
+    console.log(`[emailScheduler] ${resonatorIds.length} pending resonators`);
 
-    const sql = `select id from resonators ` +
-                `where date_part('day', ${now} - coalesce(last_pop_time, '1970-1-1')) >= 1 and ` +
-                `${now}::timestamp::time >= pop_time::time and ` +
-                `position(extract(dow from ${now}::timestamp)::char in repeat_days) > 0`;
+    if (resonatorIds.length > 0) {
+        const resonatorData = await getResonatorsData(resonatorIds);
+        const emailPromises = resonatorData.map(sendEmail);
+        return Promise.all(emailPromises);
+    } else {
+        return Promise.resolve();
+    }
+}
 
-    return db.query(sql).spread(rows => rows.map(r => r.id));
+function getResonatorsData(resonatorIds) {
+    const promises = resonatorIds.map(id => {
+        return resonators.findOne({
+            where: {
+                id
+            },
+            include: [
+                resonator_attachments, {
+                model: followers,
+                include: [users]
+            }, {
+                model: resonator_questions,
+                include: [{
+                    model: questions,
+                    include: [answers]
+                }]
+            }]
+        }).then(row => {
+            const resonator = dbToDomain.toResonator(row);
+            const user = dbToDomain.toUser(row.follower.user);
+            return {resonator, user};
+        });
+    });
+
+    return Promise.all(promises);
+}
+
+function sendEmail({resonator, user}) {
+    const html = renderResonatorEmail(resonator, cfg.host);
+    const from = 'mindharmoniesinc app';
+    const to = user.email;
+    const subject = resonator.title;
+    return sendResonatorEmail({from, to, subject, html});
 }

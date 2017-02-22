@@ -24,6 +24,7 @@ module.exports = function(sequelize, DataTypes) {
             associate: function(models) {
                 resonators.hasMany(models.resonator_attachments);
                 resonators.hasMany(models.resonator_questions);
+                resonators.belongsTo(models.followers);
             }
         }
     });
