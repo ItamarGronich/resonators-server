@@ -55,7 +55,11 @@ module.exports = {
         type: Sequelize.DATE
       }
     }).then(function() {
-        return queryInterface.addIndex('resonators', ['follower_id']);
+        return Promise.all([
+            queryInterface.addIndex('resonators', ['follower_id']),
+            queryInterface.addIndex('resonators', ['last_pop_time']),
+            queryInterface.addIndex('resonators', ['pop_time'])
+        ]);
     });
   },
   down: function(queryInterface, Sequelize) {
