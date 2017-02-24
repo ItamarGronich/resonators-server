@@ -8,6 +8,8 @@ import appSession from './appSessionMiddleware';
 
 const app = express();
 
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/pages');
 app.use(compressionMiddleware());
 app.use(cookieParserMiddleware());
 app.use(requestIdMiddleware());
