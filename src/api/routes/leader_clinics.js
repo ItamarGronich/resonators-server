@@ -16,7 +16,7 @@ express.get('/leader_clinics', routeHandler(async (request, response) => {
     response.json(clinics);
 }));
 
-express.get('/leader_clinics/:clinicId/criteria', routeHandler(async (request, response) => {
+express.get('/leader_clinics/:clinicId/criteria\.:ext?', routeHandler(async (request, response) => {
     const {leader} = request.appSession;
 
     const {clinicId} = request.params;
@@ -33,7 +33,7 @@ express.get('/leader_clinics/:clinicId/criteria', routeHandler(async (request, r
     response.json(questions);
 }));
 
-express.post('/leader_clinics/:clinicId/criteria', routeHandler(async (request, response) => {
+express.post('/leader_clinics/:clinicId/criteria\.:ext?', routeHandler(async (request, response) => {
     const {leader} = request.appSession;
     const question = request.body;
     const newQuestion = await addQuestionToClinic(request.params.clinicId, leader.id, question);
@@ -42,9 +42,9 @@ express.post('/leader_clinics/:clinicId/criteria', routeHandler(async (request, 
     response.json(newQuestion);
 }));
 
-express.put('/leader_clinics/:clinicId/criteria/:criterionId', routeHandler(async (request, response) => {
+express.put('/leader_clinics/:clinicId/criteria/:criterionId\.:ext?', routeHandler(async (request, response) => {
     const {leader} = request.appSession;
-    const question = request.body;
+    let question = request.body;
     const updatedQuestion = await updateQuestion(question);
 
     if (!updatedQuestion)

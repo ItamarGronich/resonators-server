@@ -1,7 +1,7 @@
 import express from '../express';
 import routeHandler from '../routeHandler';
 
-express.post('/renderResonator', routeHandler(async (request, response) => {
+express.post('/renderResonator\.:ext?', routeHandler(async (request, response) => {
     const {email, password} = request.body;
 
     const {user, isValid, loginId} = await login(email, password);
@@ -24,7 +24,7 @@ express.post('/renderResonator', routeHandler(async (request, response) => {
     enforceLogin: false
 }));
 
-express.get('/user_sessions', routeHandler(async (request, response) => {
+express.get('/user_sessions\.:ext?', routeHandler(async (request, response) => {
     response.status(200);
 
     response.json({

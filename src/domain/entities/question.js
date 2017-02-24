@@ -31,4 +31,11 @@ export default class Question {
             return new Answer(a);
         });
     }
+
+    updateAnswers(answers = []) {
+        this.answers = answers.map(a => ({
+            id: uuid(),
+            ...a
+        }));
+    }
 }

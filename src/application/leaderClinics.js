@@ -68,9 +68,10 @@ export async function updateQuestion(questionRequest) {
         'clinic_id',
         'description',
         'title',
-        'question_kind',
-        'answers'
+        'question_kind'
     ]);
+
+    question.updateAnswers(questionRequest.answers);
 
     await uow.commit();
 

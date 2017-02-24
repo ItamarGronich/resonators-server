@@ -140,6 +140,71 @@ describe('leader_clinics', () => {
         assertQuestions(clinicQuestionsResponse.body,
                         [updatedQuestion]);
     });
+
+    it('update clinic criteria', async () => {
+        const {userLogin, clinics, questions} = await generateFixtures().presetLeaderWithManyClinics();
+
+        const originalQuestion = questions[0];
+        const clinic = clinics[0];
+
+        const updatedQuestion = {
+            ...originalQuestion,
+            description: 'a new description'
+        };
+
+        const response = await supertestWrapper({
+            method: 'put',
+            url: `/leader_clinics/${clinic.id}/criteria/${originalQuestion.id}`,
+            cookie: `loginId=${userLogin.id}`,
+            body: updatedQuestion
+        });
+
+        assert.equal(response.status, 200);
+
+        assertQuestions([response.body], [updatedQuestion]);
+
+        const clinicQuestionsResponse = await supertestWrapper({
+            method: 'get',
+            url: `/leader_clinics/${clinic.id}/criteria`,
+            cookie: `loginId=${userLogin.id}`
+        });
+
+        assertQuestions(clinicQuestionsResponse.body,
+                        [updatedQuestion]);
+    });
+
+    it('update criterion without answer ids - add them anyway', async () => {
+        const {userLogin, clinics, questions} = await generateFixtures().presetLeaderWithManyClinics();
+
+        const originalQuestion = questions[0];
+        const clinic = clinics[0];
+
+        const updatedQuestion = {
+            ...originalQuestion,
+            answers: _.map(originalQuestion.answers, a => _.omit(a, 'id'))
+        };
+
+        const response = await supertestWrapper({
+            method: 'put',
+            url: `/leader_clinics/${clinic.id}/criteria/${originalQuestion.id}`,
+            cookie: `loginId=${userLogin.id}`,
+            body: updatedQuestion
+        });
+
+        assert.equal(response.status, 200);
+
+        updatedQuestion.answers[0].id = response.body.answers[0].id;
+        assertQuestions([response.body], [updatedQuestion]);
+
+        const clinicQuestionsResponse = await supertestWrapper({
+            method: 'get',
+            url: `/leader_clinics/${clinic.id}/criteria`,
+            cookie: `loginId=${userLogin.id}`
+        });
+
+        assertQuestions(clinicQuestionsResponse.body,
+                        [updatedQuestion]);
+    });
 });
 
 function assertQuestions(actual, expected) {

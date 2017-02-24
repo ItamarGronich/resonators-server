@@ -3,7 +3,7 @@ import routeHandler from '../routeHandler';
 import {updateFollowerUser, getLeaderFollowers, addLeaderFollower} from '../../application/leaderFollowers';
 import userRepository from '../../db/repositories/UserRepository' ;
 
-express.get('/leader_followers', routeHandler(async (request, response) => {
+express.get('/leader_followers\.:ext?', routeHandler(async (request, response) => {
     const {user} = request.appSession;
 
     const followers = await getLeaderFollowers(user.id);
@@ -12,7 +12,7 @@ express.get('/leader_followers', routeHandler(async (request, response) => {
     response.json(followers);
 }));
 
-express.post('/leader_followers', routeHandler(async (request, response) => {
+express.post('/leader_followers\.:ext?', routeHandler(async (request, response) => {
     const {leader} = request.appSession;
     let followerRequest = request.body;
     followerRequest = {...followerRequest, leader_id: leader.id};
@@ -23,7 +23,7 @@ express.post('/leader_followers', routeHandler(async (request, response) => {
     response.json(follower);
 }));
 
-express.put('/leader_followers/:followerId', routeHandler(async (request, response) => {
+express.put('/leader_followers/:followerId\.:ext?', routeHandler(async (request, response) => {
     const {user: userRequest, leader} = request.body;
     const {followerId} = request.params;
 

@@ -5,7 +5,7 @@ import waitFor from 'wait-for-cond';
 import sinon from 'sinon';
 import {assert} from 'chai';
 
-describe.skip('email scheduler', () => {
+describe('email scheduler', () => {
     let startEmailSchedulingLoop, stopEmailSchedulingLoop, sendResonatorEmailStub;
 
     beforeEach(() => {
