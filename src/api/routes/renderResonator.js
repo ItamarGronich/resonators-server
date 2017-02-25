@@ -2,7 +2,7 @@ import express from '../express';
 import routeHandler from '../routeHandler';
 import {renderResonator} from '../../application/resonatorRenderer';
 
-express.get('/renderResonator/:resonatorId', routeHandler(async (request, response) => {
+express.get('/reminders/:resonatorId/render', routeHandler(async (request, response) => {
     const {resonatorId} = request.params;
 
     const template = await renderResonator(resonatorId);

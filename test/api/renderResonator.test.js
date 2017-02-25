@@ -9,7 +9,7 @@ describe('render resonator', () => {
 
         const response = await supertestWrapper({
             method: 'get',
-            url: `/renderResonator/${resonator.id}`
+            url: `/reminders/${resonator.id}/render`
         });
 
         assert.equal(response.status, 200);
