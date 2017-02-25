@@ -4,16 +4,39 @@ import {assert} from 'chai';
 import supertestWrapper from '../api/supertestWrapper';
 
 describe('render resonator', () => {
-    it('render resonator html', async () => {
-        const { userLogin, resonator } = await generateFixtures().preset1();
+    let status, text, resonator, userLogin;
+
+    beforeEach(async () => {
+        ({ userLogin, resonator } = await generateFixtures().preset1());
 
         const response = await supertestWrapper({
             method: 'get',
             url: `/reminders/${resonator.id}/render`
         });
 
-        assert.equal(response.status, 200);
+        ({status, text} = response);
+    });
 
-        assert.include(response.text, resonator.title);
+    it('status 200', () => {
+        assert.equal(status, 200);
+    });
+
+    it('render title', () => {
+        assert.include(text, resonator.title);
+    });
+
+    it('render the first question', () => {
+        const questions = resonator.questions.map(q => q.question);
+        const question = questions[0];
+        assert.include(text, question.description);
+
+        question.answers.forEach(a => {
+            assert.include(text, a.body, 'must include the answer body');
+            assert.notInclude(text, 'showFromMail', 'must not include the answers link, since it is a preview mode');
+        });
+    });
+
+    it('do not render the unsubscribe link', () => {
+        assert.notInclude(text, 'unsubscribe');
     });
 });

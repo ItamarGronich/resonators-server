@@ -47,7 +47,7 @@ function getResonatorsData(resonatorIds) {
 }
 
 function sendEmail({resonator, user}) {
-    const html = renderResonatorEmail(resonator, cfg.host);
+    const html = renderResonatorEmail({resonator, host: cfg.host});
     const from = 'mindharmoniesinc app';
     const to = user.email;
     const subject = resonator.title;

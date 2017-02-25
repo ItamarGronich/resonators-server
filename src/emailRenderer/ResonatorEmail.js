@@ -18,22 +18,26 @@ function getUnsubscribeLink(host, user) {
 }
 
 function renderQuestion({question, preview, resonator, host, trackingId}) {
+    const renderAnswer = a => (
+    <div style={{padding: 10,
+        border: '1px solid',
+        borderRadius: 10,
+        background: '#FFFF00',
+        color: 'black'}}>
+        {question.question_kind === 'numeric' ?
+            `${a.rank} - ${a.body}` : a.body
+        }
+    </div>);
+
     const answers = _.orderBy(question.answers, 'rank').map(a => {
         return (
             <TR>
                 <TD>
-                    <a href={getAnswerLink({host, question, answer: a, resonator, trackingId})}
-                        style={{textDecoration: 'none'}}>
-                        <div style={{padding: 10,
-                                     border: '1px solid',
-                                     borderRadius: 10,
-                                     background: '#FFFF00',
-                                     color: 'black'}}>
-                            {question.question_kind === 'numeric' ?
-                                `${a.rank} - ${a.body}` : a.body
-                            }
-                        </div>
-                    </a>
+                    {preview ? renderAnswer(a) : (
+                        <a href={getAnswerLink({host, question, answer: a, resonator, trackingId})}
+                            style={{textDecoration: 'none'}}>
+                            {renderAnswer(a)}
+                        </a>)}
                 </TD>
             </TR>
         );
@@ -51,11 +55,11 @@ function renderQuestion({question, preview, resonator, host, trackingId}) {
     );
 }
 
-export default ({resonator, host, trackingId, user = {}}) => {
+export default ({resonator, host, preview, trackingId, user = {}}) => {
     const resonatorQuestion = resonator.questions[0];
     const question = _.get(resonatorQuestion, 'question');
 
-    const questionEl = question && renderQuestion({question, resonator, host, trackingId});
+    const questionEl = question && renderQuestion({question, preview, resonator, host, trackingId});
 
     const mainCol = (
         <TD>
@@ -75,10 +79,12 @@ export default ({resonator, host, trackingId, user = {}}) => {
                 </p>
             )}
             {questionEl}
-            <hr/>
-            <div style={{fontSize: 10, textAlign: 'center'}}>
-                <a href={getUnsubscribeLink(host, user)}>Unsubscribe</a>
-            </div>
+            {!preview && [
+                <hr/>,
+                <div style={{fontSize: 10, textAlign: 'center'}}>
+                    <a href={getUnsubscribeLink(host, user)}>Unsubscribe</a>
+                </div>
+            ]}
         </TD>
     );
 

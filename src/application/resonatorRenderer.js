@@ -10,5 +10,5 @@ export async function renderResonator(resonatorId) {
 
     const host = cfg.host;
 
-    return resonatorRenderer(resonator, host);
+    return resonatorRenderer({resonator, host, preview: true});
 }
