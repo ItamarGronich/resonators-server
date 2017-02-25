@@ -6,6 +6,7 @@ import sinon from 'sinon';
 import {resonators, sent_resonators} from '../../src/db/sequelize/models';
 import {assert} from 'chai';
 import moment from 'moment';
+import {getArgsOf} from '../utils';
 
 describe('email scheduler', () => {
     let startEmailSchedulingLoop, stopEmailSchedulingLoop, sendResonatorEmailStub;
@@ -29,43 +30,51 @@ describe('email scheduler', () => {
         stopEmailSchedulingLoop();
     });
 
-    it('schedule pending resonator', async () => {
-        const [r1,r2] = await generateFixtures()
-                        .generateResonator({
-                            fields: {
-                                repeat_days: '1,2,3,4,5,6',
-                                pop_time: '2016-04-05 14:00:00'
-                            }})
-                        .generateResonator({
-                            fields: {
-                                repeat_days: '1,2,3,4,5,6',
-                                pop_time: '2016-04-05 14:00:00'
-                            }
-                        })
-                        .done();
+    describe('schedule pending resonator', async () => {
+        let r1, r2;
 
-        startEmailSchedulingLoop();
+        beforeEach(async () => {
+            [r1,r2] = await generateFixtures()
+                            .generateResonator({
+                                fields: {
+                                    repeat_days: '1,2,3,4,5,6',
+                                    pop_time: '2016-04-05 14:00:00'
+                                }})
+                            .generateResonator({
+                                fields: {
+                                    repeat_days: '1,2,3,4,5,6',
+                                    pop_time: '2016-04-05 14:00:00'
+                                }
+                            })
+                            .done();
 
-        await waitFor(() => sendResonatorEmailStub.calledWithMatch({
-            subject: r1.title
-        }) && sendResonatorEmailStub.calledWithMatch({
-            subject: r2.title
-        }), 5000);
+            startEmailSchedulingLoop();
 
-        const sendR1Called = sendResonatorEmailStub.calledWithMatch({
-            to: r1.follower.user.email,
-            subject: r1.title,
-            html: sinon.match(
-                txt => _.includes(txt, r1.link) &&
-                       _.includes(txt, r1.content)
-            )
+            await waitFor(() => sendResonatorEmailStub.calledWithMatch({
+                subject: r1.title
+            }) && sendResonatorEmailStub.calledWithMatch({
+                subject: r2.title
+            }), 5000);
         });
 
-        const r1Call = resonatorEmailCalledWithMatch(sendResonatorEmailStub, r1);
-        const r2Call = resonatorEmailCalledWithMatch(sendResonatorEmailStub, r2);
+        it('send both resonators', () => {
+            assert(resonatorEmailCalledWithMatch(sendResonatorEmailStub, r1), 'r1 was not called properly.');
+            assert(resonatorEmailCalledWithMatch(sendResonatorEmailStub, r2), 'r2 was not called properly.');
+        });
 
-        assert(r1Call, 'r1 was not called properly.');
-        assert(r2Call, 'r2 was not called properly.');
+        it('html', async () => {
+            const sentResonatorRow = await sent_resonators.findOne({where: {resonator_id: r1.id}});
+            const sentResonatorId = sentResonatorRow.get('id');
+
+            const args = getArgsOf(sendResonatorEmailStub,
+                                   args => args[0].subject === r1.title);
+
+            const html = args[0].html;
+            assert.include(html, r1.content, 'html must include the resonator title');
+            assert.include(html, r1.link, 'html must include the resonator link');
+            assert.include(html, 'showFromMail', 'html must include the answer link');
+            assert.include(html, sentResonatorId, 'html must include the sent_resonator id');
+        });
     }).timeout(5000);
 
     it('don\'t schedule non-pending resonators', async () => {
@@ -108,11 +117,12 @@ describe('email scheduler', () => {
 
         startEmailSchedulingLoop();
 
-        await waitFor(() => sendResonatorEmailStub.calledWithMatch({
-            subject: r1.title
-        }), 5000);
+        let row;
+        await waitFor(() => {
+            resonators.findById(r1.id).then(r => {row = r;});
+            return row && row.get('last_pop_time');
+        }, 5000);
 
-        const row = await resonators.findById(r1.id);
         const lastPopTime = row.get('last_pop_time');
 
         assert.isAbove(moment(lastPopTime), moment().startOf('d'));

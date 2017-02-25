@@ -9,15 +9,15 @@ const {
     TD
 } = Oy;
 
-function getAnswerLink({host, question, answer, resonator, trackingId}) {
-    return `${host}/resonators/${resonator.id}/showFromMail?questionId=${question.id}&answerId=${answer.id}&sentResonatorId=${trackingId}`;
+function getAnswerLink({host, question, answer, resonator, sentResonatorId}) {
+    return `${host}/resonators/${resonator.id}/showFromMail?questionId=${question.id}&answerId=${answer.id}&sentResonatorId=${sentResonatorId}`;
 }
 
 function getUnsubscribeLink(host, user) {
     return `${host}/users/${user.id}/unsubscribe`;
 }
 
-function renderQuestion({question, preview, resonator, host, trackingId}) {
+function renderQuestion({question, preview, resonator, host, sentResonatorId}) {
     const renderAnswer = a => (
     <div style={{padding: 10,
         border: '1px solid',
@@ -34,7 +34,7 @@ function renderQuestion({question, preview, resonator, host, trackingId}) {
             <TR>
                 <TD>
                     {preview ? renderAnswer(a) : (
-                        <a href={getAnswerLink({host, question, answer: a, resonator, trackingId})}
+                        <a href={getAnswerLink({host, question, answer: a, resonator, sentResonatorId})}
                             style={{textDecoration: 'none'}}>
                             {renderAnswer(a)}
                         </a>)}
@@ -55,11 +55,11 @@ function renderQuestion({question, preview, resonator, host, trackingId}) {
     );
 }
 
-export default ({resonator, host, preview, trackingId, user = {}}) => {
+export default ({resonator, host, preview, sentResonatorId, user = {}}) => {
     const resonatorQuestion = resonator.questions[0];
     const question = _.get(resonatorQuestion, 'question');
 
-    const questionEl = question && renderQuestion({question, preview, resonator, host, trackingId});
+    const questionEl = question && renderQuestion({question, preview, resonator, host, sentResonatorId});
 
     const mainCol = (
         <TD>
