@@ -3,13 +3,15 @@ import proxyquire from 'proxyquire';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 import waitFor from 'wait-for-cond';
 import sinon from 'sinon';
+import {resonators, sent_resonators} from '../../src/db/sequelize/models';
 import {assert} from 'chai';
+import moment from 'moment';
 
 describe('email scheduler', () => {
     let startEmailSchedulingLoop, stopEmailSchedulingLoop, sendResonatorEmailStub;
 
     beforeEach(() => {
-        sendResonatorEmailStub = sinon.spy();
+        sendResonatorEmailStub = sinon.stub().returns(Promise.resolve());
 
         const stubs = {
             './sendResonatorEmail':{
@@ -44,9 +46,12 @@ describe('email scheduler', () => {
 
         startEmailSchedulingLoop();
 
-        await waitFor(() => sendResonatorEmailStub.called, 5000);
+        await waitFor(() => sendResonatorEmailStub.calledWithMatch({
+            subject: r1.title
+        }) && sendResonatorEmailStub.calledWithMatch({
+            subject: r2.title
+        }), 5000);
 
-        // console.log('jjjjj', sendResonatorEmailStub.getCall(0).args[0].html)
         const sendR1Called = sendResonatorEmailStub.calledWithMatch({
             to: r1.follower.user.email,
             subject: r1.title,
@@ -75,7 +80,9 @@ describe('email scheduler', () => {
 
         startEmailSchedulingLoop();
 
-        await waitFor(() => sendResonatorEmailStub.called, 3000).catch(() => {});
+        await waitFor(() => sendResonatorEmailStub.calledWithMatch({
+            subject: r1.title
+        }), 3000).catch(() => {});
 
         const sendR1Called = sendResonatorEmailStub.calledWithMatch({
             to: r1.follower.user.email,
@@ -90,20 +97,43 @@ describe('email scheduler', () => {
         assert.isFalse(r1Call, 'r1 was called, even though it should not have been.');
     }).timeout(5000);
 
-    it('record sent resonators', async () => {
+    it('set last_pop_time in the sent resonators', async () => {
         const [r1] = await generateFixtures()
                         .generateResonator({
                             fields: {
                                 repeat_days: '1,2,3,4,5,6',
-                                pop_time: '2016-01-01',
-                                last_pop_time: '2133-01-01'
+                                pop_time: '2016-01-01'
+                            }})
+                        .done();
+
+        startEmailSchedulingLoop();
+
+        await waitFor(() => sendResonatorEmailStub.calledWithMatch({
+            subject: r1.title
+        }), 5000);
+
+        const row = await resonators.findById(r1.id);
+        const lastPopTime = row.get('last_pop_time');
+
+        assert.isAbove(moment(lastPopTime), moment().startOf('d'));
+    });
+
+    it('record sent resonators in the sent_resonators table', async () => {
+        const [r1] = await generateFixtures()
+                        .generateResonator({
+                            fields: {
+                                repeat_days: '1,2,3,4,5,6',
+                                pop_time: '2016-01-01'
                             }})
                         .done();
 
         startEmailSchedulingLoop();
 
         await waitFor(() => sendResonatorEmailStub.called, 5000);
-    })
+
+        const row = await sent_resonators.findOne({ where: { resonator_id: r1.id }});
+        assert.isFalse(row.get('failed'));
+    });
 
     function resonatorEmailCalledWithMatch(spy, resonatorFixture) {
         return spy.calledWithMatch({

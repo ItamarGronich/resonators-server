@@ -1,9 +1,10 @@
 import fetchPendingResonators from './fetchPendingEmails';
-import {resonators, resonator_attachments, followers, users, resonator_questions, questions, answers} from '../db/sequelize/models';
+import {resonators, resonator_attachments, followers, users, resonator_questions, questions, answers, sent_resonators} from '../db/sequelize/models';
 import * as dbToDomain from '../db/dbToDomain';
 import renderResonatorEmail from '../emailRenderer/index';
 import sendResonatorEmail from './sendResonatorEmail';
 import cfg from '../cfg';
+import uuid from 'uuid/v4';
 
 export default async function scheduleEmails(getNow) {
     console.log('[emailScheduler] fetching pending resonators');
@@ -47,9 +48,32 @@ function getResonatorsData(resonatorIds) {
 }
 
 function sendEmail({resonator, user}) {
-    const html = renderResonatorEmail({resonator, host: cfg.host});
-    const from = 'mindharmoniesinc app';
-    const to = user.email;
-    const subject = resonator.title;
-    return sendResonatorEmail({from, to, subject, html});
+    return recordSentResonator(resonator.id)
+        .then(row => {
+            const sentResonatorId = row.get('id');
+            const html = renderResonatorEmail({resonator, host: cfg.host, sentResonatorId});
+            const from = 'mindharmoniesinc app';
+            const to = user.email;
+            const subject = resonator.title;
+            return sendResonatorEmail({from, to, subject, html});
+        })
+        .then(() => setResonatorLastSentTime(resonator.id));
+}
+
+function recordSentResonator(resonator_id) {
+    return sent_resonators.create({
+        id: uuid(),
+        resonator_id,
+        failed: false
+    });
+}
+
+function setResonatorLastSentTime(resonatorId) {
+    return resonators.update({
+        last_pop_time: new Date()
+    }, {
+        where: {
+            id: resonatorId
+        }
+    });
 }
