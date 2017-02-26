@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
     up: function(queryInterface, Sequelize) {
-        return queryInterface.createTable('resonators_answers', {
+        return queryInterface.createTable('resonator_answers', {
             id: {
                 allowNull: false,
                 primaryKey: true,
@@ -25,10 +25,10 @@ module.exports = {
                 type: Sequelize.DATE
             }
         }).then(function() {
-            return queryInterface.addIndex('resonators_answers', ['resonator_question_id']);
+            return queryInterface.addIndex('resonator_answers', ['resonator_question_id']);
         });
     },
     down: function(queryInterface, Sequelize) {
-        return queryInterface.dropTable('resonators_answers');
+        return queryInterface.dropTable('resonator_answers');
     }
 };

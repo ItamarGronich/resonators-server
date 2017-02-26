@@ -4,9 +4,8 @@ module.exports = {
         return queryInterface.createTable('resonator_answers', {
             id: {
                 allowNull: false,
-                autoIncrement: true,
                 primaryKey: true,
-                type: Sequelize.INTEGER
+                type: Sequelize.UUID
             },
             resonator_question_id: {
                 type: Sequelize.UUID
@@ -26,7 +25,7 @@ module.exports = {
                 type: Sequelize.DATE
             }
         }).then(function() {
-            return queryInterface.addIndex('resonator_answers', ['resonator_question_id']);
+            // return queryInterface.addIndex('resonator_answers', ['resonator_question_id']);
         });
     },
     down: function(queryInterface, Sequelize) {

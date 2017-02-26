@@ -13,6 +13,7 @@ module.exports = function(sequelize, DataTypes) {
         classMethods: {
             associate: function(models) {
                 resonator_questions.belongsTo(models.questions);
+                resonator_questions.belongsTo(models.resonators);
             }
         }
     });

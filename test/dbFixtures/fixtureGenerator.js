@@ -10,7 +10,8 @@ import {
     resonator_attachments,
     questions,
     answers,
-    resonator_questions
+    resonator_questions,
+    resonator_answers
 } from '../../src/db/sequelize/models';
 
 import uuid from 'uuid/v4';
@@ -186,6 +187,8 @@ export default function generateFixtures() {
             resonator_id: id
         })];
 
+        const resonatorAnswers = generateResonatorAnswers(resonatorQuestions[0]);
+
         const entity = Object.assign({}, {
             id,
             leader_id: leader.id,
@@ -206,6 +209,7 @@ export default function generateFixtures() {
         }, fields);
 
         Object.defineProperty(entity, 'follower', {value: follower});
+        Object.defineProperty(entity, 'resonatorAnswers', {value: resonatorAnswers});
 
         queue.push(resonators.create(entity));
 
@@ -288,5 +292,26 @@ export default function generateFixtures() {
         queue.push(answers.create(entity));
 
         return entity;
+    }
+
+    function generateResonatorAnswers(resonatorQuestion) {
+        const entity1 = {
+            id: uuid(),
+            resonator_question_id: resonatorQuestion.id,
+            answer_id: resonatorQuestion.question.answers[0].id
+        };
+
+        const entity2 = {
+            id: uuid(),
+            resonator_question_id: resonatorQuestion.id,
+            answer_id: resonatorQuestion.question.answers[0].id
+        };
+
+        queue.push(
+            resonator_answers.create(entity1),
+            resonator_answers.create(entity2)
+        );
+
+        return [entity1, entity2];
     }
 }
