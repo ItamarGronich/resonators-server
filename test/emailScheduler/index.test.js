@@ -37,12 +37,12 @@ describe('email scheduler', () => {
             [r1,r2] = await generateFixtures()
                             .generateResonator({
                                 fields: {
-                                    repeat_days: '1,2,3,4,5,6',
+                                    repeat_days: '0,1,2,3,4,5,6',
                                     pop_time: '2016-04-05 14:00:00'
                                 }})
                             .generateResonator({
                                 fields: {
-                                    repeat_days: '1,2,3,4,5,6',
+                                    repeat_days: '0,1,2,3,4,5,6',
                                     pop_time: '2016-04-05 14:00:00'
                                 }
                             })
@@ -81,7 +81,7 @@ describe('email scheduler', () => {
         const [r1] = await generateFixtures()
                         .generateResonator({
                             fields: {
-                                repeat_days: '1,2,3,4,5,6',
+                                repeat_days: '0,1,2,3,4,5,6',
                                 pop_time: '2016-01-01',
                                 last_pop_time: '2133-01-01'
                             }})
@@ -110,7 +110,7 @@ describe('email scheduler', () => {
         const [r1] = await generateFixtures()
                         .generateResonator({
                             fields: {
-                                repeat_days: '1,2,3,4,5,6',
+                                repeat_days: '0,1,2,3,4,5,6',
                                 pop_time: '2016-01-01'
                             }})
                         .done();
@@ -132,7 +132,7 @@ describe('email scheduler', () => {
         const [r1] = await generateFixtures()
                         .generateResonator({
                             fields: {
-                                repeat_days: '1,2,3,4,5,6',
+                                repeat_days: '0,1,2,3,4,5,6',
                                 pop_time: '2016-01-01'
                             }})
                         .done();
