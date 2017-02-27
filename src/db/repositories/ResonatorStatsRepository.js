@@ -55,7 +55,11 @@ class ResonatorStatsRepository extends Repository {
                     where: {id: resonator_id}
                 },
                 questions]
-            }]
+            }],
+
+            order: [
+                ['created_at', 'DESC']
+            ]
         });
 
         const questionAnswerPair = rows.map(r => {
@@ -64,13 +68,15 @@ class ResonatorStatsRepository extends Repository {
             const resonator_question_id = r.get('resonator_question_id');
             const answer_id = r.get('answer_id');
             const sent_resonator_id = r.get('sent_resonator_id');
+            const created_at = r.get('created_at');
 
             return {
                 id,
                 resonator_question_id,
                 question_id,
                 answer_id,
-                sent_resonator_id
+                sent_resonator_id,
+                created_at
             };
         });
 

@@ -1,7 +1,7 @@
 import resonatorsRepository from '../../db/repositories/ResonatorRepository.js';
 
 export default async function enforceLeaderResonator(request, response) {
-    const {leader} = request.appSession;
+    const leader = request.appSession.leader || {};
     const resonatorId = request.params.resonatorId || request.params.reminderId;
     const resonator = await resonatorsRepository.findById(resonatorId);
 

@@ -1,7 +1,7 @@
 import followerRepository from '../../db/repositories/FollowerRepository';
 
 export default async function enforceLeaderFollowers(request, response) {
-    const {leader} = request.appSession;
+    const leader = request.appSession.leader || {};
     const followerId = request.params.followerId;
     const follower = await followerRepository.findById(followerId);
     if (follower.leader_id !== leader.id) {

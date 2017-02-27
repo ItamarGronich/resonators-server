@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 import {assert} from 'chai';
 import uuid from 'uuid/v4';
@@ -32,18 +33,18 @@ describe('ResonatorStatsRepository', () => {
         const question = resonator.questions[0].question;
         const answer_id = question.answers[0].id;
 
-        assert.deepEqual(result, {
+        assert.deepEqual(_.omitDeep(result, 'created_at'), {
             resonator_id: resonator.id,
             criteria: {
                 [resonator.questions[0].question.id]: [{
                     id: id1,
                     answer_id,
-                    sent_resonator_id: null,
+                    sent_resonator_id: resonator.answers[0].sent_resonator_id,
                     resonator_question_id: resonator.questions[0].id
                 }, {
                     id: id2,
                     answer_id,
-                    sent_resonator_id: null,
+                    sent_resonator_id: resonator.answers[1].sent_resonator_id,
                     resonator_question_id: resonator.questions[0].id
                 }]
             }
@@ -83,6 +84,7 @@ describe('ResonatorStatsRepository', () => {
 
         const resonatorStats3 = await repo.findById(resonator.id);
 
-        assert.deepEqual(resonatorStats3, resonatorStats);
+        assert.deepEqual(_.omitDeep(resonatorStats3, 'created_at'),
+                         _.omitDeep(resonatorStats, 'created_at'));
     });
 });

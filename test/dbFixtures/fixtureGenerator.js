@@ -209,7 +209,7 @@ export default function generateFixtures() {
         }, fields);
 
         Object.defineProperty(entity, 'follower', {value: follower});
-        Object.defineProperty(entity, 'resonatorAnswers', {value: resonatorAnswers});
+        Object.defineProperty(entity, 'answers', {value: resonatorAnswers});
 
         queue.push(resonators.create(entity));
 
@@ -298,13 +298,15 @@ export default function generateFixtures() {
         const entity1 = {
             id: uuid(),
             resonator_question_id: resonatorQuestion.id,
-            answer_id: resonatorQuestion.question.answers[0].id
+            answer_id: resonatorQuestion.question.answers[0].id,
+            sent_resonator_id: uuid()
         };
 
         const entity2 = {
             id: uuid(),
             resonator_question_id: resonatorQuestion.id,
-            answer_id: resonatorQuestion.question.answers[0].id
+            answer_id: resonatorQuestion.question.answers[0].id,
+            sent_resonator_id: uuid()
         };
 
         queue.push(

@@ -12,7 +12,7 @@ export default class ResonatorStats {
     addAnswer({question_id, resonator_question_id, sent_resonator_id, answer_id}) {
         const answers = this.criteria[question_id] || [];
 
-        answers.push({
+        answers.unshift({
             id: uuid(),
             resonator_question_id,
             sent_resonator_id,
