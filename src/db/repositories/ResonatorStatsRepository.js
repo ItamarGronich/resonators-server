@@ -23,27 +23,27 @@ class ResonatorStatsRepository extends Repository {
         };
     }
 
-    save(resonatorStats) {
-        const upsertPromise = resonators.upsert(resonator, tran);
-        const questionsPromises = this.saveQuestions(resonator, lastResonator);
-        const itemsPromises = this.saveItems(resonator, lastResonator);
-        return Promise.all([upsertPromise, ...questionsPromises, ...itemsPromises]);
+    save(resonatorStats, tran, lastResonatorStats) {
+        const answers = this.getNewStats(resonatorStats, lastResonatorStats);
+        const promises = answers.map(a => resonator_answers.create(a, tran));
+        return Promise.all(promises);
     }
 
-    saveQuestions(resonator, lastResonator) {
-        return addRemoveChangedEntities({
-            currentGroup: resonator.questions,
-            previousGroup: lastResonator.questions,
-            dbModel: resonator_questions
-        });
-    }
+    getNewStats(resonatorStats, lastResonatorStats) {
+        const arr = [];
 
-    saveItems(resonator, lastResonator) {
-        return addRemoveChangedEntities({
-            currentGroup: resonator.items,
-            previousGroup: lastResonator.items,
-            dbModel: resonator_attachments
-        });
+        for (const qid of Object.keys(resonatorStats.criteria)) {
+            const answers = resonatorStats.criteria[qid];
+            const lastAnswers = lastResonatorStats.criteria[qid] || [];
+
+            for (const answer of answers) {
+                if (!_.find(lastAnswers, a => a.id === answer.id)) {
+                    arr.push(answer);
+                }
+            }
+        }
+
+        return arr;
     }
 
     async findById(resonator_id) {
@@ -60,18 +60,24 @@ class ResonatorStatsRepository extends Repository {
 
         const questionAnswerPair = rows.map(r => {
             const question_id = r.resonator_question.question_id;
+            const id = r.get('id');
+            const resonator_question_id = r.get('resonator_question_id');
             const answer_id = r.get('answer_id');
+            const sent_resonator_id = r.get('sent_resonator_id');
 
             return {
+                id,
+                resonator_question_id,
                 question_id,
-                answer_id
+                answer_id,
+                sent_resonator_id
             };
         });
 
         let questionGroup = _.groupBy(questionAnswerPair, p => p.question_id);
 
         questionGroup = _.reduce(Object.keys(questionGroup), (acc, cur) => {
-            acc[cur] = questionGroup[cur].map(a => a.answer_id);
+            acc[cur] = questionGroup[cur].map(a => _.omit(a, 'question_id', 'updated_at'));
             return acc;
         }, {});
 
@@ -79,6 +85,8 @@ class ResonatorStatsRepository extends Repository {
             resonator_id,
             criteria: questionGroup
         });
+
+        this.trackEntity(resonatorStats);
 
         return resonatorStats;
     }
