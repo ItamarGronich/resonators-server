@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import uuid from 'uuid/v4';
 import ResonatorAttachment from './resonatorAttachment';
 
@@ -76,5 +77,10 @@ export default class Resonator {
 
     getImage() {
         return '';
+    }
+
+    getResonatorQuestionId(question_id) {
+        const q = _.find(this.questions, q => q.question_id === question_id);
+        return q ? q.id : null;
     }
 }

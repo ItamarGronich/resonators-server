@@ -11,7 +11,8 @@ import {
     questions,
     answers,
     resonator_questions,
-    resonator_answers
+    resonator_answers,
+    sent_resonators
 } from '../../src/db/sequelize/models';
 
 import uuid from 'uuid/v4';
@@ -33,6 +34,8 @@ export default function generateFixtures() {
         generateFollower: (...args) => generateFixture(generateFollower(...args)),
         generateQuestion: (...args) => generateFixture(generateQuestion(...args)),
         generateResonator: (...args) => generateFixture(generateResonator(...args)),
+        generateResonatorQuestion: (...args) => generateFixture(generateResonatorQuestion(...args)),
+        generateSentResonator: (...args) => generateFixture(generateSentResonator(...args)),
         last: () => _.last(fixtureList),
         fixtures: () => fixtureList,
         done() {
@@ -315,5 +318,16 @@ export default function generateFixtures() {
         );
 
         return [entity1, entity2];
+    }
+
+    function generateSentResonator(resonator) {
+        const entity = {
+            id: uuid(),
+            resonator_id: resonator.id
+        };
+
+        queue.push(sent_resonators.create(entity));
+
+        return entity;
     }
 }

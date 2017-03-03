@@ -4,6 +4,7 @@ import Follower from '../domain/entities/follower';
 import Resonator from '../domain/entities/resonator';
 import Question from '../domain/entities/question';
 import ResonatorAttachment from '../domain/entities/resonatorAttachment';
+import SentResonator from '../domain/entities/sentResonator';
 
 export function toUser(dbUser) {
     return new User({
@@ -117,4 +118,13 @@ function toAnswer(r) {
         body: r.get('body'),
         rank: r.get('rank')
     };
+}
+
+export function toSentResonator(r) {
+    return new SentResonator({
+        id: r.get('id'),
+        resonator_id: r.get('resonator_id'),
+        created_at: r.get('created_at'),
+        updated_at: r.get('updated_at')
+    });
 }
