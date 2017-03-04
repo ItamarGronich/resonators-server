@@ -5,3 +5,4 @@ import './reminders';
 import './renderResonator';
 import './pages.js';
 import './stats.js';
+import './users';

@@ -4,6 +4,7 @@ import login from '../../application/login';
 import relogin from '../../application/relogin';
 import routeHandler from '../routeHandler';
 import * as dtoFactory from '../../application/dto';
+import setSuccessfulLoginResponse from './setSuccessfulLoginResponse';
 import moment from 'moment';
 
 express.post('/user_sessions\.:ext?', routeHandler(async (request, response) => {
@@ -14,14 +15,11 @@ express.post('/user_sessions\.:ext?', routeHandler(async (request, response) => 
     response.status(200);
 
     if (isValid) {
-        const maxAge = 3600 * 24 * 7 * 1000;
-        const expires_at = moment().add(maxAge, 's').format();
-
-        response.cookie('loginId', loginId, {
-            maxAge
+        setSuccessfulLoginResponse({
+            response,
+            loginId,
+            user
         });
-
-        response.json({...user, expires_at});
     } else {
         response.json({});
     }

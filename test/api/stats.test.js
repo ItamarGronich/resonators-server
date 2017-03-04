@@ -59,7 +59,7 @@ describe('resonator stats', () => {
         });
     });
 
-    describe.only('send resonator answer', () => {
+    describe('send resonator answer', () => {
         it('post resonator answer', async () => {
             const {resonator, userLogin} = await generateFixtures().preset1();
             const [sentResonator] = await generateFixtures().generateSentResonator(resonator).done();
