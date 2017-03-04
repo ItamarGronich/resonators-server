@@ -38,7 +38,7 @@ express.get(`/criteria/stats/reminders/:resonator_id/criteria/submit`, routeHand
     else
         response.status(200);
 
-    response.json(result);
+    response.render('../pages/index');
 }, {
     enforceLogin: false
 }));

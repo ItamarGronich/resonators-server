@@ -59,164 +59,185 @@ describe('resonator stats', () => {
         });
     });
 
-    it('post resonator answer', async () => {
-        const {resonator, userLogin} = await generateFixtures().preset1();
-        const [sentResonator] = await generateFixtures().generateSentResonator(resonator).done();
+    describe.only('send resonator answer', () => {
+        it('post resonator answer', async () => {
+            const {resonator, userLogin} = await generateFixtures().preset1();
+            const [sentResonator] = await generateFixtures().generateSentResonator(resonator).done();
 
-        const answer = {
-            resonator_id: resonator.id,
-            question_id: resonator.questions[0].question.id,
-            answer_id: resonator.questions[0].question.answers[0].id,
-            sent_resonator_id: sentResonator.id
-        };
+            const answer = {
+                resonator_id: resonator.id,
+                question_id: resonator.questions[0].question.id,
+                answer_id: resonator.questions[0].question.answers[0].id,
+                sent_resonator_id: sentResonator.id
+            };
 
-        const response = await request({
-            method: 'get',
-            url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
-            cookie: `loginId=${userLogin.id}`
+            const response = await request({
+                method: 'get',
+                url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                cookie: `loginId=${userLogin.id}`
+            });
+
+            assert.equal(response.status, 200);
+
+            const getResponse = await request({
+                method: 'get',
+                url: `/criteria/stats/reminders/${resonator.id}/criteria?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                cookie: `loginId=${userLogin.id}`
+            });
+
+            let responseAnswers = getResponse.body.criteria[answer.question_id];
+            responseAnswers = _.omitDeep(responseAnswers, ['id', 'created_at']);
+            const addedAnswer = responseAnswers.find(a => a.answer_id === answer.answer_id);
+            assert.deepEqual(addedAnswer, {
+                answer_id: answer.answer_id,
+                resonator_question_id: resonator.questions[0].id,
+                sent_resonator_id: answer.sent_resonator_id
+            });
         });
 
-        assert.equal(response.status, 200);
+        it('post resonator answer - returns the index page', async () => {
+            const {resonator, userLogin} = await generateFixtures().preset1();
+            const [sentResonator] = await generateFixtures().generateSentResonator(resonator).done();
 
-        const getResponse = await request({
-            method: 'get',
-            url: `/criteria/stats/reminders/${resonator.id}/criteria?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
-            cookie: `loginId=${userLogin.id}`
+            const answer = {
+                resonator_id: resonator.id,
+                question_id: resonator.questions[0].question.id,
+                answer_id: resonator.questions[0].question.answers[0].id,
+                sent_resonator_id: sentResonator.id
+            };
+
+            const response = await request({
+                method: 'get',
+                url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                cookie: `loginId=${userLogin.id}`
+            });
+
+            assert.include(response.text, '<html>');
+        });
+        it('post resonator answer for a new question', async () => {
+            const {resonator, userLogin, leader, clinic} = await generateFixtures().preset1();
+
+            const [question] = await generateFixtures().generateQuestion({
+                leader,
+                clinic
+            }).done();
+
+            const [resonatorQuestion] = await generateFixtures().generateResonatorQuestion({
+                question, resonator_id: resonator.id
+            }).done();
+
+            const [sentResonator] = await generateFixtures().generateSentResonator(resonator).done();
+
+            const answer = {
+                resonator_id: resonator.id,
+                question_id: question.id,
+                answer_id: question.answers[0].id,
+                sent_resonator_id: sentResonator.id
+            };
+
+            const response = await request({
+                method: 'get',
+                url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                cookie: `loginId=${userLogin.id}`
+            });
+
+            assert.equal(response.status, 200);
+
+            const getResponse = await request({
+                method: 'get',
+                url: `/criteria/stats/reminders/${resonator.id}/criteria?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                cookie: `loginId=${userLogin.id}`
+            });
+
+            let responseAnswers = getResponse.body.criteria[answer.question_id];
+            responseAnswers = _.omitDeep(responseAnswers, ['id', 'created_at']);
+            const addedAnswer = responseAnswers.find(a => a.answer_id === answer.answer_id);
+            assert.deepEqual(addedAnswer, {
+                answer_id: answer.answer_id,
+                resonator_question_id: resonatorQuestion.id,
+                sent_resonator_id: answer.sent_resonator_id
+            });
         });
 
-        let responseAnswers = getResponse.body.criteria[answer.question_id];
-        responseAnswers = _.omitDeep(responseAnswers, ['id', 'created_at']);
-        const addedAnswer = responseAnswers.find(a => a.answer_id === answer.answer_id);
-        assert.deepEqual(addedAnswer, {
-            answer_id: answer.answer_id,
-            resonator_question_id: resonator.questions[0].id,
-            sent_resonator_id: answer.sent_resonator_id
-        });
-    });
+        it('cannot post resonator answer for wrong sent_resonator_id', async () => {
+            const {resonator, userLogin} = await generateFixtures().preset1();
 
-    it('post resonator answer for a new question', async () => {
-        const {resonator, userLogin, leader, clinic} = await generateFixtures().preset1();
+            const fakeSentResonatorId = uuid();
 
-        const [question] = await generateFixtures().generateQuestion({
-            leader,
-            clinic
-        }).done();
+            const answer = {
+                resonator_id: resonator.id,
+                question_id: resonator.questions[0].question.id,
+                answer_id: resonator.questions[0].question.answers[0].id,
+                sent_resonator_id: fakeSentResonatorId
+            };
 
-        const [resonatorQuestion] = await generateFixtures().generateResonatorQuestion({
-            question, resonator_id: resonator.id
-        }).done();
+            const response = await request({
+                method: 'get',
+                url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                cookie: `loginId=${userLogin.id}`
+            });
 
-        const [sentResonator] = await generateFixtures().generateSentResonator(resonator).done();
-
-        const answer = {
-            resonator_id: resonator.id,
-            question_id: question.id,
-            answer_id: question.answers[0].id,
-            sent_resonator_id: sentResonator.id
-        };
-
-        const response = await request({
-            method: 'get',
-            url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
-            cookie: `loginId=${userLogin.id}`
+            assert.equal(response.status, 422);
         });
 
-        assert.equal(response.status, 200);
+        it('cannot post resonator answer for wrong resonator', async () => {
+            const {resonator, userLogin} = await generateFixtures().preset1();
+            const [sentResonator] = await generateFixtures().generateSentResonator(resonator).done();
 
-        const getResponse = await request({
-            method: 'get',
-            url: `/criteria/stats/reminders/${resonator.id}/criteria?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
-            cookie: `loginId=${userLogin.id}`
+            const fakeResonatorId = uuid();
+
+            const answer = {
+                resonator_id: fakeResonatorId,
+                question_id: resonator.questions[0].question.id,
+                answer_id: resonator.questions[0].question.answers[0].id,
+                sent_resonator_id: sentResonator.id
+            };
+
+            const response = await request({
+                method: 'get',
+                url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                cookie: `loginId=${userLogin.id}`
+            });
+
+            assert.equal(response.status, 422);
         });
 
-        let responseAnswers = getResponse.body.criteria[answer.question_id];
-        responseAnswers = _.omitDeep(responseAnswers, ['id', 'created_at']);
-        const addedAnswer = responseAnswers.find(a => a.answer_id === answer.answer_id);
-        assert.deepEqual(addedAnswer, {
-            answer_id: answer.answer_id,
-            resonator_question_id: resonatorQuestion.id,
-            sent_resonator_id: answer.sent_resonator_id
+        it('cannot post twice with the same sent resonator', async () => {
+            const {resonator, userLogin} = await generateFixtures().preset1();
+            const [sentResonator] = await generateFixtures().generateSentResonator(resonator).done();
+
+            const answer = {
+                resonator_id: resonator.id,
+                question_id: resonator.questions[0].question.id,
+                answer_id: resonator.questions[0].question.answers[0].id,
+                sent_resonator_id: sentResonator.id
+            };
+
+            const response = await request({
+                method: 'get',
+                url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                cookie: `loginId=${userLogin.id}`
+            });
+
+            assert.equal(response.status, 200);
+
+            const response2 = await request({
+                method: 'get',
+                url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                cookie: `loginId=${userLogin.id}`
+            });
+
+            assert.equal(response.status, 200);
+
+            const getResponse = await request({
+                method: 'get',
+                url: `/criteria/stats/reminders/${resonator.id}/criteria?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                cookie: `loginId=${userLogin.id}`
+            });
+
+            const stats = getResponse.body;
+
+            assert.equal(stats.criteria[answer.question_id].filter(a => a.sent_resonator_id === answer.sent_resonator_id).length, 1);
         });
-    });
-
-    it('cannot post resonator answer for wrong sent_resonator_id', async () => {
-        const {resonator, userLogin} = await generateFixtures().preset1();
-
-        const fakeSentResonatorId = uuid();
-
-        const answer = {
-            resonator_id: resonator.id,
-            question_id: resonator.questions[0].question.id,
-            answer_id: resonator.questions[0].question.answers[0].id,
-            sent_resonator_id: fakeSentResonatorId
-        };
-
-        const response = await request({
-            method: 'get',
-            url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
-            cookie: `loginId=${userLogin.id}`
-        });
-
-        assert.equal(response.status, 422);
-    });
-
-    it('cannot post resonator answer for wrong resonator', async () => {
-        const {resonator, userLogin} = await generateFixtures().preset1();
-        const [sentResonator] = await generateFixtures().generateSentResonator(resonator).done();
-
-        const fakeResonatorId = uuid();
-
-        const answer = {
-            resonator_id: fakeResonatorId,
-            question_id: resonator.questions[0].question.id,
-            answer_id: resonator.questions[0].question.answers[0].id,
-            sent_resonator_id: sentResonator.id
-        };
-
-        const response = await request({
-            method: 'get',
-            url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
-            cookie: `loginId=${userLogin.id}`
-        });
-
-        assert.equal(response.status, 422);
-    });
-
-    it('cannot post twice with the same sent resonator', async () => {
-        const {resonator, userLogin} = await generateFixtures().preset1();
-        const [sentResonator] = await generateFixtures().generateSentResonator(resonator).done();
-
-        const answer = {
-            resonator_id: resonator.id,
-            question_id: resonator.questions[0].question.id,
-            answer_id: resonator.questions[0].question.answers[0].id,
-            sent_resonator_id: sentResonator.id
-        };
-
-        const response = await request({
-            method: 'get',
-            url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
-            cookie: `loginId=${userLogin.id}`
-        });
-
-        assert.equal(response.status, 200);
-
-        const response2 = await request({
-            method: 'get',
-            url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
-            cookie: `loginId=${userLogin.id}`
-        });
-
-        assert.equal(response.status, 200);
-
-        const getResponse = await request({
-            method: 'get',
-            url: `/criteria/stats/reminders/${resonator.id}/criteria?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
-            cookie: `loginId=${userLogin.id}`
-        });
-
-        const stats = getResponse.body;
-
-        assert.equal(stats.criteria[answer.question_id].filter(a => a.sent_resonator_id === answer.sent_resonator_id).length, 1);
     });
 });
