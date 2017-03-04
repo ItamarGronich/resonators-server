@@ -33,17 +33,18 @@ describe('email scheduler', () => {
     describe('schedule pending resonator', async () => {
         let r1, r2;
 
-        beforeEach(async () => {
+        beforeEach(async function (){
+            this.timeout(6000);
             [r1,r2] = await generateFixtures()
                             .generateResonator({
                                 fields: {
                                     repeat_days: '0,1,2,3,4,5,6',
-                                    pop_time: '2016-04-05 14:00:00'
+                                    pop_time: moment().add(-26, 'h').format()
                                 }})
                             .generateResonator({
                                 fields: {
                                     repeat_days: '0,1,2,3,4,5,6',
-                                    pop_time: '2016-04-05 14:00:00'
+                                    pop_time: moment().add(-26, 'h').format()
                                 }
                             })
                             .done();
