@@ -33,8 +33,16 @@ export default class User {
 
     init(pass) {
         this.id = uuid();
+        this.setHashedPassword(pass);
+    }
+
+    setHashedPassword(pass) {
         this.salt = bcrypt.genSaltSync(10);
         this.pass = bcrypt.hashSync(pass, this.salt);
+    }
+
+    changePassword(pass) {
+        this.setHashedPassword(pass);
     }
 
     validate({email, name, password}) {

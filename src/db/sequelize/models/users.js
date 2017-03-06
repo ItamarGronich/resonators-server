@@ -19,6 +19,7 @@ module.exports = function(sequelize, DataTypes) {
             associate: function(models) {
                 users.hasOne(models.leaders);
                 users.hasOne(models.followers);
+                users.hasOne(models.user_password_resets);
             }
         }
     });
