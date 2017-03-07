@@ -8,7 +8,7 @@ import {assert} from 'chai';
 import uuid from 'uuid/v4';
 import cfg from '../../src/cfg';
 
-describe.only('versionable assets', () => {
+describe('versionable assets', () => {
     const secret = cfg.uploadAssetsSecret;
     const attachment = {
         kind: 'image/png',
@@ -46,7 +46,7 @@ describe.only('versionable assets', () => {
         });
     });
 
-    it.only('save a new version of an existing asset', async () => {
+    it('save a new version of an existing asset', async () => {
         const [asset] = await generateFixtures().generateVersionableAsset().done();
 
         const response = await request({
