@@ -12,7 +12,8 @@ import {
     answers,
     resonator_questions,
     resonator_answers,
-    sent_resonators
+    sent_resonators,
+    versionable_assets
 } from '../../src/db/sequelize/models';
 
 import uuid from 'uuid/v4';
@@ -36,6 +37,7 @@ export default function generateFixtures() {
         generateResonator: (...args) => generateFixture(generateResonator(...args)),
         generateResonatorQuestion: (...args) => generateFixture(generateResonatorQuestion(...args)),
         generateSentResonator: (...args) => generateFixture(generateSentResonator(...args)),
+        generateVersionableAsset: (...args) => generateFixture(generateVersionableAsset(...args)),
         last: () => _.last(fixtureList),
         fixtures: () => fixtureList,
         done() {
@@ -327,6 +329,19 @@ export default function generateFixtures() {
         };
 
         queue.push(sent_resonators.create(entity));
+
+        return entity;
+    }
+
+    function generateVersionableAsset() {
+        const entity = {
+            id: uuid(),
+            asset_id: `asset_${uuid()}`,
+            asset_version: 1,
+            link: 'foo'
+        };
+
+        queue.push(versionable_assets.create(entity));
 
         return entity;
     }

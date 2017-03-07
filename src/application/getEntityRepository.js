@@ -3,6 +3,7 @@ import Question from '../domain/entities/question';
 import Follower from '../domain/entities/follower';
 import Resonator from '../domain/entities/resonator';
 import SentResonator from '../domain/entities/sentResonator';
+import VersionableAsset from '../domain/entities/versionableAsset';
 import ResonatorStats from '../domain/entities/resonatorStats';
 import userRepository from '../db/repositories/UserRepository';
 import followerRepository from  '../db/repositories/FollowerRepository';
@@ -10,6 +11,7 @@ import resonatorRepository from  '../db/repositories/ResonatorRepository';
 import questionRepository from '../db/repositories/QuestionRepository';
 import resonatorStatsRepository from '../db/repositories/ResonatorStatsRepository';
 import sentResonatorRepository from '../db/repositories/SentResonatorRepository';
+import versionableAssetsRepository from '../db/repositories/VersionableAssetsRepository';
 
 export default function getEntityRepository(entity) {
     if (entity.constructor === User)
@@ -29,6 +31,9 @@ export default function getEntityRepository(entity) {
 
     if (entity.constructor === SentResonator)
         return sentResonatorRepository;
+
+    if (entity.constructor === VersionableAsset)
+        return versionableAssetsRepository;
 
     throw new Error(`No repository was found matching the entity ${entity.constructor.name}`);
 }

@@ -7,3 +7,4 @@ import './pages.js';
 import './stats.js';
 import './users';
 import './user_password_resets';
+import './versionableAssets'
