@@ -33,18 +33,21 @@ describe('ResonatorStatsRepository', () => {
         const question = resonator.questions[0].question;
         const answer_id = question.answers[0].id;
 
+        const expectedAnswers = _.orderBy(resonator.answers, a => a.sent_resonator_id);
+        result.criteria[resonator.questions[0].question.id] = _.orderBy(result.criteria[resonator.questions[0].question.id], a => a.sent_resonator_id);
+
         assert.deepEqual(_.omitDeep(result, 'created_at'), {
             resonator_id: resonator.id,
             criteria: {
                 [resonator.questions[0].question.id]: [{
-                    id: id1,
+                    id: expectedAnswers[0].id,
                     answer_id,
-                    sent_resonator_id: resonator.answers[0].sent_resonator_id,
+                    sent_resonator_id: expectedAnswers[0].sent_resonator_id,
                     resonator_question_id: resonator.questions[0].id
                 }, {
-                    id: id2,
+                    id: expectedAnswers[1].id,
                     answer_id,
-                    sent_resonator_id: resonator.answers[1].sent_resonator_id,
+                    sent_resonator_id: expectedAnswers[1].sent_resonator_id,
                     resonator_question_id: resonator.questions[0].id
                 }]
             }
