@@ -28,7 +28,11 @@ export default class VersionableAsset {
         this.version++;
     }
 
+    updateLink(link) {
+        this.link = link;
+    }
+
     toString() {
-        return `${this.asset_id}@${this.version}`;
+        return `${this.asset_id}-${this.version}`;
     }
 }

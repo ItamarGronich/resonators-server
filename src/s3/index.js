@@ -13,12 +13,16 @@ export default {
 
     uploadAudio(id, stream) {
         return upload(id, stream);
+    },
+
+    uploadFile(id, stream) {
+        return upload(id, stream);
     }
 };
 
 function upload(key, stream) {
     if (process.env.ENV === 'test')
-        return Promise.resolve();
+        return Promise.resolve({Location: ''});
 
     return new Promise((resolve, reject) => {
         s3.upload({

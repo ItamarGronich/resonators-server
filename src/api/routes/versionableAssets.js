@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import express from '../express';
 import routeHandler from '../routeHandler';
 import multer from 'multer';
@@ -8,19 +9,21 @@ const upload = multer();
 var assetUpload = upload.fields([{
     name: 'asset_id'
 }, {
-    name: 'version'
-},{
     name: 'secret'
 }, {
     name: 'media_data'
 }]);
 
 express.post('/versionable_assets/upload', assetUpload, routeHandler(async (request, response) => {
-    const {asset_id, version, secret} = request.body;
+    const {asset_id, secret} = request.body;
+    const fileBuf = _.get(request, 'files.media_data[0].buffer');
 
-    const fileBuf = request.files.media_data[0].buffer;
+    if (!fileBuf) {
+        response.status(400);
+        return response.json({error: 'no attachment was sent.'});
+    }
 
-    const result = await save({asset_id, version, secret, fileBuf});
+    const result = await save({asset_id, secret, fileBuf});
 
     if (result.error) {
         response.status(400);

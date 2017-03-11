@@ -34,7 +34,7 @@ describe('versionable assets', () => {
 
         assert.equal(response.status, 200);
         assert.deepEqual(response.body, {
-            status: `${asset_id}@1`
+            link: ''
         });
 
         const entity = await queryAsset(asset_id);
@@ -42,7 +42,7 @@ describe('versionable assets', () => {
         assert.deepEqual(_.omit(entity, 'created_at', 'id'), {
             asset_id,
             version: 1,
-            link: null
+            link: ''
         });
     });
 
@@ -64,7 +64,7 @@ describe('versionable assets', () => {
         assert.deepEqual(_.omit(entity, 'created_at', 'id'), {
             asset_id: asset.asset_id,
             version: 2,
-            link: null
+            link: ''
         });
     });
 
@@ -122,4 +122,48 @@ describe('versionable assets', () => {
             link: 'foo'
         });
     });
+
+    it('no attachment was sent', () => {
+
+    });
+
+    // it('rollback', async () => {
+    //     const [asset] = await generateFixtures().generateVersionableAsset().done();
+    //
+    //     const response = await request({
+    //         url: '/versionable_assets/upload',
+    //         method: 'post',
+    //         fields: {
+    //             asset_id: asset.asset_id,
+    //             secret
+    //         },
+    //         attachment
+    //     });
+    //
+    //     const rollbackResponse = await request({
+    //         url: `/versionable_assets/${asset.asset_id}/rollback`,
+    //         method: 'post',
+    //         body: {
+    //             secret
+    //         }
+    //     });
+    //
+    //     assert.equal(rollbackResponse.status, 200);
+    //
+    //     assert.deepEqual(rollbackResponse.body, {
+    //         status: `rolled back to ${asset.asset_id}-1`
+    //     });
+    //
+    //     const entity = await queryAsset(asset.asset_id);
+    //
+    //     assert.deepEqual(_.omit(entity, 'created_at', 'id'), {
+    //         asset_id: asset.asset_id,
+    //         version: 1,
+    //         link: null
+    //     });
+    // });
+    //
+    // it('rollback with wrong secret', () => {
+    //
+    // });
 });
