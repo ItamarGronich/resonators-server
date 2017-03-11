@@ -3,11 +3,10 @@ import routeHandler from '../routeHandler';
 import {getLatestAssetLink} from '../../application/versionableAssets';
 
 express.get('/', serveClient());
-express.get('/react/*', serveClient());
+express.get('/react*', serveClient());
 
 function serveClient() {
     return routeHandler(async (request, response) => {
-        const test = process.env.ENV === 'test';
         const link = await getLatestAssetLink('resonators-client');
 
         response.status(200);
