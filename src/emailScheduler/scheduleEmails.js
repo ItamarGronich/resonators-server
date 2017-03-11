@@ -48,6 +48,7 @@ function getResonatorsData(resonatorIds) {
 }
 
 function sendEmail({resonator, user}) {
+    console.log(`sending email for resonator: ${resonator.id}`);
     return recordSentResonator(resonator.id)
         .then(row => {
             const sentResonatorId = row.get('id');
