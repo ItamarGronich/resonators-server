@@ -1,6 +1,7 @@
 import express from '../express';
 import routeHandler from '../routeHandler';
 import {getResonatorStats, sendResonatorAnswer} from '../../application/resonatorStats';
+import {getLatestAssetLink} from '../../application/versionableAssets';
 
 express.get('/criteria/stats/reminders/:resonatorId/criteria', routeHandler(async (request, response) => {
     const {resonatorId} = request.params;
@@ -38,7 +39,9 @@ express.get(`/criteria/stats/reminders/:resonator_id/criteria/submit`, routeHand
     else
         response.status(200);
 
-    response.render('../pages/index');
+    const link = await getLatestAssetLink('resonators-client');
+
+    response.render('../pages/index', {link});
 }, {
     enforceLogin: false
 }));

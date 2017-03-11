@@ -6,7 +6,7 @@ module.exports = function(sequelize, DataTypes) {
             primaryKey: true
         },
         user_id: DataTypes.UUID,
-        user_agent: DataTypes.STRING,
+        user_agent: DataTypes.TEXT,
         ip: DataTypes.STRING,
         status: DataTypes.INTEGER,
         created_at: DataTypes.DATE,

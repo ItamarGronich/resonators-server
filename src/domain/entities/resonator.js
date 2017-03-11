@@ -62,7 +62,7 @@ export default class Resonator {
     addItem(item) {
         const attachment = new ResonatorAttachment(item);
         attachment.resonator_id = this.id;
-        attachment.visible = true;
+        attachment.visible = 1;
         this.items.push(attachment);
         return attachment;
     }

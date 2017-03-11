@@ -23,7 +23,7 @@ module.exports = {
                 type: Sequelize.STRING
             },
             visible: {
-                type: Sequelize.BOOLEAN
+                type: Sequelize.INTEGER
             },
             owner_id: {
                 type: Sequelize.UUID

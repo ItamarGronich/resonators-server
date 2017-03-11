@@ -7,7 +7,7 @@ express.get('/react*', serveClient());
 
 function serveClient() {
     return routeHandler(async (request, response) => {
-        const link = await getLatestAssetLink('resonators-client');
+        let link = await getLatestAssetLink('resonators-client');
 
         response.status(200);
         response.render('../pages/index', {

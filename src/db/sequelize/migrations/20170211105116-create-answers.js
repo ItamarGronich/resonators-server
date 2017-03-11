@@ -11,7 +11,7 @@ module.exports = {
                 type: Sequelize.UUID
             },
             body: {
-                type: Sequelize.STRING
+                type: Sequelize.TEXT
             },
             rank: {
                 type: Sequelize.INTEGER

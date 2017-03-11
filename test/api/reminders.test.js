@@ -225,7 +225,7 @@ describe('reminders', () => {
                                 owner_id: null,
                                 owner_role: null,
                                 title: 'image title',
-                                visible: true
+                                visible: 1
                             }].concat(resonator.items)
                         });
     });

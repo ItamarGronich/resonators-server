@@ -232,7 +232,7 @@ export default function generateFixtures() {
             media_format: 'png',
             media_id: 'media_id',
             title: 'an image',
-            visible: true,
+            visible: 1,
             owner_id,
             owner_role: 'leader',
             link: 'a link'

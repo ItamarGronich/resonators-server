@@ -14,7 +14,7 @@ module.exports = {
         type: Sequelize.UUID
       },
       user_agent: {
-        type: Sequelize.STRING
+        type: Sequelize.TEXT
       },
       ip: {
         type: Sequelize.STRING

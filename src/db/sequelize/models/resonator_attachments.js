@@ -10,7 +10,7 @@ module.exports = function(sequelize, DataTypes) {
         media_format: DataTypes.STRING,
         media_id: DataTypes.STRING,
         title: DataTypes.STRING,
-        visible: DataTypes.BOOLEAN,
+        visible: DataTypes.INTEGER,
         owner_id: DataTypes.UUID,
         owner_role: DataTypes.STRING,
         link: DataTypes.STRING

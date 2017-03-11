@@ -14,10 +14,10 @@ module.exports = {
                 type: Sequelize.STRING
             },
             description: {
-                type: Sequelize.STRING
+                type: Sequelize.TEXT
             },
             title: {
-                type: Sequelize.STRING
+                type: Sequelize.TEXT
             },
             removed: {
                 type: Sequelize.BOOLEAN

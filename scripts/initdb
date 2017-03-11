@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const path = require('path');
 const selectedDB = process.env.DB;
 
 const allDatabases = [
@@ -21,7 +22,9 @@ databases.forEach(dbName => {
 
 console.log('\n***************\nDB MIGRATION\n***************\n');
 
-const sequelize = args => './node_modules/.bin/sequelize ' + args;
+const cfgPath = path.resolve(__dirname + '/../src/db/sequelize/config/config.json');
+const cfgMigrationsPath = path.resolve(__dirname + '/../src/db/sequelize/migrations');
+const sequelize = args => path.resolve(__dirname + `/../node_modules/.bin/sequelize --config ${cfgPath} --migrations-path ${cfgMigrationsPath} `) + args;
 
 exec(sequelize('db:migrate --env development'));
 exec(sequelize('db:migrate --env test'));
