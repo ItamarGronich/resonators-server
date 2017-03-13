@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "ENV=dev node index.js",
     "test": "./test/run",
     "test:noinit": "./test/run noinit",
     "test:watch": "mocha --watch --require test/setup",

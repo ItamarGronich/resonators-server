@@ -9,6 +9,9 @@ function serveClient() {
     return routeHandler(async (request, response) => {
         let link = await getLatestAssetLink('resonators-client');
 
+        if (process.env.ENV === 'dev')
+            link = 'http://localhost:8000/assets/app.js';
+
         response.status(200);
         response.render('../pages/index', {
             link
