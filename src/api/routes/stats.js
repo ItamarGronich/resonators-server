@@ -3,7 +3,7 @@ import routeHandler from '../routeHandler';
 import {getResonatorStats, sendResonatorAnswer} from '../../application/resonatorStats';
 import {getLatestAssetLink} from '../../application/versionableAssets';
 
-express.get('/criteria/stats/reminders/:resonatorId/criteria', routeHandler(async (request, response) => {
+express.get('/criteria/stats/reminders/:resonatorId\.:ext?', routeHandler(async (request, response) => {
     const {resonatorId} = request.params;
 
     const stats = await getResonatorStats(resonatorId);

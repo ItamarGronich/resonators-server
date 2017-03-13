@@ -5,10 +5,6 @@ import request from '../api/supertestWrapper';
 import uuid from 'uuid/v4';
 
 describe('resonator stats', () => {
-    beforeEach(() => {
-
-    });
-
     it('getResonatorStats - resonator does not belong to leader', async () => {
         const {resonator} = await generateFixtures().preset1();
 
@@ -22,7 +18,7 @@ describe('resonator stats', () => {
 
         const result = await request({
             method: 'get',
-            url: `/criteria/stats/reminders/${resonator.id}/criteria`,
+            url: `/criteria/stats/reminders/${resonator.id}.json`,
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -34,30 +30,27 @@ describe('resonator stats', () => {
 
         const result = await request({
             method: 'get',
-            url: `/criteria/stats/reminders/${resonator.id}/criteria`,
+            url: `/criteria/stats/reminders/${resonator.id}`,
             cookie: `loginId=${userLogin.id}`
         });
 
         assert.equal(result.status, 200);
 
-        let expectedAnswers = [{
-            ...resonator.answers[1],
-        }, {
-            ...resonator.answers[0]
-        }];
-
-        const rqid = resonator.questions[0].question.id;
-        expectedAnswers = _.orderBy(expectedAnswers, a => a.id);
-        const responseCriteria = _(result.body.criteria[rqid])
-        .orderBy(a => a.id)
-        .map(a => ({..._.omit(a, 'created_at')}))
-        .value();
-
-        assert.deepEqual({...result.body, criteria: responseCriteria}, {
-            resonator_id: resonator.id,
-            criteria: expectedAnswers
-        });
+        assertResonatorStatsResponse(result, resonator);
     });
+
+    function assertResonatorStatsResponse(result, resonator) {
+        result.body.answers.forEach(a => delete a.time);
+        result.body.questions.forEach(q => {delete q.created_at; delete q.updated_at;});
+
+        assert.deepEqual(result.body, {
+            questions: resonator.questions.map(q => _.omitDeep(q.question, ['question_id'])),
+            answers: resonator.answers.map(a => ({
+                question_id: resonator.questions.find(q => q.id === a.resonator_question_id).question_id,
+                rank: resonator.questions.find(q => q.id === a.resonator_question_id).question.answers.find(_a => _a.id === a.answer_id).rank,
+            }))
+        });
+    }
 
     describe('send resonator answer', () => {
         it('post resonator answer', async () => {
@@ -81,18 +74,12 @@ describe('resonator stats', () => {
 
             const getResponse = await request({
                 method: 'get',
-                url: `/criteria/stats/reminders/${resonator.id}/criteria?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                url: `/criteria/stats/reminders/${resonator.id}?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
                 cookie: `loginId=${userLogin.id}`
             });
 
-            let responseAnswers = getResponse.body.criteria[answer.question_id];
-            responseAnswers = _.omitDeep(responseAnswers, ['id', 'created_at']);
-            const addedAnswer = responseAnswers.find(a => a.answer_id === answer.answer_id);
-            assert.deepEqual(addedAnswer, {
-                answer_id: answer.answer_id,
-                resonator_question_id: resonator.questions[0].id,
-                sent_resonator_id: answer.sent_resonator_id
-            });
+            resonator.answers.unshift({ answer_id: answer.answer_id, resonator_question_id: resonator.questions[0].id });
+            assertResonatorStatsResponse(getResponse, resonator);
         });
 
         it('post resonator answer - returns the index page', async () => {
@@ -114,6 +101,7 @@ describe('resonator stats', () => {
 
             assert.include(response.text, '<html>');
         });
+
         it('post resonator answer for a new question', async () => {
             const {resonator, userLogin, leader, clinic} = await generateFixtures().preset1();
 
@@ -125,6 +113,8 @@ describe('resonator stats', () => {
             const [resonatorQuestion] = await generateFixtures().generateResonatorQuestion({
                 question, resonator_id: resonator.id
             }).done();
+
+            resonator.questions.push(resonatorQuestion);
 
             const [sentResonator] = await generateFixtures().generateSentResonator(resonator).done();
 
@@ -145,18 +135,12 @@ describe('resonator stats', () => {
 
             const getResponse = await request({
                 method: 'get',
-                url: `/criteria/stats/reminders/${resonator.id}/criteria?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                url: `/criteria/stats/reminders/${resonator.id}?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
                 cookie: `loginId=${userLogin.id}`
             });
 
-            let responseAnswers = getResponse.body.criteria[answer.question_id];
-            responseAnswers = _.omitDeep(responseAnswers, ['id', 'created_at']);
-            const addedAnswer = responseAnswers.find(a => a.answer_id === answer.answer_id);
-            assert.deepEqual(addedAnswer, {
-                answer_id: answer.answer_id,
-                resonator_question_id: resonatorQuestion.id,
-                sent_resonator_id: answer.sent_resonator_id
-            });
+            resonator.answers.unshift({ answer_id: answer.answer_id, resonator_question_id: resonatorQuestion.id });
+            assertResonatorStatsResponse(getResponse, resonator);
         });
 
         it('cannot post resonator answer for wrong sent_resonator_id', async () => {
@@ -228,16 +212,6 @@ describe('resonator stats', () => {
             });
 
             assert.equal(response.status, 200);
-
-            const getResponse = await request({
-                method: 'get',
-                url: `/criteria/stats/reminders/${resonator.id}/criteria?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
-                cookie: `loginId=${userLogin.id}`
-            });
-
-            const stats = getResponse.body;
-
-            assert.equal(stats.criteria[answer.question_id].filter(a => a.sent_resonator_id === answer.sent_resonator_id).length, 1);
         });
     });
 });

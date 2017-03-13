@@ -79,6 +79,20 @@ class QuestionRepository extends Repository {
         return questionEntities;
     }
 
+    async findManyById(ids) {
+        const rows = await questions.findAll({
+            where: {id: ids},
+            include: this.getInclude()
+        });
+
+        if (!rows)
+            return null;
+
+        const questionEntities = rows.map(dbToDomain.toQuestion);
+        questionEntities.forEach(q => this.trackEntity(q));
+        return questionEntities;
+    }
+
     getInclude() {
         return [answers];
     }

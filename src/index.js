@@ -2,7 +2,7 @@ import Sequelize from 'sequelize';
 import api from './api';
 import { startEmailSchedulingLoop } from './emailScheduler';
 
-startEmailSchedulingLoop();
+// startEmailSchedulingLoop();
 
 api.set('port', (process.env.PORT || 8080));
 

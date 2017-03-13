@@ -23,11 +23,11 @@ export default class Resonator {
         created_at,
         updated_at
     }) {
-        if (!leader_id)
-            throw new Error('resonator must have a leader_id');
-        if (!follower_id)
-            throw new Error('resonator must have a follower_id');
-
+        // if (!leader_id)
+        //     throw new Error('resonator must have a leader_id');
+        // if (!follower_id)
+        //     throw new Error('resonator must have a follower_id');
+        //
         this.id = id;
         this.leader_id = leader_id;
         this.follower_id = follower_id;
