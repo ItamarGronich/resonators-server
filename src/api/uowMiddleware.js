@@ -1,6 +1,6 @@
 import {UnitOfWork} from 'ddd-helpers';
 import dbConn from '../db/sequelize/dbConnection';
-import userRepository from '../db/repositories/userRepository';
+import userRepository from '../db/repositories/UserRepository';
 import getEntityRepository from '../application/getEntityRepository';
 var createDomain = require('domain').create;
 
