@@ -4,7 +4,8 @@ const selectedDB = process.env.DB;
 
 const allDatabases = [
     'resonators_dev',
-    'resonators_test'
+    'resonators_test',
+    'resonators_prod'
 ];
 
 const databases = allDatabases.filter(dbName => !selectedDB || dbName === selectedDB);
@@ -28,3 +29,4 @@ const sequelize = args => path.resolve(__dirname + `/../node_modules/.bin/sequel
 
 exec(sequelize('db:migrate --env development'));
 exec(sequelize('db:migrate --env test'));
+exec(sequelize('db:migrate --env production'));
