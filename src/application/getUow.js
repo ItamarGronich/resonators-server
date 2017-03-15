@@ -1,3 +1,6 @@
+import ctx from 'request-local';
+
 export default function getUnitOfWork() {
-    return process.domain.uow;
+    const uow = ctx.data.uow;
+    return uow;
 }

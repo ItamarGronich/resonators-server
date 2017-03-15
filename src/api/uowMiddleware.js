@@ -2,7 +2,8 @@ import {UnitOfWork} from 'ddd-helpers';
 import dbConn from '../db/sequelize/dbConnection';
 import userRepository from '../db/repositories/UserRepository';
 import getEntityRepository from '../application/getEntityRepository';
-var createDomain = require('domain').create;
+import ctx from 'request-local';
+import uuid from 'uuid/v4';
 
 var createUow = UnitOfWork(createTransaction, getEntityRepository);
 
@@ -11,13 +12,7 @@ function createTransaction() {
 }
 
 export default function uowMiddleware(req, res, next) {
-  var domain = createDomain();
-  domain.add(req);
-  domain.add(res);
-  domain.uow = createUow();
-  domain.run(next);
-  domain.on('error', err => {
-      console.error('app error', err);
-      next();
-  });
+    ctx.data.uow = createUow();
+    ctx.data.id = uuid();
+    next();
 }

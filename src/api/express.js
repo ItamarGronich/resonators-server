@@ -12,6 +12,7 @@ app.set('view engine', 'ejs');
 app.set('views', __dirname + '/pages');
 app.use(compressionMiddleware());
 app.use(cookieParserMiddleware());
+app.use(require('request-local/middleware').create());
 app.use(requestIdMiddleware());
 app.use(appSession);
 app.use(uowMiddleware);

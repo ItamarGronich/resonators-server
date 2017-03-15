@@ -4,7 +4,7 @@ import {assert} from 'chai';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 import supertestWrapper from '../api/supertestWrapper';
 import moment from 'moment';
-const knex = require('knex')({});
+const knex = require('knex')({client: 'postgres'});
 
 describe('login', () => {
     it('login without credentials', async () => {
