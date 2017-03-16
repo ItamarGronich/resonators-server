@@ -11,7 +11,9 @@
     "migrate": "./node_modules/.bin/sequelize db:migrate",
     "migrate:undo": "./node_modules/.bin/sequelize db:migrate:undo",
     "initdb": "./scripts/initdb",
-    "storybook": "start-storybook -p 9001 -c .storybook"
+    "storybook": "start-storybook -p 9001 -c .storybook",
+    "start:prod": "sudo PORT=80 ENV=production ./node_modules/.bin/pm2 start index.js --name resonators",
+    "restart:prod": "sudo pm2 restart resonators"
   },
   "author": "InterAl",
   "license": "ISC",
@@ -46,7 +48,8 @@
     "react-dom": "^15.4.2",
     "request-local": "^1.0.4",
     "sequelize": "^3.29.0",
-    "uuid": "^3.0.1"
+    "uuid": "^3.0.1",
+    "winston": "^2.3.1"
   },
   "devDependencies": {
     "@kadira/storybook": "^2.35.3",

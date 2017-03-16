@@ -11,7 +11,7 @@ switch (env) {
     case 'dev':
         cfg = dev;
         break;
-    case 'prod':
+    case 'production':
         cfg = prod;
         break;
     case 'test':
