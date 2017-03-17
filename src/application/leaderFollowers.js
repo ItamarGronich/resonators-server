@@ -31,7 +31,13 @@ export async function addLeaderFollower({leader_id, clinic_id, email, name, pass
     await uow.commit();
 
     const newFollower = await followerRepository.findById(follower.id);
-    return dtoFactory.toFollower(newFollower);
+    const followerDto = dtoFactory.toFollower(newFollower);
+    return {
+        ...followerDto,
+        user: {
+            name, email
+        }
+    };
 }
 
 export async function updateFollowerUser(followerId, newUserDetails) {

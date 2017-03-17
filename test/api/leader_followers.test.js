@@ -60,6 +60,9 @@ describe('leader_followers', () => {
         assert.equal(body.clinic_id, clinic.id);
         assert.equal(body.leader_id, leader.id);
         assert.equal(body.status, 2);
+        assert.isOk(body.user, 'did not return the follower\'s user data');
+        assert.isOk(body.user.name);
+        assert.isOk(body.user.email);
 
         const dbUser = await users.findById(body.user_id);
         const password = dbUser.get('pass');
