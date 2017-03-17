@@ -1,4 +1,5 @@
 import uuid from 'uuid/v4';
+import log from '../../infra/log';
 
 export default class ResonatorStats {
     constructor({
@@ -16,7 +17,7 @@ export default class ResonatorStats {
             answers = this.criteria[question_id] = [];
 
         if (answers.find(a => a.sent_resonator_id === sent_resonator_id)) {
-            console.log(`trying to add an answer with an existing sent_resonator_id: ${sent_resonator_id}`, );
+            log.info(`trying to add an answer with an existing sent_resonator_id: ${sent_resonator_id}`);
             return;
         }
 

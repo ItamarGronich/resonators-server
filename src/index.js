@@ -5,7 +5,7 @@ import initInfra from './infra';
 
 initInfra();
 
-// startEmailSchedulingLoop();
+startEmailSchedulingLoop();
 
 api.set('port', (process.env.PORT || 8080));
 

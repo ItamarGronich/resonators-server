@@ -1,24 +1,15 @@
-import log from 'winston';
-import ctx from 'request-local';
+import logWrapper from './logWrapper';
+import winston from 'winston';
+import path from 'path';
 
-const wrapLogMethod = method => (msg, other, sessionId) => {
-    const modifiedMsg = {
-        sessionId: sessionId || ctx.data.sessionId,
-        message: msg
-    };
+export default logWrapper(winston);
 
-    if (other)
-        modifiedMsg.other = other;
-
-    return method.call(log, modifiedMsg);
-}
-
-const wrapper = {
-    ...log,
-    debug: wrapLogMethod(log.debug),
-    warn: wrapLogMethod(log.warn),
-    info: wrapLogMethod(log.info),
-    error: wrapLogMethod(log.error)
-};
-
-export default wrapper;
+export const emailSchedulerLogger = logWrapper(new winston.Logger({
+    transports: [
+        new winston.transports.File({
+            filename: path.join(__dirname, '../../logs/emailSchedulerLog'),
+            maxsize: 1024 * 10,
+            level: 'debug'
+        })
+    ]
+}), true);

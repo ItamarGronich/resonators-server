@@ -5,11 +5,12 @@ import renderResonatorEmail from '../emailRenderer/index';
 import sendResonatorEmail from './sendResonatorEmail';
 import cfg from '../cfg';
 import uuid from 'uuid/v4';
+import {emailSchedulerLogger as log} from '../infra/log';
 
 export default async function scheduleEmails(getNow) {
-    console.log('[emailScheduler] fetching pending resonators');
+    log.info('[emailScheduler] fetching pending resonators');
     const resonatorIds = await fetchPendingResonators(getNow);
-    console.log(`[emailScheduler] ${resonatorIds.length} pending resonators`);
+    log.info(`[emailScheduler] ${resonatorIds.length} pending resonators`);
 
     if (resonatorIds.length > 0) {
         const resonatorData = await getResonatorsData(resonatorIds);
@@ -48,7 +49,7 @@ function getResonatorsData(resonatorIds) {
 }
 
 function sendEmail({resonator, user}) {
-    console.log(`sending email for resonator: ${resonator.id}`);
+    log.info(`sending email for resonator: ${resonator.id}`);
     return recordSentResonator(resonator.id)
         .then(row => {
             const sentResonatorId = row.get('id');
