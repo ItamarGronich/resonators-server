@@ -70,7 +70,7 @@ describe('registration', () => {
         });
 
         assert.shallowDeepEqual(dbClinic.toJSON(), {
-            name: `${userRequest.name}'s clinic'`
+            name: `${userRequest.name}'s clinic`
         });
     });
 

@@ -26,7 +26,7 @@ export async function registerUser({name, email, password}) {
     const clinic = new Clinic({
         id: uuid(),
         user_id: user.id,
-        name: `${name}'s clinic'`
+        name: `${name}'s clinic`
     });
 
     if (user.error)
