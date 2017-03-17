@@ -8,7 +8,7 @@ export const emailSchedulerLogger = logWrapper(new winston.Logger({
     transports: [
         new winston.transports.File({
             filename: path.join(__dirname, '../../logs/emailSchedulerLog'),
-            maxsize: 1024 * 10,
+            maxsize: 1024 * 1024 * 10,
             level: 'debug'
         })
     ]
