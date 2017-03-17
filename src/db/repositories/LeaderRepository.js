@@ -15,7 +15,6 @@ class LeaderRepository extends Repository {
     }
 
     async save(leader, transaction, lastLeader) {
-        console.log('zzzzzz', leader);
         return await leaders.create(leader, {transaction});
     }
 }

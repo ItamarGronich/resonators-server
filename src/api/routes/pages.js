@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import express from '../express';
 import routeHandler from '../routeHandler';
 import {getLatestAssetLink} from '../../application/versionableAssets';
@@ -12,11 +14,33 @@ function serveClient() {
         if (process.env.ENV === 'dev')
             link = 'http://localhost:8000/assets/app.js';
 
+        const version = await readVersion();
+        const versionTxt = JSON.stringify(version);
+
         response.status(200);
+
         response.render('../pages/index', {
-            link
+            link,
+            version: versionTxt
         });
     }, {
         enforceLogin: false
+    });
+}
+
+function readVersion() {
+    return new Promise((resolve, reject) => {
+        fs.readFile('./version.txt', 'utf8', (err, data) => {
+            if (err)
+                return resolve({});
+
+            const rows = data.split('\n');
+            const version = {
+                version: rows[0],
+                time: rows[1]
+            };
+
+            resolve(version);
+        });
     });
 }
