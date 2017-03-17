@@ -2,6 +2,7 @@ import request from './supertestWrapper';
 import uuid from 'uuid/v4';
 import {assert} from 'chai';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
+import {leaders, users, clinics} from '../../src/db/sequelize/models';
 import assertLoginResponse from './assert/assertLoginResponse';
 
 describe('registration', () => {
@@ -19,6 +20,58 @@ describe('registration', () => {
         });
 
         assertLoginResponse(response, userRequest);
+    });
+
+    it('registration creates a leader for the user', async () => {
+        const userRequest = {
+            email: `foo_${uuid()}@gmail.com`,
+            name: `Foo_${uuid()}`,
+            password: '1234'
+        };
+
+        const response = await request({
+            url: '/users',
+            method: 'post',
+            body: userRequest
+        });
+
+        const dbLeader = await leaders.findOne({
+            include: [{
+                model: users,
+                where: {
+                    email: userRequest.email
+                }
+            }]
+        });
+
+        assert.isOk(dbLeader.get('id'));
+    });
+
+    it('registration creates a clinic for the user', async () => {
+        const userRequest = {
+            email: `foo_${uuid()}@gmail.com`,
+            name: `Foo_${uuid()}`,
+            password: '1234'
+        };
+
+        const response = await request({
+            url: '/users',
+            method: 'post',
+            body: userRequest
+        });
+
+        const dbClinic = await clinics.findOne({
+            include: [{
+                model: users,
+                where: {
+                    email: userRequest.email
+                }
+            }]
+        });
+
+        assert.shallowDeepEqual(dbClinic.toJSON(), {
+            name: `${userRequest.name}'s clinic'`
+        });
     });
 
     it('cannot register an existing email', async () => {
