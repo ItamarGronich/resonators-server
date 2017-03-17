@@ -1,6 +1,9 @@
 import Sequelize from 'sequelize';
 import api from './api';
 import { startEmailSchedulingLoop } from './emailScheduler';
+import initInfra from './infra';
+
+initInfra();
 
 // startEmailSchedulingLoop();
 

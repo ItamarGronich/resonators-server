@@ -1,16 +1,17 @@
 import enforcePermissionPolicy from './permissions';
+import log from '../infra/log';
 
 export default function routeHandler(cb, options) {
     options = {enforceLogin: true, ...options};
 
-    return async function (req, res, ...rest) {
+    return async (req, res, ...rest) => {
         try {
             if (!await enforcePermissionPolicy(req, res, options))
                 return;
 
             return await cb(req, res, ...rest);
         } catch (err) {
-            console.error('failed', err);
+            log.error('failed', err);
             res.status(500).send('Internal error');
         }
     }
