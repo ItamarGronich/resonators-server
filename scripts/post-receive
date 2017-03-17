@@ -1,11 +1,19 @@
 #!/bin/bash
 [ -d ${GIT_WORK_TREE} ] || mkdir ${GIT_WORK_TREE}
+
 GIT_WORK_TREE=../resonators-server
 export GIT_WORK_TREE
 git checkout -f
+
+commit_hash="$(git rev-parse --verify HEAD)"
+
 echo "==========  CODE DEPLOYED - INSTALLING =========="
 cd ${GIT_WORK_TREE}
+
+echo ${commit_hash} > version.txt
+
 npm install
+
 echo "==========  RESTARTING SERVER  =========="
 
 npm run restart:prod || npm run start:prod
