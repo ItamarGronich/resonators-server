@@ -9,19 +9,22 @@ express.get('/react*', serveClient());
 
 function serveClient() {
     return routeHandler(async (request, response) => {
-        let link = await getLatestAssetLink('resonators-client');
+        let clientVersion = await getLatestAssetLink('resonators-client');
 
         if (process.env.ENV === 'dev')
-            link = 'http://localhost:8000/assets/app.js';
+            clientVersion = {
+                link: 'http://localhost:8000/assets/app.js'
+            };
 
-        const version = await readVersion();
-        const versionTxt = JSON.stringify(version);
+        const serverVersion = await readVersion();
+        const serverVersionTxt = JSON.stringify(serverVersion);
+        const clientVersionTxt = JSON.stringify(clientVersion);
 
         response.status(200);
 
         response.render('../pages/index', {
-            link,
-            version: versionTxt
+            clientVersion: clientVersionTxt,
+            serverVersion: serverVersionTxt
         });
     }, {
         enforceLogin: false

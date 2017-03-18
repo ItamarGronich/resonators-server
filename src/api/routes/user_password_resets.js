@@ -37,11 +37,11 @@ express.post('/changePassword', routeHandler(async (request, response) => {
 
 express.get('/resetPassword', routeHandler(async (request, response) => {
     const tokenValid = await resetPasswordTokenValidator(request.query.token);
-    const link = await getLatestAssetLink('resonators-client');
+    const clientVersion = await getLatestAssetLink('resonators-client');
 
     if (tokenValid) {
         response.status(200);
-        response.render('../pages/index', {link});
+        response.render('../pages/index', {clientVersion});
     } else {
         response.status(400);
         response.json({

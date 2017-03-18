@@ -39,9 +39,9 @@ express.get(`/criteria/stats/reminders/:resonator_id/criteria/submit`, routeHand
     else
         response.status(200);
 
-    const link = await getLatestAssetLink('resonators-client');
+    const clientVersion = await getLatestAssetLink('resonators-client');
 
-    response.render('../pages/index', {link});
+    response.render('../pages/index', {clientVersion});
 }, {
     enforceLogin: false
 }));

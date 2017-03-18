@@ -8,16 +8,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     </head>
     <body>
-        <% if (typeof version !== 'undefined') {%>
+        <% if (typeof serverVersion !== 'undefined') {%>
         <script type="text/javascript">
-            <%-'window.version = ' + version + ';'%>
-            <%-"console.log('%c server version', 'background: #222; color: #bada55; font-size:18px', window.version);"%>
+            <%-'window.serverVersion = ' + serverVersion + ';'%>
+            <%-"console.log('%c server version', 'background: #222; color: #bada55; font-size:18px', window.serverVersion);"%>
         </script>
         <%}%>
 
-        <% if (typeof link !== 'undefined') {%>
+        <% if (typeof clientVersion !== 'undefined' && clientVersion) {%>
+        <script type="text/javascript">
+            <%-'window.clientVersion = ' + clientVersion + ';'%>
+            <%-"console.log('%c client version', 'background: #222; color: #bada55; font-size:18px', window.clientVersion);"%>
+        </script>
+
         <div id="app">Loading...</div>
-        <script type="text/javascript" src="<%=link%>"></script>
+        <script type="text/javascript" src="<%=clientVersion.link%>"></script>
         <% } else {%>
         <div>No client version was found. Forgot to upload it?</div>
         <% } %>

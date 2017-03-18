@@ -338,7 +338,8 @@ export default function generateFixtures() {
             id: uuid(),
             asset_id: `asset_${uuid()}`,
             asset_version: 1,
-            link: 'foo'
+            link: 'foo',
+            tag: `tag_${uuid()}`
         };
 
         queue.push(versionable_assets.create(entity));

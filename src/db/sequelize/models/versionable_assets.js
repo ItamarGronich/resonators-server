@@ -7,7 +7,8 @@ module.exports = function(sequelize, DataTypes) {
         },
         asset_id: DataTypes.STRING,
         asset_version: DataTypes.INTEGER,
-        link: DataTypes.STRING
+        link: DataTypes.STRING,
+        tag: DataTypes.STRING
     }, {
         underscored: true,
         classMethods: {

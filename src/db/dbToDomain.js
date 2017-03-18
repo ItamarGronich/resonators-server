@@ -136,6 +136,7 @@ export function toVersionableAsset(row) {
         asset_id: row.get('asset_id'),
         version: row.get('asset_version'),
         link: row.get('link'),
+        tag: row.get('tag'),
         created_at: row.get('created_at')
     });
 }

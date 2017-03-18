@@ -9,13 +9,15 @@ const upload = multer();
 var assetUpload = upload.fields([{
     name: 'asset_id'
 }, {
+    name: 'tag'
+}, {
     name: 'secret'
 }, {
     name: 'media_data'
 }]);
 
 express.post('/versionable_assets/upload', assetUpload, routeHandler(async (request, response) => {
-    const {asset_id, secret} = request.body;
+    const {asset_id, tag, secret} = request.body;
     const fileBuf = _.get(request, 'files.media_data[0].buffer');
 
     if (!fileBuf) {
@@ -23,7 +25,7 @@ express.post('/versionable_assets/upload', assetUpload, routeHandler(async (requ
         return response.json({error: 'no attachment was sent.'});
     }
 
-    const result = await save({asset_id, secret, fileBuf});
+    const result = await save({asset_id, tag, secret, fileBuf});
 
     if (result.error) {
         response.status(400);
@@ -37,7 +39,7 @@ express.post('/versionable_assets/upload', assetUpload, routeHandler(async (requ
 }));
 
 express.get('/versionable_assets/:asset_id/latest', async (request, response) => {
-    const link = await getLatestAssetLink(request.params.asset_id);
-    response.status(link ? 200 : 422);
-    response.json({ link });
+    const latestAsset = await getLatestAssetLink(request.params.asset_id);
+    response.status(latestAsset ? 200 : 422);
+    response.json(latestAsset);
 });

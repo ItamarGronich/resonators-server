@@ -22,12 +22,14 @@ describe('versionable assets', () => {
 
     it('save a new asset', async () => {
         const asset_id = `asset_${uuid()}`;
+        const tag = `tag_${uuid()}`;
         const response = await request({
             url: '/versionable_assets/upload',
             method: 'post',
             fields: {
                 asset_id,
-                secret
+                secret,
+                tag
             },
             attachment
         });
@@ -42,7 +44,8 @@ describe('versionable assets', () => {
         assert.deepEqual(_.omit(entity, 'created_at', 'id'), {
             asset_id,
             version: 1,
-            link: ''
+            link: '',
+            tag
         });
     });
 
@@ -54,6 +57,7 @@ describe('versionable assets', () => {
             method: 'post',
             fields: {
                 asset_id: asset.asset_id,
+                tag: asset.tag,
                 secret
             },
             attachment
@@ -64,7 +68,8 @@ describe('versionable assets', () => {
         assert.deepEqual(_.omit(entity, 'created_at', 'id'), {
             asset_id: asset.asset_id,
             version: 2,
-            link: ''
+            link: '',
+            tag: asset.tag
         });
     });
 
@@ -118,8 +123,9 @@ describe('versionable assets', () => {
         });
 
         assert.equal(response.status, 200);
-        assert.deepEqual(response.body, {
-            link: 'foo'
+        assert.deepEqual(_.omit(response.body, 'created_at'), {
+            link: 'foo',
+            tag: asset.tag
         });
     });
 

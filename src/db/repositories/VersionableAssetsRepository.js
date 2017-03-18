@@ -13,7 +13,8 @@ class VersionableAssetsRepository extends Repository {
             id: entity.id,
             asset_id: entity.asset_id,
             asset_version: entity.version,
-            link: entity.link
+            link: entity.link,
+            tag: entity.tag
         };
     }
 

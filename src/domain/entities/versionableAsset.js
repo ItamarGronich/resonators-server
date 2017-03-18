@@ -6,12 +6,14 @@ export default class VersionableAsset {
         asset_id,
         version,
         link,
+        tag,
         created_at
     }) {
         this.id = id;
         this.asset_id = asset_id;
         this.version = version || 0;
         this.link = link;
+        this.tag = tag;
         this.created_at = created_at;
 
         if (!id) {

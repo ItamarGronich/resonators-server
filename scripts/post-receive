@@ -8,13 +8,16 @@ git checkout -f
 commit_hash="$(git rev-parse --verify HEAD)"
 commit_time="$(git show -s --format=%ci HEAD)"
 
-echo "==========  CODE DEPLOYED - INSTALLING =========="
+echo "==========  CODE DEPLOYED - NPM INSTALL =========="
 cd ${GIT_WORK_TREE}
 
 echo ${commit_hash} > version.txt
 echo ${commit_time} >> version.txt
 
 npm install
+
+echo "========= MIGRATING DB =========="
+npm run migrate
 
 echo "==========  RESTARTING SERVER  =========="
 

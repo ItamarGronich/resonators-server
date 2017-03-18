@@ -6,7 +6,7 @@ import cfg from '../cfg';
 import uuid from 'uuid/v4';
 import s3 from '../s3';
 
-export async function save({asset_id, fileBuf, secret}) {
+export async function save({asset_id, tag, fileBuf, secret}) {
     if (cfg.uploadAssetsSecret !== secret)
         return {
             error: 'wrong secret'
@@ -19,6 +19,7 @@ export async function save({asset_id, fileBuf, secret}) {
     const asset = new VersionableAsset({
         id: uuid(),
         asset_id,
+        tag,
         version: _.get(existingAsset, 'version')
     });
 
@@ -39,5 +40,10 @@ export async function save({asset_id, fileBuf, secret}) {
 
 export async function getLatestAssetLink(asset_id) {
     const asset = await versionableAssetsRepository.findLatestById(asset_id);
-    return asset && asset.link;
+
+    return asset && {
+        link: asset.link,
+        tag: asset.tag,
+        created_at: asset.created_at
+    };
 }

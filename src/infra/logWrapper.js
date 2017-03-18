@@ -2,7 +2,7 @@ import ctx from 'request-local';
 
 export default (logger, withoutSessionId) => {
     const wrapLogMethod = method => (msg, other, sessionId) => {
-        const modifiedMsg = {
+        let modifiedMsg = {
             sessionId: sessionId || withoutSessionId || ctx.data.sessionId,
             message: msg
         };
