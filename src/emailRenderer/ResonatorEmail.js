@@ -64,7 +64,10 @@ export default ({resonator, host, preview, sentResonatorId, user = {}}) => {
     const mainCol = (
         <TD>
             <div>
-                <img src={resonator.getImage()} alt={resonator.title}/>
+                <img src={resonator.getImage()} alt={resonator.title} style={{
+                    width: 'auto',
+                    maxHeight: 480
+                }}/>
             </div>
             {resonator.link && (
                 <p>

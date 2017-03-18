@@ -76,7 +76,19 @@ export default class Resonator {
     }
 
     getImage() {
-        return '';
+        const picture = _(this.items)
+            .filter(i => i.media_kind === 'image' ||
+                         i.media_kind === 'picture')
+            .orderBy('created_at', ['desc'])
+            .head();
+
+        if (picture) {
+            if (picture.link)
+                return picture.link;
+            else
+                return `https://reminders-uploads.s3.amazonaws.com/${picture.media_id}.jpg`;
+        } else
+            return '';
     }
 
     getResonatorQuestionId(question_id) {

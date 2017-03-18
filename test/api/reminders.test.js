@@ -188,7 +188,7 @@ describe('reminders', () => {
         const fields = {
             follower_id: follower.id,
             reminder_id: resonator.id,
-            media_kind: 'image',
+            media_kind: 'picture',
             media_title: 'image title'
         };
 
@@ -218,8 +218,8 @@ describe('reminders', () => {
                             items: [{
                                 id: newItem.id,
                                 resonator_id: resonator.id,
-                                media_kind: 'image',
-                                link: null,
+                                media_kind: 'picture',
+                                link: '',
                                 media_format: null,
                                 media_id: null,
                                 owner_id: null,

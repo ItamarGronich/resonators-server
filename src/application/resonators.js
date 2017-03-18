@@ -6,6 +6,7 @@ import * as dtoFactory from './dto/index';
 import updatePermittedFields from './updatePermittedFields';
 import s3 from '../s3';
 import getUow from './getUow';
+import uuid from 'uuid/v4';
 
 export async function getResonators(followerId) {
     const resonators = await resonatorRepository.findByFollowerId(followerId);
@@ -83,9 +84,15 @@ export async function addItemToResonator(resonator_id, item, stream) {
     if (!resonator)
         return null;
 
-    const attachment = resonator.addItem(item);
+    const id = uuid();
 
-    await s3.uploadImage(attachment.id, stream);
+    const {Location} = await s3.uploadImage(id, stream);
+
+    resonator.addItem({
+        ...item,
+        id,
+        link: Location
+    });
 
     await getUow().commit();
 

@@ -228,7 +228,7 @@ export default function generateFixtures() {
         const resonatorItem = {
             id: uuid(),
             resonator_id,
-            media_kind: 'image',
+            media_kind: 'picture',
             media_format: 'png',
             media_id: 'media_id',
             title: 'an image',

@@ -9,7 +9,7 @@ export default () => {
 export const resonatorAttachment = {
     id: 'c3f264e1-0550-45e9-8a8f-357656ae7d49',
     resonator_id: resonator.id,
-    media_kind: 'image',
+    media_kind: 'picture',
     media_format: 'png',
     media_id: 'media_id',
     title: 'an image',

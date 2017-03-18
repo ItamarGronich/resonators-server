@@ -39,4 +39,8 @@ describe('render resonator', () => {
     it('do not render the unsubscribe link', () => {
         assert.notInclude(text, 'unsubscribe');
     });
+
+    it('render image', () => {
+        assert.include(text, '<img src="a link"')
+    });
 });
