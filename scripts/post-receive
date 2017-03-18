@@ -17,7 +17,7 @@ echo ${commit_time} >> version.txt
 npm install
 
 echo "========= MIGRATING DB =========="
-npm run migrate
+npm run migrate -- --env=production
 
 echo "==========  RESTARTING SERVER  =========="
 
