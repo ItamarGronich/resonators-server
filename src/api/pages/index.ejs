@@ -20,9 +20,11 @@
             <%-'window.clientVersion = ' + clientVersion + ';'%>
             <%-"console.log('%c client version', 'background: #222; color: #bada55; font-size:18px', window.clientVersion);"%>
         </script>
+        <%}%>
 
+        <% if (typeof scriptUrl !== 'undefined') {%>
         <div id="app">Loading...</div>
-        <script type="text/javascript" src="<%=clientVersion.link%>"></script>
+        <script type="text/javascript" src="<%=scriptUrl%>"></script>
         <% } else {%>
         <div>No client version was found. Forgot to upload it?</div>
         <% } %>

@@ -333,13 +333,14 @@ export default function generateFixtures() {
         return entity;
     }
 
-    function generateVersionableAsset() {
+    function generateVersionableAsset(mixin) {
         const entity = {
             id: uuid(),
             asset_id: `asset_${uuid()}`,
             asset_version: 1,
             link: 'foo',
-            tag: `tag_${uuid()}`
+            tag: `tag_${uuid()}`,
+            ...mixin
         };
 
         queue.push(versionable_assets.create(entity));

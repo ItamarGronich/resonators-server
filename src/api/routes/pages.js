@@ -24,7 +24,8 @@ function serveClient() {
 
         response.render('../pages/index', {
             clientVersion: clientVersionTxt,
-            serverVersion: serverVersionTxt
+            serverVersion: serverVersionTxt,
+            scriptUrl: clientVersion.link
         });
     }, {
         enforceLogin: false
