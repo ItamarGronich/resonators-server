@@ -19,6 +19,16 @@ describe('fetch pending resonators', () => {
                 result: true
             });
         });
+
+        it('pending - scheduled for today', async () => {
+            await testPendingResonator({
+                now: '2017-02-20 15:00:00',
+                pop_time: '2017-02-20 14:00:00',
+                last_pop_time: null,
+                repeat_days: '0,1,2,3,4,5,6',
+                result: true
+            });
+        });
     });
 
     describe('negative - resonator is not pending', () => {
