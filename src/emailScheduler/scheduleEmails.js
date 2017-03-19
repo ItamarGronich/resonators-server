@@ -1,4 +1,4 @@
-import fetchPendingResonators from './fetchPendingEmails';
+import fetchPendingResonators from './fetchPendingResonators';
 import {resonators, resonator_attachments, followers, users, resonator_questions, questions, answers, sent_resonators} from '../db/sequelize/models';
 import * as dbToDomain from '../db/dbToDomain';
 import renderResonatorEmail from '../emailRenderer/index';

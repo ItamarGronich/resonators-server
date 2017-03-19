@@ -5,7 +5,7 @@ export default function fetchPendingResonators(getNow = (() => new Date())) {
     const now = "'" + getNow().toJSON() + "'";
 
     const sql = `select id from resonators ` +
-                `where date_part('day', ${now} - coalesce(last_pop_time, '1970-1-1')) >= 1 and ` +
+                `where date(${now}) > date(coalesce(last_pop_time, pop_time)) and ` +
                 `${now}::timestamp::time >= pop_time::time and ` +
                 `position(extract(dow from ${now}::timestamp)::char in repeat_days) > 0`;
 
