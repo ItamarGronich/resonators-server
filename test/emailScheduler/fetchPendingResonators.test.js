@@ -32,31 +32,38 @@ describe('fetch pending resonators', () => {
     });
 
     describe('negative - resonator is not pending', () => {
-        it('no pending - now is not in repeat_days', async () => {
+        it('now is not in repeat_days', async () => {
             await testPendingResonator({
                 repeat_days: '3',
                 result: false
             });
         });
 
-        it('no pending - now.time < pop_time', async () => {
+        it('now.time < pop_time', async () => {
             await testPendingResonator({
                 now: '2017-02-20 12:00:00',
                 result: false
             });
         });
 
-        it('no pending - was already sent today', async () => {
+        it('was already sent today', async () => {
             await testPendingResonator({
                 last_pop_time: '2017-02-20 14:00:00',
                 result: false
             });
         });
 
-        it('no pending - resonator was just created - should wait for the next due date', async () => {
+        it('resonator was just created - should wait for the next due date', async () => {
             await testPendingResonator({
                 last_pop_time: null,
                 pop_time: '2017-02-28 11:00:00',
+                result: false
+            });
+        });
+
+        it('resonator is deactivated', async () => {
+            await testPendingResonator({
+                deactivated: true,
                 result: false
             });
         });
@@ -67,6 +74,7 @@ describe('fetch pending resonators', () => {
         pop_time = '2016-04-05 14:00:00',
         now = '2017-02-20 15:00:00',
         last_pop_time,
+        deactivated = false,
         result
     } = {}) {
         const [r1] = await generateFixtures()
@@ -74,7 +82,8 @@ describe('fetch pending resonators', () => {
             fields: {
                 repeat_days,
                 pop_time: new Date(pop_time).toJSON(),
-                last_pop_time
+                last_pop_time,
+                pop_email: !deactivated
             }})
         .done();
 

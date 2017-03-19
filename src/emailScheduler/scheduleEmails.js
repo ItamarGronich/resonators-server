@@ -1,5 +1,6 @@
+import _ from 'lodash';
 import fetchPendingResonators from './fetchPendingResonators';
-import {resonators, resonator_attachments, followers, users, resonator_questions, questions, answers, sent_resonators} from '../db/sequelize/models';
+import {resonators, resonator_attachments, followers, leaders, users, resonator_questions, questions, answers, sent_resonators} from '../db/sequelize/models';
 import * as dbToDomain from '../db/dbToDomain';
 import renderResonatorEmail from '../emailRenderer/index';
 import sendResonatorEmail from './sendResonatorEmail';
@@ -14,7 +15,23 @@ export default async function scheduleEmails(getNow) {
 
     if (resonatorIds.length > 0) {
         const resonatorData = await getResonatorsData(resonatorIds);
-        const emailPromises = resonatorData.map(sendEmail);
+
+        const emailPromises = _(resonatorData).map(({
+            resonator,
+            followerUser,
+            leaderUser
+        }) => {
+            const followerEmailPromise = sendEmail({resonator, user: followerUser});
+
+            const leaderEmailPromise = !resonator.disable_copy_to_leader ?
+                sendEmail({resonator, user: leaderUser}) : Promise.resolve();
+
+            return [
+                followerEmailPromise,
+                leaderEmailPromise
+            ];
+        }).flatten().value();
+
         return Promise.all(emailPromises);
     } else {
         return Promise.resolve();
@@ -32,6 +49,9 @@ function getResonatorsData(resonatorIds) {
                 model: followers,
                 include: [users]
             }, {
+                model: leaders,
+                include: [users]
+            }, {
                 model: resonator_questions,
                 include: [{
                     model: questions,
@@ -40,8 +60,9 @@ function getResonatorsData(resonatorIds) {
             }]
         }).then(row => {
             const resonator = dbToDomain.toResonator(row);
-            const user = dbToDomain.toUser(row.follower.user);
-            return {resonator, user};
+            const followerUser = dbToDomain.toUser(row.follower.user);
+            const leaderUser = dbToDomain.toUser(row.leader.user);
+            return {resonator, followerUser, leaderUser};
         });
     });
 

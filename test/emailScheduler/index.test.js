@@ -39,12 +39,14 @@ describe('email scheduler', () => {
                             .generateResonator({
                                 fields: {
                                     repeat_days: '0,1,2,3,4,5,6',
-                                    pop_time: moment().add(-26, 'h').format()
+                                    pop_time: moment().add(-26, 'h').format(),
+                                    disable_copy_to_leader: true
                                 }})
                             .generateResonator({
                                 fields: {
                                     repeat_days: '0,1,2,3,4,5,6',
-                                    pop_time: moment().add(-26, 'h').format()
+                                    pop_time: moment().add(-26, 'h').format(),
+                                    disable_copy_to_leader: true
                                 }
                             })
                             .done();
@@ -144,6 +146,47 @@ describe('email scheduler', () => {
 
         const row = await sent_resonators.findOne({ where: { resonator_id: r1.id }});
         assert.isFalse(row.get('failed'));
+    });
+
+    it('send a copy to the leader', async () => {
+        const [r1] = await generateFixtures()
+                        .generateResonator({
+                            fields: {
+                                repeat_days: '0,1,2,3,4,5,6',
+                                pop_time: '2016-01-01'
+                            }})
+                        .done();
+
+        startEmailSchedulingLoop();
+
+        await waitFor(() => sendResonatorEmailStub.callCount > 1, 5000);
+
+        const called = sendResonatorEmailStub.calledWithMatch({
+            to: r1.leader.user.email
+        });
+
+        assert.isTrue(called, 'should send a copy to the leader');
+    });
+
+    it('do not send a copy to the leader', async () => {
+        const [r1] = await generateFixtures()
+                        .generateResonator({
+                            fields: {
+                                disable_copy_to_leader: true,
+                                repeat_days: '0,1,2,3,4,5,6',
+                                pop_time: '2016-01-01'
+                            }})
+                        .done();
+
+        startEmailSchedulingLoop();
+
+        await waitFor(() => sendResonatorEmailStub.callCount > 1, 800).catch(_.noop);
+
+        const called = sendResonatorEmailStub.calledWithMatch({
+            to: r1.leader.user.email
+        });
+
+        assert.isFalse(called, 'should not send a copy to the leader');
     });
 
     function resonatorEmailCalledWithMatch(spy, resonatorFixture) {

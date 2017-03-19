@@ -198,7 +198,7 @@ export default function generateFixtures() {
             id,
             leader_id: leader.id,
             follower_id: follower.id,
-            pop_email: false,
+            pop_email: true,
             pop_location_lat: 1.5,
             pop_location_lng: 3.4,
             pop_time: '2016-04-03 14:00:00',
@@ -215,6 +215,7 @@ export default function generateFixtures() {
 
         Object.defineProperty(entity, 'follower', {value: follower});
         Object.defineProperty(entity, 'answers', {value: resonatorAnswers});
+        Object.defineProperty(entity, 'leader', {value: leader});
 
         queue.push(resonators.create(entity));
 
