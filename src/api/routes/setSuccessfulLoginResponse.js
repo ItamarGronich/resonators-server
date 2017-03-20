@@ -15,5 +15,5 @@ export default function setSuccessfulLoginResponse({
         maxAge
     });
 
-    response.json({...user, expires_at});
+    response.json({...user, expires_at, auth_token: loginId});
 }

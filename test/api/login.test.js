@@ -18,30 +18,45 @@ describe('login', () => {
         assert.deepEqual(body, {});
     });
 
-    it('successful login', async () => {
-        const [userLogin] = await generateFixtures()
-                            .generateUserLogin()
-                            .done();
+    describe('successful login', () => {
+        let userLogin, status, body, headers;
 
-        const {status, body, headers} = await supertestWrapper({
-            method: 'post',
-            url: '/user_sessions',
-            body: { email: userLogin.user.email, password: '1234'}
+        beforeEach(async () => {
+            ([userLogin] = await generateFixtures()
+                                .generateUserLogin()
+                                .done());
+
+            ({status, body, headers} = await supertestWrapper({
+                method: 'post',
+                url: '/user_sessions',
+                body: { email: userLogin.user.email, password: '1234'}
+            }));
         });
 
-        assert.equal(status, 200);
-        assert.deepEqual(_.omit(body, 'expires_at'), {
-            email: userLogin.user.email,
-            name: userLogin.user.name,
-            country: null,
-            unsubscribed: null
+        it('status 200', () => {
+            assert.equal(status, 200);
         });
 
-        assert(moment(body.expires_at) > moment(), `expires_at (${body.expires_at}) must be in the future.`);
+        it('respond with the user info', () => {
+            assert.deepEqual(_.omit(body, 'expires_at', 'auth_token'), {
+                email: userLogin.user.email,
+                name: userLogin.user.name,
+                country: null,
+                unsubscribed: null
+            });
+        });
 
-        assert.match(headers['set-cookie'][0],
-                     /loginId=.+; Max\-Age=\d+;/,
-                     'set cookie match failed');
+        it('set cookie', () => {
+            assert(moment(body.expires_at) > moment(), `expires_at (${body.expires_at}) must be in the future.`);
+
+            assert.match(headers['set-cookie'][0],
+                         /loginId=.+; Max\-Age=\d+;/,
+                         'set cookie match failed');
+        });
+
+        it('respond with auth token', () => {
+            assert.isOk(body.auth_token);
+        });
     });
 
     it('relogin with cookie', async () => {
