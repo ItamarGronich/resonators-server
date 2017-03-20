@@ -9,6 +9,7 @@ import ctxMiddleware from 'request-local/middleware';
 import ctx from 'request-local';
 import requestLogger from './requestLoggerMiddleware';
 import uuid from 'uuid/v4';
+import cors from 'cors';
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(cors());
 app.use(requestLogger);
 app.use(compressionMiddleware());
 app.use(cookieParserMiddleware());
