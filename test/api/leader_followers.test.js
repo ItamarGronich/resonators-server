@@ -8,13 +8,13 @@ import * as dbToDomain from '../../src/db/dbToDomain';
 import {assert} from 'chai';
 import bcrypt from 'bcrypt';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
-import supertestWrapper from './supertestWrapper';
+import request from './supertestWrapper';
 
 describe('leader_followers', () => {
     it('get followers', async () => {
         const { user, userLogin, leader, clinic, follower } = await generateFixtures().preset1();
 
-        const {status, body} = await supertestWrapper({
+        const {status, body} = await request({
             method: 'get',
             url: '/leader_followers',
             cookie: `loginId=${userLogin.id}`
@@ -43,7 +43,7 @@ describe('leader_followers', () => {
     it('add follower', async () => {
         const { user, userLogin, leader, clinic } = await generateFixtures().preset1();
 
-        const {status, body} = await supertestWrapper({
+        const {status, body} = await request({
             method: 'post',
             url: '/leader_followers',
             cookie: `loginId=${userLogin.id}`,
@@ -75,7 +75,7 @@ describe('leader_followers', () => {
     });
 
     it('cannot put unfollowed user', async () => {
-        const {status, body} = await supertestWrapper({
+        const {status, body} = await request({
             method: 'put',
             url: `/leader_followers/${putFollower.id}`,
             cookie: `loginId=${fooUserLogin.id}`,
@@ -88,7 +88,7 @@ describe('leader_followers', () => {
     it('put follower', async () => {
         const { user, userLogin, leader, follower } = await generateFixtures().preset1();
 
-        const {status, body} = await supertestWrapper({
+        const {status, body} = await request({
             method: 'put',
             url: `/leader_followers/${follower.id}`,
             body: {user: {email: 'uv@gmail.com', name:'ppp'}},
@@ -105,6 +105,46 @@ describe('leader_followers', () => {
             unsubscribed: null,
             email: 'uv@gmail.com',
             name: 'ppp'
+        });
+    });
+
+    describe('delete follower', () => {
+        let userLogin, follower, status, body;
+
+        before(async () => {
+            ({ userLogin, follower } = await generateFixtures().preset1());
+
+            ({status, body} = await request({
+                method: 'delete',
+                url: `/leader_followers/${follower.id}`,
+                authorization: userLogin.id
+            }));
+        });
+
+        it('status 200', () => {
+            assert.equal(status, 200);
+        });
+
+        it('leader has no followers', async () => {
+            const {body} = await request({
+                method: 'get',
+                url: `/leader_followers`,
+                authorization: userLogin.id
+            });
+
+            assert.lengthOf(body, 0);
+        });
+
+        it('follower\'s resonator has been deleted', async () => {
+            const {status, body} = await request({
+                method: 'get',
+                url: `/leader_followers/${follower.id}/reminders`,
+                authorization: userLogin.id
+            });
+
+            assert.equal(status, 200);
+
+            assert.lengthOf(body, 0);
         });
     });
 });

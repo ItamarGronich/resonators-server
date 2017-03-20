@@ -1,6 +1,6 @@
 import express from '../express';
 import routeHandler from '../routeHandler';
-import {updateFollowerUser, getLeaderFollowers, addLeaderFollower} from '../../application/leaderFollowers';
+import {updateFollowerUser, getLeaderFollowers, addLeaderFollower, deleteLeaderFollower} from '../../application/leaderFollowers';
 import userRepository from '../../db/repositories/UserRepository' ;
 
 express.get('/leader_followers\.:ext?', routeHandler(async (request, response) => {
@@ -28,6 +28,17 @@ express.put('/leader_followers/:followerId\.:ext?', routeHandler(async (request,
     const {followerId} = request.params;
 
     await updateFollowerUser(followerId, userRequest);
+
+    response.status(200);
+    response.json({});
+}, {
+    enforceLeaderFollower: true
+}));
+
+express.delete('/leader_followers/:followerId\.:ext?', routeHandler(async (request, response) => {
+    const {followerId} = request.params;
+
+    await deleteLeaderFollower(followerId);
 
     response.status(200);
     response.json({});

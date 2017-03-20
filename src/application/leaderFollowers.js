@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import {followers, users, leaders} from '../db/sequelize/models';
 import followerRepository from '../db/repositories/FollowerRepository';
+import resonatorRepository from '../db/repositories/ResonatorRepository';
 import userRepository from '../db/repositories/UserRepository';
 import User from '../domain/entities/user';
 import Follower from '../domain/entities/follower';
@@ -38,6 +39,13 @@ export async function addLeaderFollower({leader_id, clinic_id, email, name, pass
             name, email
         }
     };
+}
+
+export async function deleteLeaderFollower(followerId) {
+    return await Promise.all([
+        followerRepository.deleteById(followerId),
+        resonatorRepository.deleteByFollowerId(followerId)
+    ]);
 }
 
 export async function updateFollowerUser(followerId, newUserDetails) {

@@ -52,6 +52,14 @@ class ResonatorsRepository extends Repository {
         });
     }
 
+    deleteByFollowerId(follower_id) {
+        return resonators.destroy({
+            where: {
+                follower_id
+            }
+        });
+    }
+
     async findById(resonatorId) {
         const row = await resonators.findOne({
             where: {

@@ -53,6 +53,14 @@ class FollowerRepository extends Repository {
 
         return follower;
     }
+
+    async deleteById(id) {
+        return await followers.destroy({
+            where: {
+                id
+            }
+        });
+    }
 }
 
 export default new FollowerRepository();
