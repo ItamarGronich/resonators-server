@@ -201,7 +201,7 @@ export default function generateFixtures() {
             pop_email: true,
             pop_location_lat: 1.5,
             pop_location_lng: 3.4,
-            pop_time: '2016-04-03 14:00:00',
+            pop_time: '2016-04-03T11:00:00.000Z',
             repeat_days: '1,2,3,4,5',
             last_pop_time: null,
             disable_copy_to_leader: false,

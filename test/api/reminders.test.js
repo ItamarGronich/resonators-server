@@ -262,7 +262,7 @@ function assertResonator(actual, expected) {
         expected.repeat_days.split(',').map(d => parseInt(d));
 
     assert.deepEqual(_.omit(actual, 'created_at', 'updated_at', 'items', 'questions'), {
-        ..._.omit(expected, 'items', 'questions', 'last_pop_time', 'pop_email', 'pop_location_lat', 'pop_location_lng', 'pop_time'),
+        ..._.omit(expected, 'items', 'questions', 'last_pop_time', 'pop_email', 'pop_location_lat', 'pop_location_lng'),
         repeat_days
     });
 
