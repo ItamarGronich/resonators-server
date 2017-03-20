@@ -7,6 +7,7 @@ export default function supertestWrapper({
     method,
     body,
     cookie,
+    authorization,
     fields,
     attachment
 }) {
@@ -18,6 +19,9 @@ export default function supertestWrapper({
 
         if (cookie)
             req.set('Cookie', cookie);
+
+        if (authorization)
+            req.set('Authorization', authorization);
 
         if (body)
             req.send(body);

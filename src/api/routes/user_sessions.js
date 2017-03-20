@@ -29,7 +29,7 @@ express.post('/user_sessions\.:ext?', routeHandler(async (request, response) => 
 
 express.get('/user_sessions', routeHandler(async (request, response) => {
     response.status(200);
-    const {loginId} = request.cookies;
+    const loginId = request.cookies.loginId || request.headers.authorization;
     const {user} = await relogin(loginId);
     const resp = user ? dtoFactory.toUser(user) : {};
     response.json(resp);

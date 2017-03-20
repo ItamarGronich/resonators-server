@@ -1,7 +1,7 @@
 import relogin from '../../application/relogin';
 
 export default async function enforceLogin(request, response) {
-    const {loginId} = request.cookies;
+    let loginId = request.cookies.loginId || request.headers.authorization;
 
     if (!loginId) {
         sendLoginFailed(response);

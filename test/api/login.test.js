@@ -73,6 +73,26 @@ describe('login', () => {
         });
     });
 
+    it('relogin with token specified in the authorization header', async () => {
+        const [userLogin] = await generateFixtures()
+        .generateUserLogin()
+        .done();
+
+        const getResponse = await supertestWrapper({
+            method: 'get',
+            url: '/user_sessions',
+            authorization: userLogin.id
+        });
+
+        assert.equal(getResponse.status, 200);
+        assert.deepEqual(getResponse.body, {
+            name: userLogin.user.name,
+            email: userLogin.user.email,
+            unsubscribed: null,
+            country: null
+        });
+    });
+
     it('relogin without cookie', async () => {
         const {status, body} = await supertestWrapper({
             method: 'get',
