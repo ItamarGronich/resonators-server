@@ -4,6 +4,7 @@ import sendResetPasswordEmail from '../../application/sendResetPasswordEmail';
 import resetPasswordTokenValidator from '../../application/resetPasswordTokenValidator';
 import {getLatestAssetLink} from '../../application/versionableAssets';
 import changePassword from '../../application/changePassword';
+import renderClient from '../renderClient';
 
 express.post('/user_password_resets\.:ext?', routeHandler(async (request, response) => {
     const {email} = request.body;
@@ -37,11 +38,10 @@ express.post('/changePassword', routeHandler(async (request, response) => {
 
 express.get('/resetPassword', routeHandler(async (request, response) => {
     const tokenValid = await resetPasswordTokenValidator(request.query.token);
-    const clientVersion = await getLatestAssetLink('resonators-client');
 
     if (tokenValid) {
         response.status(200);
-        response.render('../pages/index', {clientVersion});
+        await renderClient(request, response);
     } else {
         response.status(400);
         response.json({
