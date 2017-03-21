@@ -32,7 +32,7 @@ describe('render resonator', () => {
 
         question.answers.forEach(a => {
             assert.include(text, a.body, 'must include the answer body');
-            assert.notInclude(text, 'showFromMail', 'must not include the answers link, since it is a preview mode');
+            assert.notInclude(text, '/submit', 'must not include the answers link, since it is a preview mode');
         });
     });
 

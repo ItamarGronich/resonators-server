@@ -1,7 +1,7 @@
 import express from '../express';
 import routeHandler from '../routeHandler';
 import {getResonatorStats, sendResonatorAnswer} from '../../application/resonatorStats';
-import {getLatestAssetLink} from '../../application/versionableAssets';
+import renderClient from '../renderClient';
 
 express.get('/criteria/stats/reminders/:resonatorId\.:ext?', routeHandler(async (request, response) => {
     const {resonatorId} = request.params;
@@ -34,14 +34,11 @@ express.get(`/criteria/stats/reminders/:resonator_id/criteria/submit`, routeHand
         sent_resonator_id
     });
 
-    if (!result)
+    if (!result) {
         response.status(422);
-    else
-        response.status(200);
-
-    const clientVersion = await getLatestAssetLink('resonators-client');
-
-    response.render('../pages/index', {clientVersion});
+        response.send('Answer submission failed.');
+    } else
+        await renderClient(request, response);
 }, {
     enforceLogin: false
 }));

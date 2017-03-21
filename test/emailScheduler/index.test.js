@@ -75,7 +75,7 @@ describe('email scheduler', () => {
             const html = args[0].html;
             assert.include(html, r1.content, 'html must include the resonator title');
             assert.include(html, r1.link, 'html must include the resonator link');
-            assert.include(html, 'showFromMail', 'html must include the answer link');
+            assert.include(html, '/submit', 'html must include the answer link');
             assert.include(html, sentResonatorId, 'html must include the sent_resonator id');
         });
     }).timeout(5000);
