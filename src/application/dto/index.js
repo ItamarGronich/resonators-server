@@ -34,6 +34,7 @@ export function toResonator(resonator) {
                        'repeat_days',
                        'items',
                        'questions',
+                       'pop_email',
                        'pop_time',
                        'created_at',
                        'updated_at'
