@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import {getLatestAssetLink} from '../application/versionableAssets';
 
-export default async function renderClient(request, response) {
+export default async function renderClient(request, response, pageData) {
     let clientVersion = await getLatestAssetLink('resonators-client');
 
     if (process.env.ENV === 'dev')
@@ -19,7 +19,8 @@ export default async function renderClient(request, response) {
     response.render('../pages/index', {
         clientVersion: clientVersionTxt,
         serverVersion: serverVersionTxt,
-        scriptUrl: clientVersion.link
+        scriptUrl: clientVersion.link,
+        pageData: pageData && JSON.stringify(pageData)
     });
 }
 

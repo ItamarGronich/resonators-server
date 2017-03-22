@@ -3,6 +3,7 @@ import resonatorStatsRepository from '../db/repositories/ResonatorStatsRepositor
 import resonatorRepository from '../db/repositories/ResonatorRepository';
 import questionRepository from '../db/repositories/QuestionRepository';
 import sentResonatorRepository from '../db/repositories/SentResonatorRepository';
+import * as dtoFactory from './dto';
 import getUow from './getUow';
 
 export async function getResonatorStats(resonatorId) {
@@ -47,5 +48,9 @@ export async function sendResonatorAnswer({resonator_id, question_id, answer_id,
 
     await getUow().commit();
 
-    return true;
+    const resonatorDto = dtoFactory.toResonator(resonator);
+
+    return {
+        resonator: resonatorDto
+    };
 }

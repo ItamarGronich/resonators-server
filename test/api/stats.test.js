@@ -100,6 +100,7 @@ describe('resonator stats', () => {
             });
 
             assert.include(response.text, '<html>');
+            assert.include(response.text, 'window.pageData = {"resonator":{');
         });
 
         it('post resonator answer for a new question', async () => {

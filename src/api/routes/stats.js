@@ -38,7 +38,7 @@ express.get(`/criteria/stats/reminders/:resonator_id/criteria/submit`, routeHand
         response.status(422);
         response.send('Answer submission failed.');
     } else
-        await renderClient(request, response);
+        await renderClient(request, response, result);
 }, {
     enforceLogin: false
 }));
