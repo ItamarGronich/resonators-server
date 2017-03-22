@@ -53,7 +53,8 @@ describe('resonator stats', () => {
     }
 
     describe('send resonator answer', () => {
-        it('post resonator answer', async () => {
+        ['get', 'post'].forEach(method =>
+        it(`post resonator answer - by ${method}`, async () => {
             const {resonator, userLogin} = await generateFixtures().preset1();
             const [sentResonator] = await generateFixtures().generateSentResonator(resonator).done();
 
@@ -64,11 +65,26 @@ describe('resonator stats', () => {
                 sent_resonator_id: sentResonator.id
             };
 
-            const response = await request({
-                method: 'get',
-                url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
-                cookie: `loginId=${userLogin.id}`
-            });
+            let response;
+
+            if (method === 'get') {
+                response = await request({
+                    method: 'get',
+                    url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                    cookie: `loginId=${userLogin.id}`
+                });
+            } else if (method === 'post') {
+                response = await request({
+                    method: 'post',
+                    url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit`,
+                    body: {
+                        question_id: answer.question_id,
+                        answer_id: answer.answer_id,
+                        sent_resonator_id: answer.sent_resonator_id
+                    },
+                    cookie: `loginId=${userLogin.id}`
+                });
+            }
 
             assert.equal(response.status, 200);
 
@@ -80,7 +96,7 @@ describe('resonator stats', () => {
 
             resonator.answers.unshift({ answer_id: answer.answer_id, resonator_question_id: resonator.questions[0].id });
             assertResonatorStatsResponse(getResponse, resonator);
-        });
+        }));
 
         it('post resonator answer - returns the index page', async () => {
             const {resonator, userLogin} = await generateFixtures().preset1();
