@@ -39,7 +39,7 @@ export default class Resonator {
         this.pop_location_lat = pop_location_lat;
         this.pop_location_lng = pop_location_lng;
         this.pop_time = pop_time;
-        this.repeat_days = repeat_days;
+        this.repeat_days = repeat_days || [];
         this.last_pop_time = last_pop_time;
         this.disable_copy_to_leader = disable_copy_to_leader;
         this.items = items || [];

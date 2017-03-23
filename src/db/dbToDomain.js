@@ -41,7 +41,8 @@ export function toFollower(r) {
 export function toResonator(r) {
     const resonator_attachments = (r.resonator_attachments || []).map(toResonatorAttachment);
     const resonator_questions = (r.resonator_questions || []).map(toResonatorQuestion);
-    const repeat_days = (r.get('repeat_days') || []).split(',').map(s => parseInt(s));
+    let repeat_days = r.get('repeat_days');
+    repeat_days = repeat_days ? repeat_days.split(',').map(s => parseInt(s)) : [];
 
     return new Resonator({
         id: r.get('id'),

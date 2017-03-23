@@ -53,38 +53,58 @@ describe('reminders', () => {
         assertResonator(body, resonator);
     });
 
-    it('create resonator', async () => {
-        const { userLogin, leader, clinic, follower } = await generateFixtures().preset1();
+    describe('create resonator', () => {
+        let userLogin, leader, clinic, follower, resonator;
 
-        const resonator = {
-            title: 'title',
-            content: 'content',
-            description: 'description',
-            disable_copy_to_leader: true,
-            follower_id: follower.id,
-            link: 'link',
-            pop_email: true,
-            pop_time: "2017-02-12T11:06:47.255Z",
-            repeat_days: [1,2,3]
-        };
+        beforeEach(async () => {
+            ({ userLogin, leader, clinic, follower } = await generateFixtures().preset1());
 
-        const {status, body} = await supertestWrapper({
-            method: 'post',
-            url: `/leader_followers/${follower.id}/reminders`,
-            body: resonator,
-            cookie: `loginId=${userLogin.id}`
+            resonator = {
+                title: 'title',
+                content: 'content',
+                description: 'description',
+                disable_copy_to_leader: true,
+                follower_id: follower.id,
+                link: 'link',
+                pop_email: true,
+                pop_time: "2017-02-12T11:06:47.255Z",
+                repeat_days: [1,2,3]
+            };
         });
 
-        assert.equal(status, 201);
-        assertResonator(body, {
-            ...resonator,
-            id: body.id,
-            leader_id: leader.id
+        it('create resonator', async () => {
+            await create();
         });
 
-        assert.lengthOf(body.id, 36);
-        assert.isOk(body.created_at);
-        assert.isOk(body.updated_at);
+        it('create resonator with empty repeat_days', async () => {
+            resonator.repeat_days = [];
+            await create();
+        });
+
+        it('create resonator with undefined repeat_days', async () => {
+            resonator = _.omit(resonator, 'repeat_days');
+            await create();
+        });
+
+        async function create() {
+            const {status, body} = await supertestWrapper({
+                method: 'post',
+                url: `/leader_followers/${follower.id}/reminders`,
+                body: resonator,
+                cookie: `loginId=${userLogin.id}`
+            });
+
+            assert.equal(status, 201);
+            assertResonator(body, {
+                ...resonator,
+                id: body.id,
+                leader_id: leader.id
+            });
+
+            assert.lengthOf(body.id, 36);
+            assert.isOk(body.created_at);
+            assert.isOk(body.updated_at);
+        }
     });
 
     it('put resonator', async () => {
@@ -257,9 +277,14 @@ describe('reminders', () => {
 });
 
 function assertResonator(actual, expected) {
-    const repeat_days = expected.repeat_days.constructor.name === 'Array' ?
-        expected.repeat_days :
-        expected.repeat_days.split(',').map(d => parseInt(d));
+    let repeat_days;
+
+    if (!expected.repeat_days)
+        repeat_days = [];
+    else if (expected.repeat_days.constructor.name === 'Array')
+        repeat_days = expected.repeat_days;
+    else
+        repeat_days = expected.repeat_days.split(',').map(d => parseInt(d));
 
     assert.deepEqual(_.omit(actual, 'created_at', 'updated_at', 'items', 'questions'), {
         ..._.omit(expected, 'items', 'questions', 'last_pop_time', 'pop_location_lat', 'pop_location_lng'),
