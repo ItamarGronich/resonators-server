@@ -8,13 +8,13 @@ import setLoginCookie from './setLoginCookie';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 import {assert} from 'chai';
 import moment from 'moment';
-import supertestWrapper from './supertestWrapper';
+import request from './supertestWrapper';
 
 describe('reminders', () => {
     it('block unauthorized leader', async () => {
         const { userLogin, follower } = await generateFixtures().preset1();
 
-        const {status, body} = await supertestWrapper({
+        const {status, body} = await request({
             url: `/leader_followers/${follower.id}/reminders`,
             method: 'get',
             cookie: `loginId=${fooUserLogin.id}`
@@ -30,7 +30,7 @@ describe('reminders', () => {
     it('get followers\' resonators', async () => {
         const { userLogin, follower, resonator } = await generateFixtures().preset1();
 
-        const {status, body} = await supertestWrapper({
+        const {status, body} = await request({
             method: 'get',
             url: `/leader_followers/${follower.id}/reminders`,
             cookie: `loginId=${userLogin.id}`
@@ -43,7 +43,7 @@ describe('reminders', () => {
     it('get a single follower resonator', async () => {
         const {userLogin, follower, resonator} = await generateFixtures().preset1();
 
-        const {status, body} = await supertestWrapper({
+        const {status, body} = await request({
             method: 'get',
             url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
             cookie: `loginId=${userLogin.id}`
@@ -87,7 +87,7 @@ describe('reminders', () => {
         });
 
         async function create() {
-            const {status, body} = await supertestWrapper({
+            const {status, body} = await request({
                 method: 'post',
                 url: `/leader_followers/${follower.id}/reminders`,
                 body: resonator,
@@ -122,7 +122,7 @@ describe('reminders', () => {
             repeat_days: [1,2,3]
         };
 
-        const {status, body} = await supertestWrapper({
+        const {status, body} = await request({
             method: 'put',
             url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
             cookie: `loginId=${userLogin.id}`
@@ -134,13 +134,34 @@ describe('reminders', () => {
         assert.isOk(body.updated_at);
     });
 
+    it('remove resonator', async () => {
+        const { userLogin, follower, resonator } = await generateFixtures().preset1();
+
+        const deleteResponse = await request({
+            method: 'delete',
+            url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
+            cookie: `loginId=${userLogin.id}`
+        });
+
+        assert.equal(deleteResponse.status, 200);
+
+        const getResponse = await request({
+            method: 'get',
+            url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
+            cookie: `loginId=${userLogin.id}`
+        });
+
+        assert.equal(getResponse.status, 200);
+        assert.equal(getResponse.body, null);
+    });
+
     it('add resonator criteria', async () => {
         const { userLogin, leader, clinic, follower, resonator } = await generateFixtures().preset1();
         const [ question ] = await generateFixtures().generateQuestion({
             leader, clinic
         }).done();
 
-        const response = await supertestWrapper({
+        const response = await request({
             method: 'post',
             url: `/leader_followers/${follower.id}/reminders/${resonator.id}/criteria`,
             cookie: `loginId=${userLogin.id}`,
@@ -152,7 +173,7 @@ describe('reminders', () => {
 
         assert.equal(response.status, 200);
 
-        const response2 = await supertestWrapper({
+        const response2 = await request({
             method: 'get',
             url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
             cookie: `loginId=${userLogin.id}`
@@ -179,7 +200,7 @@ describe('reminders', () => {
     it('remove resonator criteria', async () => {
         const { userLogin, follower, resonator } = await generateFixtures().preset1();
 
-        const response = await supertestWrapper({
+        const response = await request({
             method: 'delete',
             url: `/leader_followers/${follower.id}/reminders/${resonator.id}/criteria/${resonator.questions[0].id}`,
             cookie: `loginId=${userLogin.id}`,
@@ -187,7 +208,7 @@ describe('reminders', () => {
 
         assert.equal(response.status, 200);
 
-        const {body: updatedResonator} = await supertestWrapper({
+        const {body: updatedResonator} = await request({
             method: 'get',
             url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
             cookie: `loginId=${userLogin.id}`
@@ -212,7 +233,7 @@ describe('reminders', () => {
             media_title: 'image title'
         };
 
-        const response = await supertestWrapper({
+        const response = await request({
             method: 'post',
             url: `/leader_followers/${follower.id}/reminders/${resonator.id}/items`,
             cookie: `loginId=${userLogin.id}`,
@@ -222,7 +243,7 @@ describe('reminders', () => {
 
         assert.equal(response.status, 201);
 
-        const updatedResonatorResponse = await supertestWrapper({
+        const updatedResonatorResponse = await request({
             method: 'get',
             url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
             cookie: `loginId=${userLogin.id}`
@@ -255,7 +276,7 @@ describe('reminders', () => {
 
         const item = resonator.items[0]
 
-        const deleteResponse = await supertestWrapper({
+        const deleteResponse = await request({
             method: 'delete',
             url: `/leader_followers/${follower.id}/reminders/${resonator.id}/items/${item.id}`,
             cookie: `loginId=${userLogin.id}`
@@ -263,7 +284,7 @@ describe('reminders', () => {
 
         assert.equal(deleteResponse.status, 200);
 
-        const getResponse = await supertestWrapper({
+        const getResponse = await request({
             method: 'get',
             url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
             cookie: `loginId=${userLogin.id}`

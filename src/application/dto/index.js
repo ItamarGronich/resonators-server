@@ -21,6 +21,9 @@ export function toFollower(follower) {
 }
 
 export function toResonator(resonator) {
+    if (!resonator)
+        return null;
+
     const dto = _.pick(resonator,
                        'id',
                        'leader_id',

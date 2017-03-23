@@ -50,6 +50,11 @@ export async function updateResonator(resonator_id, updatedFields) {
     return savedResonator;
 }
 
+export async function removeResonator(resonator_id) {
+    await resonatorRepository.deleteById(resonator_id);
+    return true;
+}
+
 export async function addQuestionToResonator(resonator_id, question_id) {
     const [resonator, question] = await Promise.all([
         resonatorRepository.findById(resonator_id),

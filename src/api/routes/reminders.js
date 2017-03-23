@@ -127,3 +127,18 @@ express.delete('/leader_followers/:followerId/reminders/:reminderId/items/:itemI
 }, {
     enforceLeaderFollower: true
 }));
+
+express.delete('/leader_followers/:followerId/reminders/:reminderId\.:ext?', routeHandler(async (request, response) => {
+    const {reminderId} = request.params;
+
+    const result = await service.removeResonator(reminderId);
+
+    if (!result)
+        response.status(422);
+    else
+        response.status(200);
+
+    response.json({});
+}, {
+    enforceLeaderFollower: true
+}));
