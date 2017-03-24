@@ -2,14 +2,14 @@ import _ from 'lodash';
 import db from '../../src/db/sequelize/dbConnection';
 import {assert} from 'chai';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
-import supertestWrapper from '../api/supertestWrapper';
+import request from '../api/supertestWrapper';
 import moment from 'moment';
 import assertLoginResponse from './assert/assertLoginResponse';
 const knex = require('knex')({client: 'postgres'});
 
 describe('login', () => {
     it('login without credentials', async () => {
-        const {status, body} = await supertestWrapper({
+        const {status, body} = await request({
             method: 'post',
             url: '/api/user_sessions'
         });
@@ -27,7 +27,7 @@ describe('login', () => {
                                 .generateUserLogin()
                                 .done());
 
-            ({status, body, headers} = await supertestWrapper({
+            ({status, body, headers} = await request({
                 method: 'post',
                 url: '/api/user_sessions',
                 body: { email: userLogin.user.email, password: '1234'}
@@ -69,7 +69,7 @@ describe('login', () => {
         .generateUserLogin()
         .done();
 
-        const {status, body, headers} = await supertestWrapper({
+        const {status, body, headers} = await request({
             method: 'post',
             url: '/api/user_sessions',
             body: { email: userLogin.user.email, password: '1234'},
@@ -78,7 +78,7 @@ describe('login', () => {
         const matches = /loginId=(.+?);/.exec(headers['set-cookie'][0]);
         const loginId = matches[1];
 
-        const getResponse = await supertestWrapper({
+        const getResponse = await request({
             method: 'get',
             url: '/api/user_sessions',
             cookie: `loginId=${loginId}`
@@ -100,7 +100,7 @@ describe('login', () => {
         .generateUserLogin()
         .done();
 
-        const getResponse = await supertestWrapper({
+        const getResponse = await request({
             method: 'get',
             url: '/api/user_sessions',
             authorization: userLogin.id
@@ -118,7 +118,7 @@ describe('login', () => {
     });
 
     it('relogin without cookie', async () => {
-        const {status, body} = await supertestWrapper({
+        const {status, body} = await request({
             method: 'get',
             url: '/api/user_sessions'
         });
@@ -132,7 +132,7 @@ describe('login', () => {
                             .generateUserLogin()
                             .done();
 
-        const {status, body, headers} = await supertestWrapper({
+        const {status, body, headers} = await request({
             method: 'post',
             url: '/api/user_sessions',
             body: { email: userLogin.user.email, password: '12345'}
@@ -156,8 +156,7 @@ describe('login', () => {
                             .generateUserLogin()
                             .done();
 
-
-        const {status, body} = await supertestWrapper({
+        const {status, body} = await request({
             method: 'post',
             url: '/api/user_sessions',
             body: { email: userLogin.user.email, password: '1234'}
@@ -169,5 +168,27 @@ describe('login', () => {
         .toString();
 
         await db.query(sql).spread(rows => assert.isAbove(rows.length, 0))
+    });
+
+    it('logout', async () => {
+        const [userLogin] = await generateFixtures()
+                            .generateUserLogin()
+                            .done();
+
+        const {status, body} = await request({
+            method: 'delete',
+            url: '/api/user_sessions',
+            authorization: userLogin.id
+        });
+
+        assert.equal(status, 200);
+
+        const getResponse = await request({
+            method: 'get',
+            url: '/api/user_sessions',
+            authorization: userLogin.id
+        });
+
+        assert.deepEqual(getResponse.body, {});
     });
 });
