@@ -2,8 +2,7 @@ import express from '../express';
 import routeHandler from '../routeHandler';
 import renderClient from '../renderClient';
 
-express.get('/', serveClient());
-express.get('/react*', serveClient());
+express.get(/^(?!\/api).*$/, serveClient());
 
 function serveClient() {
     return routeHandler(async (request, response) => {

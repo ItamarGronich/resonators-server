@@ -11,7 +11,7 @@ describe('login', () => {
     it('login without credentials', async () => {
         const {status, body} = await supertestWrapper({
             method: 'post',
-            url: '/user_sessions'
+            url: '/api/user_sessions'
         });
 
         assert.equal(status, 200);
@@ -29,7 +29,7 @@ describe('login', () => {
 
             ({status, body, headers} = await supertestWrapper({
                 method: 'post',
-                url: '/user_sessions',
+                url: '/api/user_sessions',
                 body: { email: userLogin.user.email, password: '1234'}
             }));
         });
@@ -71,7 +71,7 @@ describe('login', () => {
 
         const {status, body, headers} = await supertestWrapper({
             method: 'post',
-            url: '/user_sessions',
+            url: '/api/user_sessions',
             body: { email: userLogin.user.email, password: '1234'},
         });
 
@@ -80,7 +80,7 @@ describe('login', () => {
 
         const getResponse = await supertestWrapper({
             method: 'get',
-            url: '/user_sessions',
+            url: '/api/user_sessions',
             cookie: `loginId=${loginId}`
         });
 
@@ -102,7 +102,7 @@ describe('login', () => {
 
         const getResponse = await supertestWrapper({
             method: 'get',
-            url: '/user_sessions',
+            url: '/api/user_sessions',
             authorization: userLogin.id
         });
 
@@ -120,7 +120,7 @@ describe('login', () => {
     it('relogin without cookie', async () => {
         const {status, body} = await supertestWrapper({
             method: 'get',
-            url: '/user_sessions'
+            url: '/api/user_sessions'
         });
 
         assert.equal(status, 200);
@@ -134,7 +134,7 @@ describe('login', () => {
 
         const {status, body, headers} = await supertestWrapper({
             method: 'post',
-            url: '/user_sessions',
+            url: '/api/user_sessions',
             body: { email: userLogin.user.email, password: '12345'}
         });
 
@@ -159,7 +159,7 @@ describe('login', () => {
 
         const {status, body} = await supertestWrapper({
             method: 'post',
-            url: '/user_sessions',
+            url: '/api/user_sessions',
             body: { email: userLogin.user.email, password: '1234'}
         });
 
@@ -169,5 +169,5 @@ describe('login', () => {
         .toString();
 
         await db.query(sql).spread(rows => assert.isAbove(rows.length, 0))
-    })
+    });
 });

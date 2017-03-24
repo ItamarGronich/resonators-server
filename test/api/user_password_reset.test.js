@@ -12,7 +12,7 @@ describe('password reset', () => {
         const [user] = await generateFixtures().generateUser().done();
 
         const response = await request({
-            url: '/user_password_resets',
+            url: '/api/user_password_resets',
             method: 'post',
             body: {
                 email: user.email
@@ -26,7 +26,7 @@ describe('password reset', () => {
         const [user] = await generateFixtures().generateUser().done();
 
         const response = await request({
-            url: '/user_password_resets',
+            url: '/api/user_password_resets',
             method: 'post',
             body: {
                 email: 'aaa' + user.email
@@ -66,7 +66,7 @@ describe('password reset', () => {
         const [user] = await generateFixtures().generateUser().done();
 
         const response = await request({
-            url: '/user_password_resets',
+            url: '/api/user_password_resets',
             method: 'post',
             body: {
                 email: user.email
@@ -77,7 +77,7 @@ describe('password reset', () => {
         const token = row.get('id');
 
         const response2 = await request({
-            url: '/resetPassword?token=' + token,
+            url: '/api/resetPassword?token=' + token,
             method: 'get'
         });
 
@@ -87,7 +87,7 @@ describe('password reset', () => {
 
     it('get reset password page with an inexistent token', async () => {
         const response = await request({
-            url: `/resetPassword?token=${uuid()}`,
+            url: `/api/resetPassword?token=${uuid()}`,
             method: 'get'
         });
 
@@ -101,7 +101,7 @@ describe('password reset', () => {
         const [user] = await generateFixtures().generateUser().done();
 
         const response = await request({
-            url: '/user_password_resets',
+            url: '/api/user_password_resets',
             method: 'post',
             body: {
                 email: user.email
@@ -112,7 +112,7 @@ describe('password reset', () => {
         const token = row.get('id');
 
         const response2 = await request({
-            url: '/changePassword',
+            url: '/api/changePassword',
             method: 'post',
             body: {
                 token,
@@ -123,7 +123,7 @@ describe('password reset', () => {
         assert.equal(response.status, 200);
 
         const loginResponse = await request({
-            url: '/user_sessions',
+            url: '/api/user_sessions',
             method: 'post',
             body: {
                 email: user.email,

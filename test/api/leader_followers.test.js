@@ -16,7 +16,7 @@ describe('leader_followers', () => {
 
         const {status, body} = await request({
             method: 'get',
-            url: '/leader_followers',
+            url: '/api/leader_followers',
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -45,7 +45,7 @@ describe('leader_followers', () => {
 
         const {status, body} = await request({
             method: 'post',
-            url: '/leader_followers',
+            url: '/api/leader_followers',
             cookie: `loginId=${userLogin.id}`,
             body: {
                 clinic_id: clinic.id,
@@ -77,7 +77,7 @@ describe('leader_followers', () => {
     it('cannot put unfollowed user', async () => {
         const {status, body} = await request({
             method: 'put',
-            url: `/leader_followers/${putFollower.id}`,
+            url: `/api/leader_followers/${putFollower.id}`,
             cookie: `loginId=${fooUserLogin.id}`,
             body: {user: {email: 'uv@gmail.com', name:'ppp'}}
         });
@@ -90,7 +90,7 @@ describe('leader_followers', () => {
 
         const {status, body} = await request({
             method: 'put',
-            url: `/leader_followers/${follower.id}`,
+            url: `/api/leader_followers/${follower.id}`,
             body: {user: {email: 'uv@gmail.com', name:'ppp'}},
             cookie: `loginId=${userLogin.id}`
         });
@@ -116,7 +116,7 @@ describe('leader_followers', () => {
 
             ({status, body} = await request({
                 method: 'delete',
-                url: `/leader_followers/${follower.id}`,
+                url: `/api/leader_followers/${follower.id}`,
                 authorization: userLogin.id
             }));
         });
@@ -128,7 +128,7 @@ describe('leader_followers', () => {
         it('leader has no followers', async () => {
             const {body} = await request({
                 method: 'get',
-                url: `/leader_followers`,
+                url: `/api/leader_followers`,
                 authorization: userLogin.id
             });
 
@@ -138,7 +138,7 @@ describe('leader_followers', () => {
         it('follower\'s resonator has been deleted', async () => {
             const {status, body} = await request({
                 method: 'get',
-                url: `/leader_followers/${follower.id}/reminders`,
+                url: `/api/leader_followers/${follower.id}/reminders`,
                 authorization: userLogin.id
             });
 

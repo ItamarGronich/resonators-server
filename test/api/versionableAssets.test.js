@@ -24,7 +24,7 @@ describe('versionable assets', () => {
         const asset_id = `asset_${uuid()}`;
         const tag = `tag_${uuid()}`;
         const response = await request({
-            url: '/versionable_assets/upload',
+            url: '/api/versionable_assets/upload',
             method: 'post',
             fields: {
                 asset_id,
@@ -53,7 +53,7 @@ describe('versionable assets', () => {
         const [asset] = await generateFixtures().generateVersionableAsset().done();
 
         const response = await request({
-            url: '/versionable_assets/upload',
+            url: '/api/versionable_assets/upload',
             method: 'post',
             fields: {
                 asset_id: asset.asset_id,
@@ -76,7 +76,7 @@ describe('versionable assets', () => {
     it('save with wrong secret', async () => {
         const asset_id = `asset_${uuid()}`;
         const response = await request({
-            url: '/versionable_assets/upload',
+            url: '/api/versionable_assets/upload',
             method: 'post',
             fields: {
                 asset_id,
@@ -98,7 +98,7 @@ describe('versionable assets', () => {
                                         .done();
 
         await request({
-            url: '/versionable_assets/upload',
+            url: '/api/versionable_assets/upload',
             method: 'post',
             fields: {
                 asset_id: asset1.asset_id,
@@ -118,7 +118,7 @@ describe('versionable assets', () => {
         const [asset] = await generateFixtures().generateVersionableAsset().done();
 
         const response = await request({
-            url: `/versionable_assets/${asset.asset_id}/latest`,
+            url: `/api/versionable_assets/${asset.asset_id}/latest`,
             method: 'get'
         });
 

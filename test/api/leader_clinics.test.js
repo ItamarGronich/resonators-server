@@ -10,7 +10,7 @@ describe('leader_clinics', () => {
 
         const response = await supertestWrapper({
             method: 'get',
-            url: '/leader_clinics',
+            url: '/api/leader_clinics',
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -29,7 +29,7 @@ describe('leader_clinics', () => {
 
         const response = await supertestWrapper({
             method: 'get',
-            url: `/leader_clinics/${clinics[0].id}/criteria`,
+            url: `/api/leader_clinics/${clinics[0].id}/criteria`,
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -52,7 +52,7 @@ describe('leader_clinics', () => {
 
         const response = await supertestWrapper({
             method: 'get',
-            url: `/leader_clinics/all/criteria`,
+            url: `/api/leader_clinics/all/criteria`,
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -82,7 +82,7 @@ describe('leader_clinics', () => {
 
         const response = await supertestWrapper({
             method: 'post',
-            url: `/leader_clinics/${clinic.id}/criteria`,
+            url: `/api/leader_clinics/${clinic.id}/criteria`,
             cookie: `loginId=${userLogin.id}`,
             body: newQuestion
         });
@@ -101,7 +101,7 @@ describe('leader_clinics', () => {
 
         const clinicQuestionsResponse = await supertestWrapper({
             method: 'get',
-            url: `/leader_clinics/${clinic.id}/criteria`,
+            url: `/api/leader_clinics/${clinic.id}/criteria`,
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -122,7 +122,7 @@ describe('leader_clinics', () => {
 
         const response = await supertestWrapper({
             method: 'put',
-            url: `/leader_clinics/${clinic.id}/criteria/${originalQuestion.id}`,
+            url: `/api/leader_clinics/${clinic.id}/criteria/${originalQuestion.id}`,
             cookie: `loginId=${userLogin.id}`,
             body: updatedQuestion
         });
@@ -133,7 +133,7 @@ describe('leader_clinics', () => {
 
         const clinicQuestionsResponse = await supertestWrapper({
             method: 'get',
-            url: `/leader_clinics/${clinic.id}/criteria`,
+            url: `/api/leader_clinics/${clinic.id}/criteria`,
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -154,7 +154,7 @@ describe('leader_clinics', () => {
 
         const response = await supertestWrapper({
             method: 'put',
-            url: `/leader_clinics/${clinic.id}/criteria/${originalQuestion.id}`,
+            url: `/api/leader_clinics/${clinic.id}/criteria/${originalQuestion.id}`,
             cookie: `loginId=${userLogin.id}`,
             body: updatedQuestion
         });
@@ -165,7 +165,7 @@ describe('leader_clinics', () => {
 
         const clinicQuestionsResponse = await supertestWrapper({
             method: 'get',
-            url: `/leader_clinics/${clinic.id}/criteria`,
+            url: `/api/leader_clinics/${clinic.id}/criteria`,
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -186,7 +186,7 @@ describe('leader_clinics', () => {
 
         const response = await supertestWrapper({
             method: 'put',
-            url: `/leader_clinics/${clinic.id}/criteria/${originalQuestion.id}`,
+            url: `/api/leader_clinics/${clinic.id}/criteria/${originalQuestion.id}`,
             cookie: `loginId=${userLogin.id}`,
             body: updatedQuestion
         });
@@ -198,7 +198,7 @@ describe('leader_clinics', () => {
 
         const clinicQuestionsResponse = await supertestWrapper({
             method: 'get',
-            url: `/leader_clinics/${clinic.id}/criteria`,
+            url: `/api/leader_clinics/${clinic.id}/criteria`,
             cookie: `loginId=${userLogin.id}`
         });
 

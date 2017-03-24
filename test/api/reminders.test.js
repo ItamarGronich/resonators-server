@@ -15,7 +15,7 @@ describe('reminders', () => {
         const { userLogin, follower } = await generateFixtures().preset1();
 
         const {status, body} = await request({
-            url: `/leader_followers/${follower.id}/reminders`,
+            url: `/api/leader_followers/${follower.id}/reminders`,
             method: 'get',
             cookie: `loginId=${fooUserLogin.id}`
         });
@@ -32,7 +32,7 @@ describe('reminders', () => {
 
         const {status, body} = await request({
             method: 'get',
-            url: `/leader_followers/${follower.id}/reminders`,
+            url: `/api/leader_followers/${follower.id}/reminders`,
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -45,7 +45,7 @@ describe('reminders', () => {
 
         const {status, body} = await request({
             method: 'get',
-            url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
+            url: `/api/leader_followers/${follower.id}/reminders/${resonator.id}`,
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -89,7 +89,7 @@ describe('reminders', () => {
         async function create() {
             const {status, body} = await request({
                 method: 'post',
-                url: `/leader_followers/${follower.id}/reminders`,
+                url: `/api/leader_followers/${follower.id}/reminders`,
                 body: resonator,
                 cookie: `loginId=${userLogin.id}`
             });
@@ -124,7 +124,7 @@ describe('reminders', () => {
 
         const {status, body} = await request({
             method: 'put',
-            url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
+            url: `/api/leader_followers/${follower.id}/reminders/${resonator.id}`,
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -139,7 +139,7 @@ describe('reminders', () => {
 
         const deleteResponse = await request({
             method: 'delete',
-            url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
+            url: `/api/leader_followers/${follower.id}/reminders/${resonator.id}`,
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -147,7 +147,7 @@ describe('reminders', () => {
 
         const getResponse = await request({
             method: 'get',
-            url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
+            url: `/api/leader_followers/${follower.id}/reminders/${resonator.id}`,
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -163,7 +163,7 @@ describe('reminders', () => {
 
         const response = await request({
             method: 'post',
-            url: `/leader_followers/${follower.id}/reminders/${resonator.id}/criteria`,
+            url: `/api/leader_followers/${follower.id}/reminders/${resonator.id}/criteria`,
             cookie: `loginId=${userLogin.id}`,
             body: {
                 question_id: question.id,
@@ -175,7 +175,7 @@ describe('reminders', () => {
 
         const response2 = await request({
             method: 'get',
-            url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
+            url: `/api/leader_followers/${follower.id}/reminders/${resonator.id}`,
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -202,7 +202,7 @@ describe('reminders', () => {
 
         const response = await request({
             method: 'delete',
-            url: `/leader_followers/${follower.id}/reminders/${resonator.id}/criteria/${resonator.questions[0].id}`,
+            url: `/api/leader_followers/${follower.id}/reminders/${resonator.id}/criteria/${resonator.questions[0].id}`,
             cookie: `loginId=${userLogin.id}`,
         });
 
@@ -210,7 +210,7 @@ describe('reminders', () => {
 
         const {body: updatedResonator} = await request({
             method: 'get',
-            url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
+            url: `/api/leader_followers/${follower.id}/reminders/${resonator.id}`,
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -235,7 +235,7 @@ describe('reminders', () => {
 
         const response = await request({
             method: 'post',
-            url: `/leader_followers/${follower.id}/reminders/${resonator.id}/items`,
+            url: `/api/leader_followers/${follower.id}/reminders/${resonator.id}/items`,
             cookie: `loginId=${userLogin.id}`,
             fields,
             attachment
@@ -245,7 +245,7 @@ describe('reminders', () => {
 
         const updatedResonatorResponse = await request({
             method: 'get',
-            url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
+            url: `/api/leader_followers/${follower.id}/reminders/${resonator.id}`,
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -278,7 +278,7 @@ describe('reminders', () => {
 
         const deleteResponse = await request({
             method: 'delete',
-            url: `/leader_followers/${follower.id}/reminders/${resonator.id}/items/${item.id}`,
+            url: `/api/leader_followers/${follower.id}/reminders/${resonator.id}/items/${item.id}`,
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -286,7 +286,7 @@ describe('reminders', () => {
 
         const getResponse = await request({
             method: 'get',
-            url: `/leader_followers/${follower.id}/reminders/${resonator.id}`,
+            url: `/api/leader_followers/${follower.id}/reminders/${resonator.id}`,
             cookie: `loginId=${userLogin.id}`
         });
 

@@ -11,7 +11,7 @@ describe('render resonator', () => {
 
         const response = await supertestWrapper({
             method: 'get',
-            url: `/reminders/${resonator.id}/render`
+            url: `/api/reminders/${resonator.id}/render`
         });
 
         ({status, text} = response);

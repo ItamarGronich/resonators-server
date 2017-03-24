@@ -6,7 +6,7 @@ import {getLatestAssetLink} from '../../application/versionableAssets';
 import changePassword from '../../application/changePassword';
 import renderClient from '../renderClient';
 
-express.post('/user_password_resets\.:ext?', routeHandler(async (request, response) => {
+express.post('/api/user_password_resets\.:ext?', routeHandler(async (request, response) => {
     const {email} = request.body;
     const result = await sendResetPasswordEmail(email);
 
@@ -20,7 +20,7 @@ express.post('/user_password_resets\.:ext?', routeHandler(async (request, respon
     enforceLogin: false
 }));
 
-express.post('/changePassword', routeHandler(async (request, response) => {
+express.post('/api/changePassword', routeHandler(async (request, response) => {
     const {token, password} = request.body;
 
     const result = await changePassword(token, password);
@@ -36,7 +36,7 @@ express.post('/changePassword', routeHandler(async (request, response) => {
     enforceLogin: false
 }));
 
-express.get('/resetPassword', routeHandler(async (request, response) => {
+express.get('/api/resetPassword', routeHandler(async (request, response) => {
     const tokenValid = await resetPasswordTokenValidator(request.query.token);
 
     if (tokenValid) {

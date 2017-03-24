@@ -7,7 +7,7 @@ import {
     updateQuestion
 } from '../../application/leaderClinics';
 
-express.get('/leader_clinics', routeHandler(async (request, response) => {
+express.get('/api/leader_clinics', routeHandler(async (request, response) => {
     const {user} = request.appSession;
 
     const clinics = await getLeaderClinics(user.id);
@@ -16,7 +16,7 @@ express.get('/leader_clinics', routeHandler(async (request, response) => {
     response.json(clinics);
 }));
 
-express.get('/leader_clinics/:clinicId/criteria\.:ext?', routeHandler(async (request, response) => {
+express.get('/api/leader_clinics/:clinicId/criteria\.:ext?', routeHandler(async (request, response) => {
     const {leader} = request.appSession;
 
     const {clinicId} = request.params;
@@ -33,7 +33,7 @@ express.get('/leader_clinics/:clinicId/criteria\.:ext?', routeHandler(async (req
     response.json(questions);
 }));
 
-express.post('/leader_clinics/:clinicId/criteria\.:ext?', routeHandler(async (request, response) => {
+express.post('/api/leader_clinics/:clinicId/criteria\.:ext?', routeHandler(async (request, response) => {
     const {leader} = request.appSession;
     const question = request.body;
     const newQuestion = await addQuestionToClinic(request.params.clinicId, leader.id, question);
@@ -42,7 +42,7 @@ express.post('/leader_clinics/:clinicId/criteria\.:ext?', routeHandler(async (re
     response.json(newQuestion);
 }));
 
-express.put('/leader_clinics/:clinicId/criteria/:criterionId\.:ext?', routeHandler(async (request, response) => {
+express.put('/api/leader_clinics/:clinicId/criteria/:criterionId\.:ext?', routeHandler(async (request, response) => {
     const {leader} = request.appSession;
     let question = request.body;
     const updatedQuestion = await updateQuestion(question);

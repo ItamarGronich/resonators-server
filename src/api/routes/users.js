@@ -4,7 +4,7 @@ import {registerUser} from '../../application/registerUser';
 import * as dtoFactory from '../../application/dto';
 import setSuccessfulLoginResponse from './setSuccessfulLoginResponse';
 
-express.post('/users\.:ext?', routeHandler(async (request, response) => {
+express.post('/api/users\.:ext?', routeHandler(async (request, response) => {
     const {email, name, password} = request.body;
 
     const registrationResult = await registerUser({

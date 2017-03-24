@@ -14,7 +14,7 @@ describe('registration', () => {
         };
 
         const response = await request({
-            url: '/users',
+            url: '/api/users',
             method: 'post',
             body: userRequest
         });
@@ -30,7 +30,7 @@ describe('registration', () => {
         };
 
         const response = await request({
-            url: '/users',
+            url: '/api/users',
             method: 'post',
             body: userRequest
         });
@@ -55,7 +55,7 @@ describe('registration', () => {
         };
 
         const response = await request({
-            url: '/users',
+            url: '/api/users',
             method: 'post',
             body: userRequest
         });
@@ -84,7 +84,7 @@ describe('registration', () => {
         };
 
         const response = await request({
-            url: '/users',
+            url: '/api/users',
             method: 'post',
             body: userRequest
         });
@@ -104,7 +104,7 @@ describe('registration', () => {
         };
 
         const response = await request({
-            url: '/users',
+            url: '/api/users',
             method: 'post',
             body: userRequest
         });
@@ -122,7 +122,7 @@ describe('registration', () => {
         };
 
         const response = await request({
-            url: '/users',
+            url: '/api/users',
             method: 'post',
             body: userRequest
         });
@@ -141,7 +141,7 @@ describe('registration', () => {
         };
 
         const response = await request({
-            url: '/users',
+            url: '/api/users',
             method: 'post',
             body: userRequest
         });

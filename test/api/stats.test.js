@@ -18,7 +18,7 @@ describe('resonator stats', () => {
 
         const result = await request({
             method: 'get',
-            url: `/criteria/stats/reminders/${resonator.id}.json`,
+            url: `/api/criteria/stats/reminders/${resonator.id}.json`,
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -30,7 +30,7 @@ describe('resonator stats', () => {
 
         const result = await request({
             method: 'get',
-            url: `/criteria/stats/reminders/${resonator.id}`,
+            url: `/api/criteria/stats/reminders/${resonator.id}`,
             cookie: `loginId=${userLogin.id}`
         });
 
@@ -70,13 +70,13 @@ describe('resonator stats', () => {
             if (method === 'get') {
                 response = await request({
                     method: 'get',
-                    url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                    url: `/api/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
                     cookie: `loginId=${userLogin.id}`
                 });
             } else if (method === 'post') {
                 response = await request({
                     method: 'post',
-                    url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit`,
+                    url: `/api/criteria/stats/reminders/${answer.resonator_id}/criteria/submit`,
                     body: {
                         question_id: answer.question_id,
                         answer_id: answer.answer_id,
@@ -90,7 +90,7 @@ describe('resonator stats', () => {
 
             const getResponse = await request({
                 method: 'get',
-                url: `/criteria/stats/reminders/${resonator.id}?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                url: `/api/criteria/stats/reminders/${resonator.id}?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
                 cookie: `loginId=${userLogin.id}`
             });
 
@@ -111,7 +111,7 @@ describe('resonator stats', () => {
 
             const response = await request({
                 method: 'get',
-                url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                url: `/api/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
                 cookie: `loginId=${userLogin.id}`
             });
 
@@ -144,7 +144,7 @@ describe('resonator stats', () => {
 
             const response = await request({
                 method: 'get',
-                url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                url: `/api/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
                 cookie: `loginId=${userLogin.id}`
             });
 
@@ -152,7 +152,7 @@ describe('resonator stats', () => {
 
             const getResponse = await request({
                 method: 'get',
-                url: `/criteria/stats/reminders/${resonator.id}?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                url: `/api/criteria/stats/reminders/${resonator.id}?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
                 cookie: `loginId=${userLogin.id}`
             });
 
@@ -174,7 +174,7 @@ describe('resonator stats', () => {
 
             const response = await request({
                 method: 'get',
-                url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                url: `/api/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
                 cookie: `loginId=${userLogin.id}`
             });
 
@@ -196,7 +196,7 @@ describe('resonator stats', () => {
 
             const response = await request({
                 method: 'get',
-                url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                url: `/api/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
                 cookie: `loginId=${userLogin.id}`
             });
 
@@ -216,7 +216,7 @@ describe('resonator stats', () => {
 
             const response = await request({
                 method: 'get',
-                url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                url: `/api/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
                 cookie: `loginId=${userLogin.id}`
             });
 
@@ -224,7 +224,7 @@ describe('resonator stats', () => {
 
             const response2 = await request({
                 method: 'get',
-                url: `/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                url: `/api/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
                 cookie: `loginId=${userLogin.id}`
             });
 

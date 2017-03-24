@@ -16,7 +16,7 @@ var assetUpload = upload.fields([{
     name: 'media_data'
 }]);
 
-express.post('/versionable_assets/upload', assetUpload, routeHandler(async (request, response) => {
+express.post('/api/versionable_assets/upload', assetUpload, routeHandler(async (request, response) => {
     const {asset_id, tag, secret} = request.body;
     const fileBuf = _.get(request, 'files.media_data[0].buffer');
 
@@ -38,7 +38,7 @@ express.post('/versionable_assets/upload', assetUpload, routeHandler(async (requ
     enforceLogin: false
 }));
 
-express.get('/versionable_assets/:asset_id/latest', async (request, response) => {
+express.get('/api/versionable_assets/:asset_id/latest', async (request, response) => {
     const latestAsset = await getLatestAssetLink(request.params.asset_id);
     response.status(latestAsset ? 200 : 422);
     response.json(latestAsset);
