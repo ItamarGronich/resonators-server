@@ -1,8 +1,9 @@
 import _ from 'lodash';
 import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
-import {questions, answers} from '../sequelize/models';
+import {questions, answers, clinics, leaders, users} from '../sequelize/models';
 import addRemoveChangedEntities from './addedRemovedEntities';
+import log from '../../infra/log';
 
 class QuestionRepository extends Repository {
     constructor(...args) {
@@ -67,8 +68,19 @@ class QuestionRepository extends Repository {
 
     async findByLeader(leader_id) {
         const rows = await questions.findAll({
-            where: {leader_id},
-            include: this.getInclude()
+            include: [
+                ...this.getInclude(),
+                {
+                    model: clinics,
+                    include: {
+                        model: users,
+                        include: {
+                            model: leaders,
+                            where: {id: leader_id}
+                        }
+                    }
+                }
+            ]
         });
 
         if (!rows)

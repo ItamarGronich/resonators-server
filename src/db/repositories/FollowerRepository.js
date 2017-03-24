@@ -26,7 +26,10 @@ class FollowerRepository extends Repository {
                 model: leaders,
                 include: [{
                     model: followers,
-                    include: [users]
+                    include: [{
+                        model: users,
+                        required: true
+                    }]
                 }]
             }]
         });

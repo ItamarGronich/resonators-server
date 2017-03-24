@@ -2,13 +2,13 @@ import _ from 'lodash';
 import setLoginCookie from './setLoginCookie';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 import {assert} from 'chai';
-import supertestWrapper from '../api/supertestWrapper';
+import request from '../api/supertestWrapper';
 
 describe('leader_clinics', () => {
     it('get clinics', async () => {
         const { user, userLogin, clinic } = await generateFixtures().preset1();
 
-        const response = await supertestWrapper({
+        const response = await request({
             method: 'get',
             url: '/api/leader_clinics',
             cookie: `loginId=${userLogin.id}`
@@ -27,7 +27,7 @@ describe('leader_clinics', () => {
     it('get clinic criteria', async () => {
         const {userLogin, clinics, questions} = await generateFixtures().presetLeaderWithManyClinics();
 
-        const response = await supertestWrapper({
+        const response = await request({
             method: 'get',
             url: `/api/leader_clinics/${clinics[0].id}/criteria`,
             cookie: `loginId=${userLogin.id}`
@@ -50,7 +50,7 @@ describe('leader_clinics', () => {
     it('get all leader criteria', async () => {
         const {userLogin, clinics, questions} = await generateFixtures().presetLeaderWithManyClinics();
 
-        const response = await supertestWrapper({
+        const response = await request({
             method: 'get',
             url: `/api/leader_clinics/all/criteria`,
             cookie: `loginId=${userLogin.id}`
@@ -80,7 +80,7 @@ describe('leader_clinics', () => {
             }]
         };
 
-        const response = await supertestWrapper({
+        const response = await request({
             method: 'post',
             url: `/api/leader_clinics/${clinic.id}/criteria`,
             cookie: `loginId=${userLogin.id}`,
@@ -99,7 +99,7 @@ describe('leader_clinics', () => {
 
         assertQuestions([response.body], [newQuestion]);
 
-        const clinicQuestionsResponse = await supertestWrapper({
+        const clinicQuestionsResponse = await request({
             method: 'get',
             url: `/api/leader_clinics/${clinic.id}/criteria`,
             cookie: `loginId=${userLogin.id}`
@@ -120,7 +120,7 @@ describe('leader_clinics', () => {
             description: 'a new description'
         };
 
-        const response = await supertestWrapper({
+        const response = await request({
             method: 'put',
             url: `/api/leader_clinics/${clinic.id}/criteria/${originalQuestion.id}`,
             cookie: `loginId=${userLogin.id}`,
@@ -131,7 +131,7 @@ describe('leader_clinics', () => {
 
         assertQuestions([response.body], [updatedQuestion]);
 
-        const clinicQuestionsResponse = await supertestWrapper({
+        const clinicQuestionsResponse = await request({
             method: 'get',
             url: `/api/leader_clinics/${clinic.id}/criteria`,
             cookie: `loginId=${userLogin.id}`
@@ -152,7 +152,7 @@ describe('leader_clinics', () => {
             description: 'a new description'
         };
 
-        const response = await supertestWrapper({
+        const response = await request({
             method: 'put',
             url: `/api/leader_clinics/${clinic.id}/criteria/${originalQuestion.id}`,
             cookie: `loginId=${userLogin.id}`,
@@ -163,7 +163,7 @@ describe('leader_clinics', () => {
 
         assertQuestions([response.body], [updatedQuestion]);
 
-        const clinicQuestionsResponse = await supertestWrapper({
+        const clinicQuestionsResponse = await request({
             method: 'get',
             url: `/api/leader_clinics/${clinic.id}/criteria`,
             cookie: `loginId=${userLogin.id}`
@@ -184,7 +184,7 @@ describe('leader_clinics', () => {
             answers: _.map(originalQuestion.answers, a => _.omit(a, 'id'))
         };
 
-        const response = await supertestWrapper({
+        const response = await request({
             method: 'put',
             url: `/api/leader_clinics/${clinic.id}/criteria/${originalQuestion.id}`,
             cookie: `loginId=${userLogin.id}`,
@@ -196,7 +196,7 @@ describe('leader_clinics', () => {
         updatedQuestion.answers[0].id = response.body.answers[0].id;
         assertQuestions([response.body], [updatedQuestion]);
 
-        const clinicQuestionsResponse = await supertestWrapper({
+        const clinicQuestionsResponse = await request({
             method: 'get',
             url: `/api/leader_clinics/${clinic.id}/criteria`,
             cookie: `loginId=${userLogin.id}`

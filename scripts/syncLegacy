@@ -6,7 +6,7 @@ import uuid from 'uuid/v4';
 import prodCfg from '../src/cfg/prod';
 import devCfg from '../src/cfg/dev';
 
-const knex = require('knex')({});
+const knex = require('knex')({client: 'postgres'});
 var srcSeq = new Sequelize(`postgres://${prodCfg.db.username}:${prodCfg.db.password}@${prodCfg.db.host}/${prodCfg.db.database}`);
 var dstSeq = new Sequelize(`postgres://${devCfg.db.username}:${devCfg.db.password}@${devCfg.db.host}/${devCfg.db.database}`);
 
@@ -151,9 +151,25 @@ function transformUserLogin(row) {
 async function transformResonator(row) {
     const [results] =  await srcSeq.query(`select * from reminder_detailes where reminder_id='${row.id}'`);
     const resonatorDetails = results[0];
+    row.repeat_days = convertRepeatDays(row.repeat_days);
     row.title = resonatorDetails.title;
     row.link = resonatorDetails.link;
     row.content = resonatorDetails.content;
     row.created_at = resonatorDetails.created_at;
     row.updated_at = resonatorDetails.updated_at;
+}
+
+function convertRepeatDays(legacyValue) {
+    let ret = '';
+    const regexp = new RegExp(/\-\s(\d)/g);
+    let matches = regexp.exec(legacyValue);
+
+    while (matches !== null) {
+        ret += matches[1] + ',';
+        matches = regexp.exec(legacyValue);
+    }
+
+    ret = ret.substring(0, ret.length - 1);
+
+    return ret;
 }

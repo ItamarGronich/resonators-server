@@ -280,6 +280,9 @@ export default function generateFixtures() {
             answers
         };
 
+        Object.defineProperty(entity, 'leader', {value: leader});
+        Object.defineProperty(entity, 'clinic', {value: clinic});
+
         queue.push(questions.create(entity));
 
         return entity;
