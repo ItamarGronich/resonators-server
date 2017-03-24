@@ -5,13 +5,14 @@ import moment from 'moment';
 export default function assertLoginResponse(response, expectedResult) {
     assert.equal(response.status, 200);
 
-    assert.deepEqual(_.omit(response.body, 'expires_at', 'auth_token'), {
+    assert.deepEqual(_.omit(response.body, 'id', 'expires_at', 'auth_token'), {
         email: expectedResult.email,
         name: expectedResult.name,
         country: null,
         unsubscribed: null
     });
 
+    assert.isOk(response.body.id);
     assert.isOk(response.body.auth_token);
 
     assert(moment(response.body.expires_at) > moment(),

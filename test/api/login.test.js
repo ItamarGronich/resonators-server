@@ -4,6 +4,7 @@ import {assert} from 'chai';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 import supertestWrapper from '../api/supertestWrapper';
 import moment from 'moment';
+import assertLoginResponse from './assert/assertLoginResponse';
 const knex = require('knex')({client: 'postgres'});
 
 describe('login', () => {
@@ -38,12 +39,16 @@ describe('login', () => {
         });
 
         it('respond with the user info', () => {
-            assert.deepEqual(_.omit(body, 'expires_at', 'auth_token'), {
+            assert.deepEqual(_.omit(body, 'expires_at', 'auth_token', 'id'), {
                 email: userLogin.user.email,
                 name: userLogin.user.name,
                 country: null,
                 unsubscribed: null
             });
+        });
+
+        it('response with login id', () => {
+            assert.isOk(body.id);
         });
 
         it('set cookie', () => {
@@ -80,12 +85,14 @@ describe('login', () => {
         });
 
         assert.equal(getResponse.status, 200);
-        assert.deepEqual(_.omit(getResponse.body, 'expires_at', 'auth_token'), {
+        assert.deepEqual(_.omit(getResponse.body, 'id', 'expires_at', 'auth_token'), {
             name: userLogin.user.name,
             email: userLogin.user.email,
             unsubscribed: null,
             country: null
         });
+
+        assert.isOk(getResponse.body.id);
     });
 
     it('relogin with token specified in the authorization header', async () => {
@@ -100,12 +107,14 @@ describe('login', () => {
         });
 
         assert.equal(getResponse.status, 200);
-        assert.deepEqual(_.omit(getResponse.body, 'expires_at', 'auth_token'), {
+        assert.deepEqual(_.omit(getResponse.body, 'id', 'expires_at', 'auth_token'), {
             name: userLogin.user.name,
             email: userLogin.user.email,
             unsubscribed: null,
             country: null
         });
+
+        assert.isOk(getResponse.body.id);
     });
 
     it('relogin without cookie', async () => {
