@@ -2,6 +2,8 @@ import nodemailer from 'nodemailer';
 import cfg from '../cfg';
 
 export default function sendResonatorEmail({from = 'mindharmoniesinc app', to, subject, html}) {
+    return Promise.resolve();
+
     if (process.env.ENV === 'test')
         return Promise.resolve();
 
