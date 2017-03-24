@@ -31,8 +31,18 @@ express.get('/user_sessions', routeHandler(async (request, response) => {
     response.status(200);
     const loginId = request.cookies.loginId || request.headers.authorization;
     const {user} = await relogin(loginId);
-    const resp = user ? dtoFactory.toUser(user) : {};
-    response.json(resp);
+
+    if (user) {
+        const userDto = dtoFactory.toUser(user);
+
+        setSuccessfulLoginResponse({
+            response,
+            loginId,
+            user: userDto
+        });
+    } else {
+        response.json({});
+    }
 }, {
     enforceLogin: false
 }));

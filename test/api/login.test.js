@@ -80,7 +80,7 @@ describe('login', () => {
         });
 
         assert.equal(getResponse.status, 200);
-        assert.deepEqual(getResponse.body, {
+        assert.deepEqual(_.omit(getResponse.body, 'expires_at', 'auth_token'), {
             name: userLogin.user.name,
             email: userLogin.user.email,
             unsubscribed: null,
@@ -100,7 +100,7 @@ describe('login', () => {
         });
 
         assert.equal(getResponse.status, 200);
-        assert.deepEqual(getResponse.body, {
+        assert.deepEqual(_.omit(getResponse.body, 'expires_at', 'auth_token'), {
             name: userLogin.user.name,
             email: userLogin.user.email,
             unsubscribed: null,
