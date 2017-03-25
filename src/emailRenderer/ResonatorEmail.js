@@ -60,15 +60,18 @@ export default ({resonator, host, preview, sentResonatorId, user = {}}) => {
     const question = _.get(resonatorQuestion, 'question');
 
     const questionEl = question && renderQuestion({question, preview, resonator, host, sentResonatorId});
+    const imageUrl = resonator.getImage();
 
     const mainCol = (
         <TD>
-            <div>
-                <img src={resonator.getImage()} alt={resonator.title} style={{
-                    width: 'auto',
-                    maxHeight: 480
-                }}/>
-            </div>
+            {imageUrl &&
+                <div>
+                    <img src={imageUrl} alt={resonator.title} style={{
+                        width: 'auto',
+                        maxHeight: 480
+                    }}/>
+                </div>
+            }
             {resonator.link && (
                 <p>
                     <h2>
