@@ -1,6 +1,7 @@
 import {assert} from 'chai';
 import fetchPendingResonators from '../../src/emailScheduler/fetchPendingResonators';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
+import uuid from 'uuid/v4';
 
 describe('fetch pending resonators', () => {
     describe('positive - resonator is pending', () => {
@@ -67,6 +68,30 @@ describe('fetch pending resonators', () => {
                 result: false
             });
         });
+
+        it('follower has no user', async () => {
+            await testPendingResonator({
+                follower: {
+                    id: uuid(),
+                    user: {
+                        id: uuid()
+                    }
+                },
+                result: false
+            });
+        });
+
+        it('leader has no user', async () => {
+            await testPendingResonator({
+                leader: {
+                    id: uuid(),
+                    user: {
+                        id: uuid()
+                    }
+                },
+                result: false
+            });
+        });
     });
 
     async function testPendingResonator({
@@ -75,10 +100,14 @@ describe('fetch pending resonators', () => {
         now = '2017-02-20 15:00:00',
         last_pop_time,
         deactivated = false,
-        result
+        result,
+        follower,
+        leader
     } = {}) {
         const [r1] = await generateFixtures()
         .generateResonator({
+            follower,
+            leader,
             fields: {
                 repeat_days,
                 pop_time: new Date(pop_time).toJSON(),

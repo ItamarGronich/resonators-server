@@ -21,8 +21,6 @@ export default async function scheduleEmails(getNow) {
             followerUser,
             leaderUser
         }) => {
-            if (!resonator) return Promise.resolve();
-
             const followerEmailPromise = sendEmail({resonator, user: followerUser});
 
             const leaderEmailPromise = !resonator.disable_copy_to_leader ?
@@ -49,16 +47,10 @@ function getResonatorsData(resonatorIds) {
             include: [
                 resonator_attachments, {
                 model: followers,
-                include: [{
-                    model: users,
-                    required: true
-                }]
+                include: [users]
             }, {
                 model: leaders,
-                include: [{
-                    model: users,
-                    required: true
-                }]
+                include: [users]
             }, {
                 model: resonator_questions,
                 include: [{
@@ -67,8 +59,6 @@ function getResonatorsData(resonatorIds) {
                 }]
             }]
         }).then(row => {
-            if (!row) return {};
-
             const resonator = dbToDomain.toResonator(row);
             const followerUser = dbToDomain.toUser(row.follower.user);
             const leaderUser = dbToDomain.toUser(row.leader.user);
