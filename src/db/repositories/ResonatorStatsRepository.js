@@ -23,9 +23,9 @@ class ResonatorStatsRepository extends Repository {
         };
     }
 
-    save(resonatorStats, tran, lastResonatorStats) {
+    save(resonatorStats, transaction, lastResonatorStats) {
         const answers = this.getNewStats(resonatorStats, lastResonatorStats);
-        const promises = answers.map(a => resonator_answers.create(a, tran));
+        const promises = answers.map(a => resonator_answers.create(a, {transaction}));
         return Promise.all(promises);
     }
 

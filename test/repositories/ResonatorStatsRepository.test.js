@@ -75,7 +75,7 @@ describe('ResonatorStatsRepository', () => {
             question_id: resonator.questions[0].question.id
         };
 
-        const tran = dbConn.transaction();
+        const tran = await dbConn.transaction();
 
         const resonatorStats = await repo.findById(resonator.id);
 
@@ -84,6 +84,8 @@ describe('ResonatorStatsRepository', () => {
         resonatorStats.addAnswer(newAnswer);
 
         await repo.save(resonatorStats, tran, resonatorStats2);
+
+        await tran.commit();
 
         const resonatorStats3 = await repo.findById(resonator.id);
 

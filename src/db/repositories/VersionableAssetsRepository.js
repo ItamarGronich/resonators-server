@@ -19,7 +19,7 @@ class VersionableAssetsRepository extends Repository {
     }
 
     async save(dbEntity, transaction) {
-        return versionable_assets.create(dbEntity, transaction);
+        return versionable_assets.create(dbEntity, {transaction});
     }
 
     async findLatestById(asset_id) {

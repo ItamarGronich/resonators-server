@@ -29,8 +29,8 @@ class ResonatorsRepository extends Repository {
         };
     }
 
-    save(resonator, tran, lastResonator = {}) {
-        const upsertPromise = resonators.upsert(resonator, tran);
+    save(resonator, transaction, lastResonator = {}) {
+        const upsertPromise = resonators.upsert(resonator, {transaction});
         const questionsPromises = this.saveQuestions(resonator, lastResonator);
         const itemsPromises = this.saveItems(resonator, lastResonator);
         return Promise.all([upsertPromise, ...questionsPromises, ...itemsPromises]);

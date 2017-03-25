@@ -13,8 +13,8 @@ class UserRepository extends Repository {
         };
     }
 
-    async save(user, tran) {
-        return User.upsert(user, tran);
+    async save(user, transaction) {
+        return User.upsert(user, {transaction});
     }
 
     async findByEmail(email) {
