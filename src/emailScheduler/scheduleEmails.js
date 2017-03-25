@@ -80,13 +80,15 @@ function getResonatorsData(resonatorIds) {
 }
 
 function sendEmail({resonator, user}) {
-    log.info(`sending email for resonator: ${resonator.id}`);
+    const to = 'ancap.forever.21@gmail.com'; //user.email;
+
+    log.info(`sending email for resonator: ${resonator.id}, to: ${to}`);
+
     return recordSentResonator(resonator.id)
         .then(row => {
             const sentResonatorId = row.get('id');
             const html = renderResonatorEmail({resonator, host: cfg.host, sentResonatorId});
             const from = 'mindharmoniesinc app';
-            const to = 'ancap.forever.21@gmail.com';
             const subject = resonator.title;
             return sendResonatorEmail({from, to, subject, html});
         })
