@@ -10,7 +10,7 @@ describe('unsubscribe', () => {
         const {userLogin, resonator} = await generateFixtures().preset1();
         const userId = userLogin.user.id;
 
-        const response = await unsubscribe(userId, userLogin.id)
+        const response = await unsubscribe(userId);
 
         assert.equal(response.status, 200);
         assert.equal(response.text, 'You have been unsubscribed from the Resonators system.');

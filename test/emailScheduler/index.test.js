@@ -203,8 +203,7 @@ describe('email scheduler', () => {
                         .done();
 
         const userRecipient = r1.follower.user;
-        const [userLogin] = await generateFixtures().generateUserLogin({ user: userRecipient }).done();
-        await apiCalls.unsubscribe(userRecipient.id, userLogin.id);
+        await apiCalls.unsubscribe(userRecipient.id);
 
         //When
         startEmailSchedulingLoop();

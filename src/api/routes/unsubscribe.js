@@ -12,5 +12,5 @@ express.get('/api/users/:user_id/unsubscribe', routeHandler(async (request, resp
 
     response.send('You have been unsubscribed from the Resonators system.');
 }, {
-    enforceLogin: true
+    enforceLogin: false
 }));
