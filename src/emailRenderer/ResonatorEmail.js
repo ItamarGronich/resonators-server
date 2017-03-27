@@ -10,11 +10,11 @@ const {
 } = Oy;
 
 function getAnswerLink({host, question, answer, resonator, sentResonatorId}) {
-    return `${host}/criteria/stats/reminders/${resonator.id}/criteria/submit?question_id=${question.id}&answer_id=${answer.id}&sent_resonator_id=${sentResonatorId}`;
+    return `${host}/api/criteria/stats/reminders/${resonator.id}/criteria/submit?question_id=${question.id}&answer_id=${answer.id}&sent_resonator_id=${sentResonatorId}`;
 }
 
 function getUnsubscribeLink(host, user) {
-    return `${host}/users/${user.id}/unsubscribe`;
+    return `${host}/api/users/${user.id}/unsubscribe`;
 }
 
 function renderQuestion({question, preview, resonator, host, sentResonatorId}) {
@@ -55,7 +55,7 @@ function renderQuestion({question, preview, resonator, host, sentResonatorId}) {
     );
 }
 
-export default ({resonator, host, preview, sentResonatorId, user = {}}) => {
+export default ({resonator, host, preview, sentResonatorId, recipientUser = {}}) => {
     const resonatorQuestion = resonator.questions[0];
     const question = _.get(resonatorQuestion, 'question');
 
@@ -88,7 +88,7 @@ export default ({resonator, host, preview, sentResonatorId, user = {}}) => {
             {!preview && [
                 <hr/>,
                 <div style={{fontSize: 10, textAlign: 'center'}}>
-                    <a href={getUnsubscribeLink(host, user)}>Unsubscribe</a>
+                    <a href={getUnsubscribeLink(host, recipientUser)}>Unsubscribe</a>
                 </div>
             ]}
         </TD>

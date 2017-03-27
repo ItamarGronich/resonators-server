@@ -7,6 +7,7 @@ import {resonators, sent_resonators} from '../../src/db/sequelize/models';
 import {assert} from 'chai';
 import moment from 'moment';
 import {getArgsOf} from '../utils';
+import * as apiCalls from '../api/calls';
 
 describe('email scheduler', () => {
     let startEmailSchedulingLoop, stopEmailSchedulingLoop, sendResonatorEmailStub;
@@ -77,6 +78,7 @@ describe('email scheduler', () => {
             assert.include(html, r1.link, 'html must include the resonator link');
             assert.include(html, '/submit', 'html must include the answer link');
             assert.include(html, sentResonatorId, 'html must include the sent_resonator id');
+            assert.include(html, `/api/users/${r1.follower.user.id}/unsubscribe`, 'html must include the unsubscribe link');
         });
     }).timeout(5000);
 
@@ -187,6 +189,34 @@ describe('email scheduler', () => {
         });
 
         assert.isFalse(called, 'should not send a copy to the leader');
+    });
+
+    it('do not send an email to an unsubscribed user', async function() {
+        this.timeout(5000);
+
+        const [r1] = await generateFixtures()
+                        .generateResonator({
+                            fields: {
+                                repeat_days: '0,1,2,3,4,5,6',
+                                pop_time: '2016-01-01'
+                            }})
+                        .done();
+
+        const userRecipient = r1.follower.user;
+        const [userLogin] = await generateFixtures().generateUserLogin({ user: userRecipient }).done();
+        await apiCalls.unsubscribe(userRecipient.id, userLogin.id);
+
+        //When
+        startEmailSchedulingLoop();
+
+        //Then
+        const predicate = () => sendResonatorEmailStub.calledWithMatch({
+            to: userRecipient.email
+        });
+
+        await waitFor(predicate, 1500).catch(_.noop);
+
+        assert.isFalse(predicate(), 'email was sent to an unsubscribed user');
     });
 
     function resonatorEmailCalledWithMatch(spy, resonatorFixture) {

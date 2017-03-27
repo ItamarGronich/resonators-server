@@ -21,6 +21,9 @@ export default async function scheduleEmails(getNow) {
             followerUser,
             leaderUser
         }) => {
+            if (followerUser.unsubscribed)
+                return Promise.resolve();
+
             const followerEmailPromise = sendEmail({resonator, user: followerUser});
 
             const leaderEmailPromise = !resonator.disable_copy_to_leader ?
@@ -77,7 +80,14 @@ function sendEmail({resonator, user}) {
     return recordSentResonator(resonator.id)
         .then(row => {
             const sentResonatorId = row.get('id');
-            const html = renderResonatorEmail({resonator, host: cfg.host, sentResonatorId});
+
+            const html = renderResonatorEmail({
+                resonator,
+                host: cfg.host,
+                sentResonatorId,
+                recipientUser: user
+            });
+
             const from = 'mindharmoniesinc app';
             const subject = resonator.title;
             return sendResonatorEmail({from, to, subject, html});

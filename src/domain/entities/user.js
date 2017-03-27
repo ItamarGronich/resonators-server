@@ -73,4 +73,8 @@ export default class User {
     passwordsMatch(pass) {
         return this.pass === bcrypt.hashSync(pass, this.salt);
     }
+
+    unsubscribe() {
+        this.unsubscribed = true;
+    }
 }

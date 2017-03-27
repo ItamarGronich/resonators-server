@@ -17,6 +17,5 @@ export default function fetchPendingResonators(getNow = (() => new Date())) {
         `fu.id is not null and ` +
         `lu.id is not null`;
 
-
     return db.query(sql).spread(rows => rows.map(r => r.id));
 }

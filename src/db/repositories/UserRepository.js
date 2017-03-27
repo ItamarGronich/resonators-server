@@ -63,6 +63,13 @@ class UserRepository extends Repository {
         this.trackEntity(user);
         return user;
     }
+
+    async findById(id) {
+        const row = await User.findById(id);
+        const user = dbToDomain.toUser(row);
+        this.trackEntity(user);
+        return user;
+    }
 }
 
 export default new UserRepository();
