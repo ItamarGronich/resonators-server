@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import cfg from '../cfg';
 
-export default function sendResonatorEmail({from = 'mindharmoniesinc app', to, subject, html}) {
+export default function sendResonatorEmail({from = 'mindharmoniesinc app', to, cc, subject, html}) {
     if (process.env.ENV === 'test')
         return Promise.resolve();
 
@@ -19,6 +19,9 @@ export default function sendResonatorEmail({from = 'mindharmoniesinc app', to, s
         subject,
         html
     };
+
+    if (cc)
+        mailOptions.cc = cc;
 
     return new Promise((resolve, reject) => {
         transporter.sendMail(mailOptions, (error, info) => {

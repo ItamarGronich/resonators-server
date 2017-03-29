@@ -161,10 +161,10 @@ describe('email scheduler', () => {
 
         startEmailSchedulingLoop();
 
-        await waitFor(() => sendResonatorEmailStub.callCount > 1, 5000);
+        await waitFor(() => sendResonatorEmailStub.called, 5000);
 
         const called = sendResonatorEmailStub.calledWithMatch({
-            to: r1.leader.user.email
+            cc: r1.leader.user.email
         });
 
         assert.isTrue(called, 'should send a copy to the leader');
@@ -185,7 +185,7 @@ describe('email scheduler', () => {
         await waitFor(() => sendResonatorEmailStub.callCount > 1, 800).catch(_.noop);
 
         const called = sendResonatorEmailStub.calledWithMatch({
-            to: r1.leader.user.email
+            cc: r1.leader.user.email
         });
 
         assert.isFalse(called, 'should not send a copy to the leader');

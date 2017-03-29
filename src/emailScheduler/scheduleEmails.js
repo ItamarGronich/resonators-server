@@ -24,16 +24,12 @@ export default async function scheduleEmails(getNow) {
             if (followerUser.unsubscribed)
                 return Promise.resolve();
 
-            const followerEmailPromise = sendEmail({resonator, user: followerUser});
-
-            const leaderEmailPromise = !resonator.disable_copy_to_leader ?
-                sendEmail({resonator, user: leaderUser}) : Promise.resolve();
-
-            return [
-                followerEmailPromise,
-                leaderEmailPromise
-            ];
-        }).flatten().value();
+            return sendEmail({
+                resonator,
+                followerUser,
+                leaderUser
+            });
+        }).value();
 
         return Promise.all(emailPromises);
     } else {
@@ -72,25 +68,35 @@ function getResonatorsData(resonatorIds) {
     return Promise.all(promises);
 }
 
-function sendEmail({resonator, user}) {
+function sendEmail({resonator, followerUser, leaderUser}) {
     const to = 'ancap.forever.21@gmail.com'; //user.email;
-
-    log.info(`sending email for resonator: ${resonator.id}, to: ${to}`);
+    const cc = 'ancap.forever.leader@gmail.com'; //leaderUser.email
 
     return recordSentResonator(resonator.id)
         .then(row => {
+            const sendCopyToLeader = !resonator.disable_copy_to_leader;
+            log.info(`sending email for resonator: ${resonator.id}, to: ${to}, leader copy: ${sendCopyToLeader && cc}`);
+
             const sentResonatorId = row.get('id');
 
             const html = renderResonatorEmail({
                 resonator,
                 host: cfg.host,
                 sentResonatorId,
-                recipientUser: user
+                recipientUser: followerUser
             });
 
-            const from = 'mindharmoniesinc app';
-            const subject = resonator.title;
-            return sendResonatorEmail({from, to, subject, html});
+            const msg = {
+                from: 'mindharmoniesinc app',
+                to,
+                subject: resonator.title,
+                html
+            };
+
+            if (sendCopyToLeader)
+                msg.cc = cc;
+
+            return sendResonatorEmail(msg);
         })
         .then(() => setResonatorLastSentTime(resonator.id));
 }
