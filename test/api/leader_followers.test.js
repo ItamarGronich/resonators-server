@@ -9,16 +9,13 @@ import {assert} from 'chai';
 import bcrypt from 'bcrypt';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 import request from './supertestWrapper';
+import {getFollowers, freezeFollower, unfreezeFollower} from './calls';
 
 describe('leader_followers', () => {
     it('get followers', async () => {
         const { user, userLogin, leader, clinic, follower } = await generateFixtures().preset1();
 
-        const {status, body} = await request({
-            method: 'get',
-            url: '/api/leader_followers',
-            cookie: `loginId=${userLogin.id}`
-        });
+        const {status, body} = await getFollowers(userLogin.id);
 
         assert.equal(status, 200);
 
@@ -28,6 +25,7 @@ describe('leader_followers', () => {
             clinic_id: clinic.id,
             leader_id: leader.id,
             status: 1,
+            frozen: false,
             user: {
                 country: null,
                 email: follower.user.email,
@@ -146,5 +144,36 @@ describe('leader_followers', () => {
 
             assert.lengthOf(body, 0);
         });
+    });
+
+    describe('disable follower', () => {
+        let userLogin, follower, status, body;
+
+        before(async () => {
+            ({ userLogin, follower } = await generateFixtures().preset1());
+            ({status, body} = await freezeFollower(userLogin.id, follower.id));
+        });
+
+        it('status 200', () => {
+            assert.equal(status, 200);
+        });
+
+        it('follower should be marked with the frozen status', async () => {
+            const f = await getFollower(follower.id);
+            assert.isTrue(f.frozen);
+        });
+
+        it('unfreeze follower', async () => {
+            const {status, body} = await unfreezeFollower(userLogin.id, follower.id);
+            assert.equal(status, 200);
+
+            const f = await getFollower(follower.id);
+            assert.isFalse(f.frozen);
+        });
+
+        async function getFollower(id) {
+            const {body} = await getFollowers(userLogin.id);
+            return _.find(body, f => f.id === id);
+        }
     });
 });

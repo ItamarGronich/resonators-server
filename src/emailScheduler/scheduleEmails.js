@@ -19,10 +19,18 @@ export default async function scheduleEmails(getNow) {
         const emailPromises = _(resonatorData).map(({
             resonator,
             followerUser,
+            follower,
             leaderUser
         }) => {
-            if (followerUser.unsubscribed)
+            if (followerUser.unsubscribed) {
+                log.info('not sending email to follower - unsubscribed', followerUser.id);
                 return Promise.resolve();
+            }
+
+            if (follower.frozen) {
+                log.info('not sending email to follower - frozen', follower.id);
+                return Promise.resolve();
+            }
 
             return sendEmail({
                 resonator,
@@ -59,9 +67,10 @@ function getResonatorsData(resonatorIds) {
             }]
         }).then(row => {
             const resonator = dbToDomain.toResonator(row);
+            const follower = dbToDomain.toFollower(row.follower);
             const followerUser = dbToDomain.toUser(row.follower.user);
             const leaderUser = dbToDomain.toUser(row.leader.user);
-            return {resonator, followerUser, leaderUser};
+            return {resonator, follower, followerUser, leaderUser};
         });
     });
 
@@ -69,14 +78,8 @@ function getResonatorsData(resonatorIds) {
 }
 
 function sendEmail({resonator, followerUser, leaderUser}) {
-    const to = 'ancap.forever.21@gmail.com'; //user.email;
-    const cc = 'ancap.forever.leader@gmail.com'; //leaderUser.email
-
     return recordSentResonator(resonator.id)
         .then(row => {
-            const sendCopyToLeader = !resonator.disable_copy_to_leader;
-            log.info(`sending email for resonator: ${resonator.id}, to: ${to}, leader copy: ${sendCopyToLeader && cc}`);
-
             const sentResonatorId = row.get('id');
 
             const html = renderResonatorEmail({
@@ -88,13 +91,17 @@ function sendEmail({resonator, followerUser, leaderUser}) {
 
             const msg = {
                 from: 'mindharmoniesinc app',
-                to,
+                to: followerUser.email,
                 subject: resonator.title,
                 html
             };
 
+            const sendCopyToLeader = !resonator.disable_copy_to_leader;
+
             if (sendCopyToLeader)
-                msg.cc = cc;
+                msg.cc = leaderUser.email;
+
+            log.info(`sending email for resonator: ${resonator.id}, to: ${msg.to}, leader copy: ${sendCopyToLeader && msg.cc}`);
 
             return sendResonatorEmail(msg);
         })

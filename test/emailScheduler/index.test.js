@@ -218,6 +218,38 @@ describe('email scheduler', () => {
         assert.isFalse(predicate(), 'email was sent to an unsubscribed user');
     });
 
+    it('don\'t send emails to frozen followers', async function() {
+        this.timeout(5000);
+
+        const [r1] = await generateFixtures()
+                        .generateResonator({
+                            fields: {
+                                repeat_days: '0,1,2,3,4,5,6',
+                                pop_time: '2016-01-01'
+                            }})
+                        .done();
+
+        const [userLogin] = await generateFixtures()
+                        .generateUserLogin({ user: r1.leader.user})
+                        .done();
+
+        const userRecipient = r1.follower.user;
+
+        await apiCalls.freezeFollower(userLogin.id, r1.follower.id);
+
+        //When
+        startEmailSchedulingLoop();
+
+        //Then
+        const predicate = () => sendResonatorEmailStub.calledWithMatch({
+            to: userRecipient.email
+        });
+
+        await waitFor(predicate, 1500).catch(_.noop);
+
+        assert.isFalse(predicate(), 'email was sent to a frozen follower');
+    });
+
     function resonatorEmailCalledWithMatch(spy, resonatorFixture) {
         return spy.calledWithMatch({
             to: resonatorFixture.follower.user.email,

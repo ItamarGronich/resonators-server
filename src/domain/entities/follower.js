@@ -8,6 +8,7 @@ export default class Follower {
         leader_id,
         clinic_id,
         status,
+        frozen,
         created_at,
         updated_at
     }) {
@@ -17,7 +18,16 @@ export default class Follower {
         this.leader_id = leader_id;
         this.clinic_id = clinic_id;
         this.status = status;
+        this.frozen = frozen;
         this.created_at = created_at;
         this.updated_at = updated_at;
+    }
+
+    freeze() {
+        this.frozen = true;
+    }
+
+    unfreeze() {
+        this.frozen = false;
     }
 }

@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import log from '../infra/log';
 import {followers, users, leaders} from '../db/sequelize/models';
 import followerRepository from '../db/repositories/FollowerRepository';
 import resonatorRepository from '../db/repositories/ResonatorRepository';
@@ -53,4 +54,26 @@ export async function updateFollowerUser(followerId, newUserDetails) {
     user.email = newUserDetails.email;
     user.name = newUserDetails.name;
     await getUow().commit();
+}
+
+export async function freezeFollower(followerId) {
+    const follower = await followerRepository.findById(followerId);
+
+    if (follower) { 
+        log.info('freezing follower', followerId);
+        follower.freeze();
+        await getUow().commit();
+        return true;
+    }
+}
+
+export async function unfreezeFollower(followerId) {
+    const follower = await followerRepository.findById(followerId);
+
+    if (follower) {
+        log.info('unfreezing follower', followerId);
+        follower.unfreeze();
+        await getUow().commit();
+        return true;
+    }
 }

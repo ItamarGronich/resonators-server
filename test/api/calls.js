@@ -7,3 +7,27 @@ export function unsubscribe(userId, userLoginId) {
         authorization: userLoginId
     });
 }
+
+export function getFollowers(leaderLoginId) {
+    return request({
+        method: 'get',
+        url: '/api/leader_followers',
+        cookie: `loginId=${leaderLoginId}`
+    });
+}
+
+export function freezeFollower(leaderLoginId, followerId) {
+    return request({
+        method: 'post',
+        url: `/api/leader_followers/${followerId}/freeze`,
+        authorization: leaderLoginId
+    });
+}
+
+export function unfreezeFollower(leaderLoginId, followerId) {
+    return request({
+        method: 'post',
+        url: `/api/leader_followers/${followerId}/unfreeze`,
+        authorization: leaderLoginId
+    });
+}

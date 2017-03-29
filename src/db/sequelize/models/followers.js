@@ -8,7 +8,8 @@ module.exports = function(sequelize, DataTypes) {
         user_id: DataTypes.UUID,
         leader_id: DataTypes.UUID,
         clinic_id: DataTypes.UUID,
-        status: DataTypes.INTEGER
+        status: DataTypes.INTEGER,
+        frozen: DataTypes.BOOLEAN
     }, {
         underscored: true,
         classMethods: {

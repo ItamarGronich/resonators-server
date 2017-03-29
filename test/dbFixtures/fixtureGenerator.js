@@ -172,12 +172,14 @@ export default function generateFixtures() {
 
     function generateResonator({
         leader = generateLeader(),
-        follower = generateFollower(),
+        follower,
         items,
         questions,
         clinic = generateClinic(),
         fields = {}
     }) {
+        follower = follower || generateFollower({leader});
+
         const id = uuid();
 
         items = items || [generateResonatorItem({resonator_id: id, owner_id: follower.user.id})];

@@ -1,6 +1,15 @@
 import express from '../express';
 import routeHandler from '../routeHandler';
-import {updateFollowerUser, getLeaderFollowers, addLeaderFollower, deleteLeaderFollower} from '../../application/leaderFollowers';
+
+import {
+    updateFollowerUser,
+    getLeaderFollowers,
+    addLeaderFollower,
+    deleteLeaderFollower,
+    freezeFollower,
+    unfreezeFollower
+} from '../../application/leaderFollowers';
+
 import userRepository from '../../db/repositories/UserRepository' ;
 
 express.get('/api/leader_followers\.:ext?', routeHandler(async (request, response) => {
@@ -38,9 +47,31 @@ express.put('/api/leader_followers/:followerId\.:ext?', routeHandler(async (requ
 express.delete('/api/leader_followers/:followerId\.:ext?', routeHandler(async (request, response) => {
     const {followerId} = request.params;
 
-    await deleteLeaderFollower(followerId);
+    const result = await deleteLeaderFollower(followerId);
 
-    response.status(200);
+    response.status(result ? 200 : 422);
+    response.json({});
+}, {
+    enforceLeaderFollower: true
+}));
+
+express.post('/api/leader_followers/:followerId/freeze\.:ext?', routeHandler(async (request, response) => {
+    const {followerId} = request.params;
+
+    const result = await freezeFollower(followerId);
+
+    response.status(result ? 200 : 422);
+    response.json({});
+}, {
+    enforceLeaderFollower: true
+}));
+
+express.post('/api/leader_followers/:followerId/unfreeze\.:ext?', routeHandler(async (request, response) => {
+    const {followerId} = request.params;
+
+    const result = await unfreezeFollower(followerId);
+
+    response.status(result ? 200 : 422);
     response.json({});
 }, {
     enforceLeaderFollower: true
