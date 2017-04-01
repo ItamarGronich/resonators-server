@@ -11,7 +11,6 @@ import {emailSchedulerLogger as log} from '../infra/log';
 export default async function scheduleEmails(getNow) {
     log.info('[emailScheduler] fetching pending resonators');
     const resonatorIds = await fetchPendingResonators(getNow);
-    log.info(`[emailScheduler] ${resonatorIds.length} pending resonators`);
 
     if (resonatorIds.length > 0) {
         const resonatorData = await getResonatorsData(resonatorIds);
@@ -23,12 +22,10 @@ export default async function scheduleEmails(getNow) {
             leaderUser
         }) => {
             if (followerUser.unsubscribed) {
-                log.info('not sending email to follower - unsubscribed', followerUser.id);
                 return Promise.resolve();
             }
 
             if (follower.frozen) {
-                log.info('not sending email to follower - frozen', follower.id);
                 return Promise.resolve();
             }
 
