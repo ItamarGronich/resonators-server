@@ -27,7 +27,7 @@ export async function save({asset_id, tag, fileBuf, secret, contentEncoding}) {
 
     uow.trackEntity(asset, {isNew: true});
 
-    const options = contentEncoding ? {contentEncoding} : {};
+    const options = contentEncoding ? {ContentEncoding: contentEncoding} : {};
     const s3Response = await s3.uploadFile(`assets/${asset.asset_id}/${asset.toString()}`, fileBuf, options);
     const link = s3Response.Location;
     asset.updateLink(link);
