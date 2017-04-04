@@ -7,20 +7,20 @@ const s3 = new S3({
 });
 
 export default {
-    uploadImage(id, stream) {
+    uploadImage(id, stream, options) {
         return upload(id, stream);
     },
 
-    uploadAudio(id, stream) {
+    uploadAudio(id, stream, options) {
         return upload(id, stream);
     },
 
-    uploadFile(id, stream) {
+    uploadFile(id, stream, options) {
         return upload(id, stream);
     }
 };
 
-function upload(key, stream) {
+function upload(key, stream, options) {
     if (process.env.ENV === 'test')
         return Promise.resolve({Location: ''});
 
@@ -29,7 +29,8 @@ function upload(key, stream) {
             Bucket: cfg.s3.bucket,
             Key: key,
             Body: stream,
-            ACL: 'public-read'
+            ACL: 'public-read',
+            ...options
         }, (err, data) => {
             if (err) {
                 return reject(err);

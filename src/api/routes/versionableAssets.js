@@ -14,10 +14,12 @@ var assetUpload = upload.fields([{
     name: 'secret'
 }, {
     name: 'media_data'
+}, {
+    name: 'contentEncoding'
 }]);
 
 express.post('/api/versionable_assets/upload', assetUpload, routeHandler(async (request, response) => {
-    const {asset_id, tag, secret} = request.body;
+    const {asset_id, tag, secret, contentEncoding} = request.body;
     const fileBuf = _.get(request, 'files.media_data[0].buffer');
 
     if (!fileBuf) {
@@ -25,7 +27,7 @@ express.post('/api/versionable_assets/upload', assetUpload, routeHandler(async (
         return response.json({error: 'no attachment was sent.'});
     }
 
-    const result = await save({asset_id, tag, secret, fileBuf});
+    const result = await save({asset_id, tag, secret, contentEncoding, fileBuf});
 
     if (result.error) {
         response.status(400);

@@ -6,7 +6,7 @@ import cfg from '../cfg';
 import uuid from 'uuid/v4';
 import s3 from '../s3';
 
-export async function save({asset_id, tag, fileBuf, secret}) {
+export async function save({asset_id, tag, fileBuf, secret, contentEncoding}) {
     if (cfg.uploadAssetsSecret !== secret)
         return {
             error: 'wrong secret'
@@ -27,7 +27,8 @@ export async function save({asset_id, tag, fileBuf, secret}) {
 
     uow.trackEntity(asset, {isNew: true});
 
-    const s3Response = await s3.uploadFile(`assets/${asset.asset_id}/${asset.toString()}`, fileBuf);
+    const options = contentEncoding ? {contentEncoding} : {};
+    const s3Response = await s3.uploadFile(`assets/${asset.asset_id}/${asset.toString()}`, fileBuf, options);
     const link = s3Response.Location;
     asset.updateLink(link);
 
