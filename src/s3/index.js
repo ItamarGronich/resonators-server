@@ -8,15 +8,15 @@ const s3 = new S3({
 
 export default {
     uploadImage(id, stream, options) {
-        return upload(id, stream);
+        return upload(id, stream, options);
     },
 
     uploadAudio(id, stream, options) {
-        return upload(id, stream);
+        return upload(id, stream, options);
     },
 
     uploadFile(id, stream, options) {
-        return upload(id, stream);
+        return upload(id, stream, options);
     }
 };
 
