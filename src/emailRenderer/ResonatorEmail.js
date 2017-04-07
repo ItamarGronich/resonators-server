@@ -10,11 +10,11 @@ const {
 } = Oy;
 
 function getAnswerLink({host, question, answer, resonator, sentResonatorId}) {
-    return `${host}/api/criteria/stats/reminders/${resonator.id}/criteria/submit?question_id=${question.id}&answer_id=${answer.id}&sent_resonator_id=${sentResonatorId}`;
+    return `${host}api/criteria/stats/reminders/${resonator.id}/criteria/submit?question_id=${question.id}&answer_id=${answer.id}&sent_resonator_id=${sentResonatorId}`;
 }
 
 function getUnsubscribeLink(host, user) {
-    return `${host}/api/users/${user.id}/unsubscribe`;
+    return `${host}api/users/${user.id}/unsubscribe`;
 }
 
 function renderQuestion({question, preview, resonator, host, sentResonatorId}) {
