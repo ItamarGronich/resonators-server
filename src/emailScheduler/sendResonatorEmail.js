@@ -13,8 +13,8 @@ export default function sendResonatorEmail({from = 'mindharmoniesinc app', to, c
         }
     });
 
-    to = 'ancap.forever.21@gmail.com';
-    cc = cc && 'ancap.forever.leader@gmail.com';
+    to = to === 'dror.gronich@gmail.com' ? to : 'fake.email.4242@gmail.com';
+    cc = cc === 'dror.gronich@gmail.com' ? cc : null;
 
     let mailOptions = {
         from,
