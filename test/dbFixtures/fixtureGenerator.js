@@ -175,6 +175,8 @@ export default function generateFixtures() {
         follower,
         items,
         questions,
+        content,
+        description,
         clinic = generateClinic(),
         fields = {}
     }) {
@@ -207,10 +209,10 @@ export default function generateFixtures() {
             repeat_days: '1,2,3,4,5',
             last_pop_time: null,
             disable_copy_to_leader: false,
-            content: randStr('a content'),
+            content: content || randStr('a content'),
             link: randStr('a link'),
             title: randStr('a title'),
-            description: randStr('a description'),
+            description: description || randStr('a description'),
             items,
             questions: resonatorQuestions,
         }, fields);

@@ -43,4 +43,22 @@ describe('render resonator', () => {
     it('render image', () => {
         assert.include(text, '<img src="a link"')
     });
+
+    it('dir=ltr', () => {
+        assert.include(text, 'dir="ltr"');
+    });
+
+    it('should display body with dir=rtl for hebrew resonators', async () => {
+        const [ resonator ] = await generateFixtures().generateResonator({
+            content: 'אחת ab',
+            description: 'שתיים ab'
+        }).done();
+
+        const response = await supertestWrapper({
+            method: 'get',
+            url: `/api/reminders/${resonator.id}/render`
+        });
+
+        assert.include(response.text, 'dir="rtl"');
+    });
 });
