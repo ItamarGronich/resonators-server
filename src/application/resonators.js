@@ -41,10 +41,10 @@ export async function updateResonator(resonator_id, updatedFields) {
         return null;
 
     updatePermittedFields(resonator, updatedFields, [
-        'title', 'link', 'description', 'content', 'repeat_days', 'disable_copy_to_leader'
+        'title', 'link', 'description', 'content', 'repeat_days', 'disable_copy_to_leader', 'pop_email'
     ]);
 
-    getUow().commit();
+    await getUow().commit();
 
     const savedResonator = dtoFactory.toResonator(await resonatorRepository.findById(resonator_id));
     return savedResonator;
