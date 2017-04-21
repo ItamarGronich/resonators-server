@@ -25,6 +25,22 @@ const resonator = {
                 body: 'Answer 2'
             }]
         }
+    }, {
+        question: {
+            id: '1',
+            title: 'An obscure question.',
+            description: 'What is the plan for the United States to win the war?',
+            question_kind: 'numeric',
+            answers: [{
+                id: '1',
+                rank: 1,
+                body: 'Answer 1'
+            }, {
+                id: '2',
+                rank: 2,
+                body: 'Answer 2'
+            }]
+        }
     }]
 };
 

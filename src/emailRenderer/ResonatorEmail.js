@@ -17,13 +17,26 @@ function getUnsubscribeLink(host, user) {
     return `${host}api/users/${user.id}/unsubscribe`;
 }
 
-function renderQuestion({question, preview, resonator, host, sentResonatorId}) {
+function renderQuestion({question, preview, resonator, host, sentResonatorId, totalQuestionsCount}) {
     const renderAnswer = a => (
-    <div style={{padding: 10,
-        border: '1px solid',
-        borderRadius: 10,
-        background: '#FFFF00',
-        color: 'black'}}>
+    <div style={{
+        padding: 10,
+        border: 10,
+        boxSizing: 'border-box',
+        display: 'inline-block',
+        fontFamily: 'Roboto, sans-serif',
+        textDecoration: 'none',
+        outline: 'none',
+        position: 'relative',
+        height: 36,
+        width: '100%',
+        borderRadius: 2,
+        color: '#fff',
+        backgroundColor: 'rgb(0, 188, 212)',
+        textAlign: 'right',
+        fontSize: 14,
+        marginBottom: 25
+    }}>
         {question.question_kind === 'numeric' ?
             `${a.rank} - ${a.body}` : a.body
         }
@@ -35,7 +48,9 @@ function renderQuestion({question, preview, resonator, host, sentResonatorId}) {
                 <TD>
                     {preview ? renderAnswer(a) : (
                         <a href={getAnswerLink({host, question, answer: a, resonator, sentResonatorId})}
-                            style={{textDecoration: 'none'}}>
+                            style={{
+                                textDecoration: 'none',
+                            }}>
                             {renderAnswer(a)}
                         </a>)}
                 </TD>
@@ -44,8 +59,19 @@ function renderQuestion({question, preview, resonator, host, sentResonatorId}) {
     });
 
     return (
-        <div>
-            <div style={{marginBottom: 12}}>{question.description}</div>
+        <div style={{
+            border: '1px solid rgba(0, 0, 0, 0.117647)',
+            borderRadius: 2,
+            padding: 10
+        }}>
+            {totalQuestionsCount > 1 &&
+            <div style={{
+                fontSize: 12,
+                marginBottom: 4
+            }}>
+                {`(1 / ${totalQuestionsCount})`}
+            </div>}
+            <div style={{marginBottom: 32}}>{question.description}</div>
             <Table cellPadding="3px" >
                 <TBody>
                     {answers}
@@ -59,7 +85,7 @@ export default ({resonator, host, preview, sentResonatorId, recipientUser = {}})
     const resonatorQuestion = resonator.questions[0];
     const question = _.get(resonatorQuestion, 'question');
 
-    const questionEl = question && renderQuestion({question, preview, resonator, host, sentResonatorId});
+    const questionEl = question && renderQuestion({question, preview, resonator, host, sentResonatorId, totalQuestionsCount: resonator.questions.length});
     const imageUrl = resonator.getImage();
 
     const mainCol = (

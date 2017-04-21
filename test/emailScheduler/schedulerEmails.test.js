@@ -1,7 +1,9 @@
 import scheduleEmails from '../../src/emailScheduler/scheduleEmails';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 
-describe.skip('schedule emails FOR REAL', () => {
+describe.skip('schedule emails FOR REAL', function() {
+    this.timeout(10000);
+
     it('send pending emails', async () => {
         const [r1,r2] = await generateFixtures()
                         .generateResonator({
