@@ -17,7 +17,9 @@ function getUnsubscribeLink(host, user) {
     return `${host}api/users/${user.id}/unsubscribe`;
 }
 
-function renderQuestion({question, preview, resonator, host, sentResonatorId, totalQuestionsCount}) {
+function renderQuestion({
+    question, preview, resonator, host, sentResonatorId, totalQuestionsCount
+}) {
     const renderAnswer = a => (
     <div style={{
         padding: 10,
@@ -33,12 +35,12 @@ function renderQuestion({question, preview, resonator, host, sentResonatorId, to
         borderRadius: 2,
         color: '#fff',
         backgroundColor: 'rgb(0, 188, 212)',
-        textAlign: 'right',
         fontSize: 14,
         marginBottom: 25
     }}>
         {question.question_kind === 'numeric' ?
-            `${a.rank} - ${a.body}` : a.body
+            (!a.body ? a.rank : `${a.rank} - ${a.body}`) :
+            a.body
         }
     </div>);
 
