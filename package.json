@@ -11,7 +11,7 @@
     "migrate": "./node_modules/.bin/sequelize db:migrate",
     "migrate:undo": "./node_modules/.bin/sequelize db:migrate:undo",
     "initdb": "./scripts/initdb",
-    "storybook": "start-storybook -p 9001 -c .storybook",
+    "storybook": "start-storybook -p 9007 -c .storybook",
     "start:prod": "sudo NODE_ENV=production ENV=production PORT=80 ./node_modules/.bin/pm2 start index.js --name resonators",
     "restart:prod": "sudo pm2 restart resonators"
   },
