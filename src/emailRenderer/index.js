@@ -23,7 +23,7 @@ export default function renderResonatorEmail({resonator, recipientUser, sentReso
 }
 
 function getBodyDir(resonator) {
-    const text = resonator.content + resonator.description;
+    const text = (resonator.content + resonator.description) || '';
     const textArr = text.split('');
     const hebrewLettersCount = _.reduce(textArr, (acc, letter) => {
         return acc + (isHebrewLetter(letter) ? 1 : 0);

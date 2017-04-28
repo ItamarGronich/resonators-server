@@ -8,7 +8,7 @@ export default (logger, withoutSessionId) => {
         };
 
         if (other)
-            modifiedMsg.other = other;
+            modifiedMsg.other = other.toString() + (other.stack ? '\n' + other.stack : '');
 
         return method.call(logger, modifiedMsg);
     }
