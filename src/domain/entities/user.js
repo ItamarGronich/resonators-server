@@ -77,4 +77,8 @@ export default class User {
     unsubscribe() {
         this.unsubscribed = true;
     }
+
+    resubscribe() {
+        this.unsubscribed = false;
+    }
 }

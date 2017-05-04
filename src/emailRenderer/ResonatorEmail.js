@@ -17,6 +17,10 @@ function getUnsubscribeLink(host, user) {
     return `${host}api/users/${user.id}/unsubscribe`;
 }
 
+function getResubscribeLink(host, user) {
+    return `${host}api/users/${user.id}/resubscribe`;
+}
+
 function renderQuestion({
     question, preview, resonator, host, sentResonatorId, totalQuestionsCount
 }) {
@@ -118,7 +122,8 @@ export default ({resonator, host, preview, sentResonatorId, recipientUser = {}})
             {!preview && [
                 <hr/>,
                 <div style={{fontSize: 10, textAlign: 'center'}}>
-                    <a href={getUnsubscribeLink(host, recipientUser)}>Unsubscribe</a>
+                    <a href={getUnsubscribeLink(host, recipientUser)}>Unsubscribe</a>&nbsp;|&nbsp;
+                    <a href={getResubscribeLink(host, recipientUser)}>Resubscribe</a>
                 </div>
             ]}
         </TD>

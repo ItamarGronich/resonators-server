@@ -8,6 +8,14 @@ export function unsubscribe(userId, userLoginId) {
     });
 }
 
+export function resubscribe(userId, userLoginId) {
+    return request({
+        method: 'get',
+        url: `/api/users/${userId}/resubscribe`,
+        authorization: userLoginId
+    });
+}
+
 export function getFollowers(leaderLoginId) {
     return request({
         method: 'get',

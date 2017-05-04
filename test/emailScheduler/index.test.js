@@ -79,6 +79,7 @@ describe('email scheduler', () => {
             assert.include(html, '/submit', 'html must include the answer link');
             assert.include(html, sentResonatorId, 'html must include the sent_resonator id');
             assert.include(html, `/api/users/${r1.follower.user.id}/unsubscribe`, 'html must include the unsubscribe link');
+            assert.include(html, `/api/users/${r1.follower.user.id}/resubscribe`, 'html must include the resubscribe link');
         });
     }).timeout(5000);
 
