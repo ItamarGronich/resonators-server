@@ -1,9 +1,7 @@
 import _ from 'lodash';
 import path from 'path';
 import {fooUserLogin} from '../dbFixtures/user_logins';
-import {putFollower} from '../dbFixtures/followers';
 import {resonator} from '../dbFixtures/resonators';
-import {bazLeader} from '../dbFixtures/leaders';
 import setLoginCookie from './setLoginCookie';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 import {assert} from 'chai';
@@ -115,7 +113,6 @@ describe('reminders', () => {
             content: 'content2',
             description: 'description2',
             disable_copy_to_leader: true,
-            follower_id: putFollower.id,
             link: 'link2',
             pop_email: true,
             pop_time: "2017-02-12T11:06:47.255Z",
@@ -125,11 +122,12 @@ describe('reminders', () => {
         const {status, body} = await request({
             method: 'put',
             url: `/api/leader_followers/${follower.id}/reminders/${resonator.id}`,
-            cookie: `loginId=${userLogin.id}`
+            cookie: `loginId=${userLogin.id}`,
+            body: {...resonator, ...updatedResonator}
         });
 
         assert.equal(status, 200);
-        assertResonator(body, resonator);
+        assertResonator(body, {...resonator, ...updatedResonator});
         assert.isOk(body.created_at);
         assert.isOk(body.updated_at);
     });
