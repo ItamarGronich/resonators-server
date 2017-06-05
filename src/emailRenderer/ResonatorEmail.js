@@ -130,7 +130,7 @@ export default ({resonator, host, preview, sentResonatorId, recipientUser = {}})
     );
 
     return (
-        <Table style={{width: '100%'}}>
+        <Table style={{width: '100% !important'}}>
             <TBody>
                 <TR>
                     {mainCol}
