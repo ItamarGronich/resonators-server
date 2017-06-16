@@ -100,7 +100,7 @@ export default ({resonator, host, preview, sentResonatorId, recipientUser = {}})
                 <div>
                     <img src={imageUrl} alt={resonator.title} style={{
                         width: 'auto',
-                        maxWidth: 480
+                        maxWidth: '100%'
                     }}/>
                 </div>
             }
