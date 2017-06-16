@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ENV=dev node index.js",
+    "start": "source ~/.nvm/nvm.sh && nvm use && ENV=dev node index.js",
     "test": "./test/run",
     "test:noinit": "./test/run noinit",
     "test:watch": "mocha --watch --require test/setup",
