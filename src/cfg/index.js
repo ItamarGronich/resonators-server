@@ -22,4 +22,4 @@ switch (env) {
         break;
 }
 
-export default Object.assign({}, cfg, base);
+export default Object.assign({}, base, cfg);
