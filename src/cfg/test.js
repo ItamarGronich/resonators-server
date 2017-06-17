@@ -2,5 +2,6 @@ import dbCfg from '../db/sequelize/config/config';
 
 export default {
     db: {...dbCfg.test, options: { logging: false }},
-    emailSchedulerOn: true
+    emailSchedulerOn: true,
+    host: 'http://localhost:8080/'
 };

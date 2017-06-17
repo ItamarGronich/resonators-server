@@ -5,7 +5,8 @@ process.env.ENV = 'test';
 
 const {execSync} = require('child_process');
 const createDbFixtures = require('./dbFixtures').default;
-const noInit = process.argv.slice(2).indexOf('noinit') !== -1;
+const args = process.argv.slice(2);
+const noInit = args.indexOf('noinit') !== -1;
 
 //********************************************
 
@@ -38,7 +39,18 @@ function initFixtures() {
 }
 
 function runMocha() {
-    return execSync('mocha --watch --require test/setup test/**/*.test.js', {
+    const mochaArgsIdx = args.indexOf('--') + 1;
+    let mochaArgsArr = [];
+
+    if (mochaArgsIdx) {
+        mochaArgsArr = args.slice(mochaArgsIdx);
+    }
+
+    const mochaArgs = mochaArgsArr.join(' ');
+
+    const mochaCmd = `mocha --require test/setup ${mochaArgs}`;
+
+    return execSync(mochaCmd, {
         stdio: 'inherit'
     });
 }

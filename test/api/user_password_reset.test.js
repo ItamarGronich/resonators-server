@@ -59,7 +59,7 @@ describe('password reset', () => {
         const callArg = stub.getCall(0).args[0];
 
         assert.equal(callArg.to, user.email);
-        assert.include(callArg.html, '.com/resetPassword?token=');
+        assert.include(callArg.html, 'localhost:8080/resetPassword?token=');
     });
 
     it('get reset password page', async () => {

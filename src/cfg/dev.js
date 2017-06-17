@@ -7,5 +7,6 @@ export default {
             logging: false
         }
     },
+    host: 'http://localhost:8080/',
     emailSchedulerOn: true
 };
