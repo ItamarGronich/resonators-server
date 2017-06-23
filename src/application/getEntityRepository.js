@@ -7,6 +7,7 @@ import Clinic from '../domain/entities/clinic';
 import SentResonator from '../domain/entities/sentResonator';
 import VersionableAsset from '../domain/entities/versionableAsset';
 import ResonatorStats from '../domain/entities/resonatorStats';
+import GoogleAccount from '../domain/entities/googleAccount';
 import userRepository from '../db/repositories/UserRepository';
 import leadersRepository from  '../db/repositories/LeaderRepository';
 import clinicsRepository from  '../db/repositories/ClinicRepository';
@@ -16,6 +17,7 @@ import questionRepository from '../db/repositories/QuestionRepository';
 import resonatorStatsRepository from '../db/repositories/ResonatorStatsRepository';
 import sentResonatorRepository from '../db/repositories/SentResonatorRepository';
 import versionableAssetsRepository from '../db/repositories/VersionableAssetsRepository';
+import googleAccountsRepository from '../db/repositories/GoogleAccountRepository';
 
 export default function getEntityRepository(entity) {
     if (entity.constructor === User)
@@ -44,6 +46,9 @@ export default function getEntityRepository(entity) {
 
     if (entity.constructor === VersionableAsset)
         return versionableAssetsRepository;
+
+    if (entity.constructor === GoogleAccount)
+        return googleAccountsRepository;
 
     throw new Error(`No repository was found matching the entity ${entity.constructor.name}`);
 }

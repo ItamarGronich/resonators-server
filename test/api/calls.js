@@ -39,3 +39,19 @@ export function unfreezeFollower(leaderLoginId, followerId) {
         authorization: leaderLoginId
     });
 }
+
+export function startGoogleAuth(userId) {
+    return request({
+        method: 'get',
+        url: `/api/startGoogleAuth?userId=${userId}`
+    });
+}
+
+export function endGoogleAuth(userId, code) {
+    const state = encodeURIComponent(JSON.stringify({userId}));
+
+    return request({
+        method: 'get',
+        url: `/api/confirmGoogleAuth?state=${state}&code=${code}`
+    });
+}

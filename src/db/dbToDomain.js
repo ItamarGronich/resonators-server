@@ -6,6 +6,7 @@ import Question from '../domain/entities/question';
 import ResonatorAttachment from '../domain/entities/resonatorAttachment';
 import SentResonator from '../domain/entities/sentResonator';
 import VersionableAsset from '../domain/entities/versionableAsset';
+import GoogleAccount from '../domain/entities/googleAccount';
 
 export function toUser(dbUser) {
     return new User({
@@ -140,5 +141,17 @@ export function toVersionableAsset(row) {
         link: row.get('link'),
         tag: row.get('tag'),
         created_at: row.get('created_at')
+    });
+}
+
+export function toGoogleAccount(row) {
+    return new GoogleAccount({
+        id: row.get('id'),
+        id_token: row.get('id_token'),
+        access_token: row.get('access_token'),
+        refresh_token: row.get('refresh_token'),
+        access_token_expiry_date: row.get('access_token_expiry_date'),
+        user_id: row.get('user_id'),
+        google_email: row.get('google_email')
     });
 }

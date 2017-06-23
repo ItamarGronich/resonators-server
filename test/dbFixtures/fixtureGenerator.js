@@ -13,7 +13,8 @@ import {
     resonator_questions,
     resonator_answers,
     sent_resonators,
-    versionable_assets
+    versionable_assets,
+    google_accounts
 } from '../../src/db/sequelize/models';
 
 import uuid from 'uuid/v4';
@@ -38,6 +39,7 @@ export default function generateFixtures() {
         generateResonatorQuestion: (...args) => generateFixture(generateResonatorQuestion(...args)),
         generateSentResonator: (...args) => generateFixture(generateSentResonator(...args)),
         generateVersionableAsset: (...args) => generateFixture(generateVersionableAsset(...args)),
+        generateGoogleAccount: (...args) => generateFixture(generateGoogleAccount(...args)),
         last: () => _.last(fixtureList),
         fixtures: () => fixtureList,
         done() {
@@ -352,6 +354,20 @@ export default function generateFixtures() {
         };
 
         queue.push(versionable_assets.create(entity));
+
+        return entity;
+    }
+
+    function generateGoogleAccount({user_id = generateUser()}) {
+        const entity = {
+            id: uuid(),
+            user_id,
+            access_token: uuid(),
+            id_token: uuid(),
+            refresh_token: uuid()
+        };
+
+        queue.push(google_accounts.create(entity));
 
         return entity;
     }
