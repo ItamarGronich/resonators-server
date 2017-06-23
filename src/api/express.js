@@ -10,6 +10,7 @@ import ctx from 'request-local';
 import requestLogger from './requestLoggerMiddleware';
 import uuid from 'uuid/v4';
 import cors from 'cors';
+import path from 'path';
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use(cookieParserMiddleware());
 app.use(requestIdMiddleware());
 app.use(appSession);
 app.use(uowMiddleware);
+app.use('/static', express.static(path.join(__dirname, 'public')));
 
 app.use(bodyParser.json());
 
