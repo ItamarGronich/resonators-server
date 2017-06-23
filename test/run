@@ -48,7 +48,7 @@ function runMocha() {
 
     const mochaArgs = mochaArgsArr.join(' ');
 
-    const mochaCmd = `mocha --require test/setup ${mochaArgs}`;
+    const mochaCmd = `mocha --require test/setup test/before.test.js ${mochaArgs}`;
 
     return execSync(mochaCmd, {
         stdio: 'inherit'
