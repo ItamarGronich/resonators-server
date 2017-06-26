@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import User from '../domain/entities/user';
 import Leader from '../domain/entities/leader';
 import Follower from '../domain/entities/follower';
@@ -41,8 +42,8 @@ export function toFollower(r) {
 }
 
 export function toResonator(r) {
-    const resonator_attachments = (r.resonator_attachments || []).map(toResonatorAttachment);
-    const resonator_questions = (r.resonator_questions || []).map(toResonatorQuestion);
+    const resonator_attachments = _.map(r.resonator_attachments, toResonatorAttachment);
+    const resonator_questions = _(r.resonator_questions).map(toResonatorQuestion).orderBy(rq => rq.updated_at).value();
     let repeat_days = r.get('repeat_days');
     repeat_days = repeat_days ? repeat_days.split(',').map(s => parseInt(s)) : [];
 
