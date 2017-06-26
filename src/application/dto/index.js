@@ -44,7 +44,6 @@ export function toResonator(resonator) {
                       );
 
     dto.items = _.orderBy(dto.items, i => i.created_at, 'desc');
-    dto.questions = _.orderBy(dto.questions, i => i.created_at, 'desc');
     return dto;
 }
 
