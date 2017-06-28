@@ -1,6 +1,4 @@
-import moment from 'moment';
-
-const maxAge = 3600 * 24 * 7 * 1000;
+import setLoginCookie from './setLoginCookie';
 
 export default function setSuccessfulLoginResponse({
     response,
@@ -9,11 +7,7 @@ export default function setSuccessfulLoginResponse({
 }) {
     response.status(200);
 
-    const expires_at = moment().add(maxAge, 's').format();
-
-    response.cookie('loginId', loginId, {
-        maxAge
-    });
+    const {expires_at} = setLoginCookie({response, loginId});
 
     response.json({...user, id: loginId, expires_at, auth_token: loginId});
 }

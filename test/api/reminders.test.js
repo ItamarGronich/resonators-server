@@ -181,17 +181,17 @@ describe('reminders', () => {
 
         assertResonator(_.omit(response2.body, 'questions'), _.omit(resonator, 'questions'));
 
-        const newQuestion = response2.body.questions[0];
+        const newQuestion = _.last(response2.body.questions);
 
         assertResonatorQuestions(
             response2.body.questions,
-            [{
+            resonator.questions.concat({
                 id: newQuestion.id,
                 question,
                 question_id: question.id,
                 resonator_id: resonator.id,
                 removed: null
-            }].concat(resonator.questions)
+            })
         );
     });
 

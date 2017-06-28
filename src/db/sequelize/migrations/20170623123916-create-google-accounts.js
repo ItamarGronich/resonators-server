@@ -8,13 +8,13 @@ module.exports = {
                 type: Sequelize.UUID
             },
             id_token: {
-                type: Sequelize.STRING
+                type: Sequelize.TEXT
             },
             access_token: {
-                type: Sequelize.STRING
+                type: Sequelize.TEXT
             },
             refresh_token: {
-                type: Sequelize.STRING
+                type: Sequelize.TEXT
             },
             access_token_expiry_date: {
                 type: Sequelize.DATE

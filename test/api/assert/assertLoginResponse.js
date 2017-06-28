@@ -18,6 +18,10 @@ export default function assertLoginResponse(response, expectedResult) {
     assert(moment(response.body.expires_at) > moment(),
            `expires_at (${response.body.expires_at}) must be in the future.`);
 
+    assertLoginCookie(response);
+}
+
+export function assertLoginCookie(response) {
     assert.match(response.headers['set-cookie'][0],
                  /loginId=.+; Max\-Age=\d+;/,
                  'set cookie match failed');

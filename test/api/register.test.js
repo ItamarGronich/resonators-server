@@ -4,6 +4,7 @@ import {assert} from 'chai';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 import {leaders, users, clinics} from '../../src/db/sequelize/models';
 import assertLoginResponse from './assert/assertLoginResponse';
+import * as calls from './calls';
 
 describe('registration', () => {
     it('register a new user', async () => {
@@ -150,5 +151,27 @@ describe('registration', () => {
         assert.deepEqual(response.body, {
             error: 'invalid password'
         });
+    });
+
+    it('google registration - step 1 - url fetching', async () => {
+        const response = await calls.startGoogleLogin();
+
+        assert.equal(response.status, 200);
+
+        const {url} = response.body;
+        assert.match(url, /^https:\/\/accounts.google.com/, 'the redirect url should go to Google');
+        assert.include(url, encodeURIComponent('/completeGoogleLogin'), 'url should include our callback url');
+    });
+
+    it('google registration - step 2 - complete registration', async () => {
+        const response = await calls.completeGoogleLogin('googleAuthCode');
+
+        assert.equal(response.status, 301);
+
+        assert.match(response.headers['set-cookie'][0],
+                     /loginId=.+; Max\-Age=\d+;/,
+                     'set cookie match failed');
+
+        assert.equal(response.headers.location, '/');
     });
 });

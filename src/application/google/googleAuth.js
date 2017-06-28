@@ -1,12 +1,12 @@
-import {generateAuthUrl, requestAccessToken} from '../google/oauth';
-import googleAccountsRepository from '../db/repositories/GoogleAccountRepository';
-import GoogleAccount from '../domain/entities/googleAccount';
-import getUow from './getUow';
+import {generateAuthUrl, requestAccessToken} from '../../google/oauth';
+import googleAccountsRepository from '../../db/repositories/GoogleAccountRepository';
+import addGoogleAccount from './addGoogleAccount';
+import getUow from '../getUow';
 
-export async function startGoogleAuth(userId) {
+export async function startGoogleAuth(userId, action) {
     const hasGoogleAccount = !!await googleAccountsRepository.findByUserId(userId);
 
-    let url = generateAuthUrl({userId});
+    let url = generateAuthUrl({userId, action});
 
     if (!hasGoogleAccount)
         url += '&prompt=consent';
@@ -14,7 +14,7 @@ export async function startGoogleAuth(userId) {
     return url;
 }
 
-export async function endGoogleAuth(user_id, gooleAuthCode) {
+export async function endGoogleAuth(user_id, action, gooleAuthCode) {
     const tokens = await requestAccessToken(gooleAuthCode);
 
     const {
@@ -29,15 +29,13 @@ export async function endGoogleAuth(user_id, gooleAuthCode) {
     const uow = getUow();
 
     if (!googleAccount) {
-        googleAccount = new GoogleAccount({
+        await addGoogleAccount({
             user_id,
-            id_token,
             access_token,
+            id_token,
             refresh_token,
-            access_token_expiry_date: expiry_date
+            expiry_date //timestamp
         });
-
-        uow.trackEntity(googleAccount, {isNew: true});
     } else {
         googleAccount.id_token = id_token;
         googleAccount.access_token = access_token;

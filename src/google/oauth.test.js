@@ -1,19 +1,31 @@
 import uuid from 'uuid/v4';
+import createOauthClient from './createOauthClient';
 
-export function generateAuthUrl({userId}) {
-    const state = encodeURIComponent(JSON.stringify({
-        state: {
-            userId
-        }
-    }));
+// generate a url that asks permissions for Google+ and Google Calendar scopes
+const scopes = [
+    'https://www.googleapis.com/auth/plus.me',
+    'https://www.googleapis.com/auth/calendar'
+];
 
-    return `https://accounts.google.com?state=${state}&redirecUri=%2FconfirmGoogleAuth`;
+export function generateAuthUrl(state) {
+    const oauth2Client = createOauthClient();
+
+    return oauth2Client.generateAuthUrl({
+        // 'online' (default) or 'offline' (gets refresh_token)
+        access_type: 'offline',
+
+        // If you only need one scope you can pass it as a string
+        scope: scopes,
+
+        // Optional property that passes state parameters to redirect URI
+        state: JSON.stringify(state)
+    });
 }
 
 export function requestAccessToken() {
     return Promise.resolve({
         access_token: uuid(),
-        refresh_token: uuid(),
+        refresh_token: 'refresh_token',
         id_token: uuid(),
         token_type: 'Bearer',
         expiry_date: 3738851787

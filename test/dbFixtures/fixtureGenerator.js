@@ -358,13 +358,14 @@ export default function generateFixtures() {
         return entity;
     }
 
-    function generateGoogleAccount({user_id = generateUser()}) {
+    function generateGoogleAccount({account, user_id = generateUser()}) {
         const entity = {
             id: uuid(),
             user_id,
             access_token: uuid(),
             id_token: uuid(),
-            refresh_token: uuid()
+            refresh_token: uuid(),
+            ...account
         };
 
         queue.push(google_accounts.create(entity));

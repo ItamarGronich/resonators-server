@@ -4,7 +4,8 @@ import {assert} from 'chai';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 import request from '../api/supertestWrapper';
 import moment from 'moment';
-import assertLoginResponse from './assert/assertLoginResponse';
+import {default as assertLoginResponse, assertLoginCookie} from './assert/assertLoginResponse';
+import * as calls from './calls';
 const knex = require('knex')({client: 'postgres'});
 
 describe('login', () => {
@@ -54,14 +55,27 @@ describe('login', () => {
         it('set cookie', () => {
             assert(moment(body.expires_at) > moment(), `expires_at (${body.expires_at}) must be in the future.`);
 
-            assert.match(headers['set-cookie'][0],
-                         /loginId=.+; Max\-Age=\d+;/,
-                         'set cookie match failed');
+            assertLoginCookie({status, headers});
         });
 
         it('respond with auth token', () => {
             assert.isOk(body.auth_token);
         });
+    });
+
+    it('login with google - existing user', async () => {
+        const [user] = await generateFixtures()
+            .generateUser()
+            .done();
+
+        const [googleAccount] = await generateFixtures()
+            .generateGoogleAccount({user_id: user.id, refresh_token: 'refresh_token'})
+            .done();
+
+        const response = await calls.completeGoogleLogin('authCode');
+
+        assert.equal(response.status, 301);
+        assertLoginCookie(response);
     });
 
     it('relogin with cookie', async () => {
@@ -75,8 +89,7 @@ describe('login', () => {
             body: { email: userLogin.user.email, password: '1234'},
         });
 
-        const matches = /loginId=(.+?);/.exec(headers['set-cookie'][0]);
-        const loginId = matches[1];
+        const loginId = extractLoginId(headers);
 
         const getResponse = await request({
             method: 'get',
@@ -191,4 +204,9 @@ describe('login', () => {
 
         assert.deepEqual(getResponse.body, {});
     });
+
+    function extractLoginId(headers) {
+        const matches = /loginId=(.+?);/.exec(headers['set-cookie'][0]);
+        return matches[1];
+    }
 });

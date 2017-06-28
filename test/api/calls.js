@@ -40,18 +40,32 @@ export function unfreezeFollower(leaderLoginId, followerId) {
     });
 }
 
-export function startGoogleAuth(userId) {
+export function startGoogleAuth(userId, action) {
     return request({
         method: 'get',
-        url: `/api/startGoogleAuth?userId=${userId}`
+        url: `/api/startGoogleAuth?userId=${userId}&action=${action}`
     });
 }
 
-export function endGoogleAuth(userId, code) {
-    const state = encodeURIComponent(JSON.stringify({userId}));
+export function endGoogleAuth(userId, action, code) {
+    const state = encodeURIComponent(JSON.stringify({userId, action}));
 
     return request({
         method: 'get',
         url: `/api/confirmGoogleAuth?state=${state}&code=${code}`
+    });
+}
+
+export function startGoogleLogin() {
+    return request({
+        method: 'get',
+        url: `/api/startGoogleLogin`
+    });
+}
+
+export function completeGoogleLogin(authCode) {
+    return request({
+        method: 'get',
+        url: `/api/completeGoogleLogin?code=${authCode}`
     });
 }

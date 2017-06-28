@@ -32,7 +32,7 @@ export async function registerUser({name, email, password}) {
     if (user.error)
         return user;
 
-    const uow = await getUow();
+    const uow = getUow();
 
     uow.trackEntity(user, {isNew: true});
     uow.trackEntity(leader, {isNew: true});
@@ -42,5 +42,5 @@ export async function registerUser({name, email, password}) {
 
     const loginResult = await login(email, password);
 
-    return loginResult;
+    return {...loginResult, user_id: user.id};
 }

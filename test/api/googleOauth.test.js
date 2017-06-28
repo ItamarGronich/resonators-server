@@ -6,74 +6,13 @@ import {startGoogleAuth, endGoogleAuth} from './calls';
 import uuid from 'uuid/v4';
 
 describe('google oauth', () => {
-    it('start oauth process - first time', async () => {
-        const {user} = await generateFixtures().preset1();
-
-        const response = await startGoogleAuth(user.id);
-
-        assert.equal(response.status, 200);
-
-        const {url} = response.body;
-
-        assertOauthRedirectUrl(url, user.id);
-        assert.include(url, '&prompt=consent', 'must include a consent prompt for first time auth (for getting the refresh_token)');
+    it('to a city fair rode i', () => {
+        const realUserCredentials = {
+            access_token: 'ya29.Glt1BKG4B3HzrzM6njUpzwVEFYLEcxHrBXEBJADAVGrBaRl6JjucjOYR_KGK50sXS-5duEgl_3oxAOqs-esl6tEVXt8bGPfDC3qB8oOJPWe2uKU2vAgS_faDa8qI',
+            id_token: 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjliOGFiYzc1Mzg1YzQ3OTU1NzQ0YjM5ZDU3MWU1ZGViMWUxODhkMGIifQ.eyJhenAiOiIyMTA4NjIzOTY4MjgtMjZkcXVoNmJtM3BlMnJqYnVycGZnZmhhN3RuYXZyNGIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiIyMTA4NjIzOTY4MjgtMjZkcXVoNmJtM3BlMnJqYnVycGZnZmhhN3RuYXZyNGIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDY2Mjc5NjIxNjU2NDA4NDg3NzMiLCJhdF9oYXNoIjoiWVF4d2NwakZqNFFhRUdQMWZlTXI2USIsImlzcyI6ImFjY291bnRzLmdvb2dsZS5jb20iLCJpYXQiOjE0OTg1MDk0MTMsImV4cCI6MTQ5ODUxMzAxM30.Qk7ED8dqIvqqwOdi9TIdfbKNMwpwjjVdsmFuz9pO910fP1llSQedSCx4X8jSjyk0XObdcOtQO_ukReQnfTPSKlhL3QbZOo0zHwwuDc6Rilzgn-yaat6RqT3DkZhw2Aqo4FWy4lILDruivWa8A_KX5cTKenyzksIhFnaV-6JRB3SMP4URSPFWrwtAMmZ9Orhwe1gtjvC67xTkrzGZnqWukrdn_9KBu-Y-Nleta_1prorbabzvjR-rX2mDWuKend-eDcn4Lra2fJGD46f49Um_KQJ9r5XxHj_mWmbhdp-tB-jhDW-aV9HFiLm0aS9D9RkPb-UVGzfE_YQptHplYecoSw',
+            refresh_token: '1/2qzbQCqQD6aSWoweupyVQgaTYeSAjU9oaedFVhEhRfKgoEBRi3i8sZmWg5Ya-LkK',
+            token_type: 'Bearer',
+            expiry_date: 1498513014053
+        };
     });
-
-    it('start oauth process - not first time', async () => {
-        const {user} = await generateFixtures().preset1();
-        await generateFixtures().generateGoogleAccount({ user_id: user.id});
-
-        const response = await startGoogleAuth(user.id);
-
-        assert.equal(response.status, 200);
-
-        const {url} = response.body;
-
-        assertOauthRedirectUrl(url, user.id);
-        assert.notInclude(url, '&prompt=consent', 'must not include the consent prompt for users with existing google accounts');
-    });
-
-    it('end oauth process - first time auth', async () => {
-        const {userLogin, resonator} = await generateFixtures().preset1();
-        const userId = userLogin.user.id;
-        const code = 'authCodeFromGoogle';
-
-        const response = await endGoogleAuth(userId, code);
-
-        assert.equal(response.status, 200);
-
-        const account = (await google_accounts.findOne({where: {user_id: userId}})).toJSON();
-        assert.equal(account.user_id, userId);
-        assert.isOk(account.access_token);
-        assert.isOk(account.access_token_expiry_date);
-        assert.isOk(account.id_token);
-        assert.isOk(account.refresh_token);
-        assert.isOk(account.id);
-        assert.isOk(account.createdAt);
-        assert.isOk(account.updatedAt);
-    });
-
-    it('end oauth process - reucurring auth', async () => {
-        const {userLogin, resonator} = await generateFixtures().preset1();
-        const userId = userLogin.user.id;
-        const [googleAccount] = await generateFixtures().generateGoogleAccount({user_id: userId}).done();
-        const code = 'authCodeFromGoogle';
-
-        const response = await endGoogleAuth(userId, code);
-
-        assert.equal(response.status, 200);
-
-        const account = (await google_accounts.findOne({where: {user_id: userId}})).toJSON();
-        assert.equal(account.user_id, userId);
-        assert.equal(account.id, googleAccount.id);
-        assert.notEqual(account.access_token, googleAccount.access_token);
-        assert.notEqual(account.id_token, googleAccount.id_token);
-        assert.isOk(account.refresh_token, googleAccount.refresh_token);
-    });
-
-    function assertOauthRedirectUrl(url, userId) {
-        assert.match(url, /^https:\/\/accounts.google.com/, 'the redirect url should go to Google');
-        assert.include(url, encodeURIComponent('/confirmGoogleAuth'), 'url should include our callback url');
-        assert.include(url, userId, 'url should include the user id');
-    }
 });

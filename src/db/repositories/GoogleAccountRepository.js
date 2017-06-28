@@ -13,7 +13,7 @@ class GoogleAccountsRepository extends Repository {
         };
     }
 
-    async save(googleAccount, transaction) {
+    save(googleAccount, transaction) {
         return google_accounts.upsert(googleAccount, {transaction});
     }
 
@@ -21,6 +21,22 @@ class GoogleAccountsRepository extends Repository {
         const dbRow = await google_accounts.findOne({
             where: {
                 user_id
+            }
+        });
+
+        if (dbRow) {
+            const entity = dbToDomain.toGoogleAccount(dbRow);
+            this.trackEntity(entity);
+            return entity;
+        }
+
+        return null;
+    }
+
+    async findByEmail(google_email) {
+        const dbRow = await google_accounts.findOne({
+            where: {
+                google_email
             }
         });
 

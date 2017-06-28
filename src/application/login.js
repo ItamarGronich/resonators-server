@@ -16,20 +16,26 @@ export default async function login(email, pass) {
     }
 }
 
+export async function loginByUserEntity(userEntity) {
+    const loginId = uuid();
+
+    await UserLogin.create({
+        id: loginId,
+        user_id: userEntity.id
+    });
+
+    const user = dtoFactory.toUser(userEntity);
+
+    return {user, isValid: true, loginId};
+}
+
 async function authenticate(userEntity, pass) {
     let user = null, isValid = false, loginId;
 
     isValid = userEntity.passwordsMatch(pass);
 
     if (isValid) {
-        loginId = uuid();
-
-        await UserLogin.create({
-            id: loginId,
-            user_id: userEntity.id
-        });
-
-        user = dtoFactory.toUser(userEntity);
+        ({user, isValid, loginId} = await loginByUserEntity(userEntity));
     }
 
     return {user, isValid, loginId};
