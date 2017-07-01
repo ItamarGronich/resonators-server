@@ -1,9 +1,7 @@
-import _ from 'lodash';
 import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
 import {questions, answers, clinics, leaders, users} from '../sequelize/models';
 import addRemoveChangedEntities from './addedRemovedEntities';
-import log from '../../infra/log';
 
 class QuestionRepository extends Repository {
     constructor(...args) {

@@ -25,7 +25,7 @@ module.exports = {
         return queryInterface.addIndex('sent_resonators', ['resonator_id']);
     });
   },
-  down: function(queryInterface, Sequelize) {
+  down: function(queryInterface) {
     return queryInterface.dropTable('sent_resonators');
   }
 };

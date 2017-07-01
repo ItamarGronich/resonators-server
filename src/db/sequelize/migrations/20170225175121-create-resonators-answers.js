@@ -28,7 +28,7 @@ module.exports = {
             return queryInterface.addIndex('resonator_answers', ['resonator_question_id']);
         });
     },
-    down: function(queryInterface, Sequelize) {
+    down: function(queryInterface) {
         return queryInterface.dropTable('resonator_answers');
     }
 };

@@ -1,6 +1,6 @@
 import uuid from 'uuid/v4';
 
-export default function fetchBasicDetails(tokens) {
+export default function fetchBasicDetails() {
     return Promise.resolve({
         email: `${randStr('foo')}@bar.baz`,
         name: 'foo bar'

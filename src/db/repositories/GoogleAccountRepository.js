@@ -1,6 +1,6 @@
 import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
-import {users, google_accounts} from '../sequelize/models';
+import {google_accounts} from '../sequelize/models';
 
 class GoogleAccountsRepository extends Repository {
     constructor(...args) {

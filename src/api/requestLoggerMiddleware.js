@@ -8,7 +8,7 @@ export default function requestLoggerMiddleware(req, res, next) {
     };
 
     if (req.method === 'post')
-        msg.body = req.body;
+        reqMsg.body = req.body;
 
     log.info(reqMsg);
 

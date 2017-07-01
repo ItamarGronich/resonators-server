@@ -43,7 +43,6 @@ express.post('/api/leader_clinics/:clinicId/criteria\.:ext?', routeHandler(async
 }));
 
 express.put('/api/leader_clinics/:clinicId/criteria/:criterionId\.:ext?', routeHandler(async (request, response) => {
-    const {leader} = request.appSession;
     let question = request.body;
     const updatedQuestion = await updateQuestion(question);
 

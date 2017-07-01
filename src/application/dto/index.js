@@ -7,7 +7,7 @@ export function toUser(user) {
         country: user.country,
         unsubscribed: user.unsubscribed
     };
-};
+}
 
 export function toFollower(follower) {
     let dto = {

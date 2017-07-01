@@ -1,4 +1,3 @@
-import {resonators as resonatorsDb} from '../db/sequelize/models';
 import Resonator from '../domain/entities/resonator';
 import resonatorRepository from '../db/repositories/ResonatorRepository';
 import questionRepository from '../db/repositories/QuestionRepository';

@@ -36,7 +36,7 @@ module.exports = {
         return queryInterface.addIndex('user_logins', ['id']);
     });
   },
-  down: function(queryInterface, Sequelize) {
+  down: function(queryInterface) {
     return queryInterface.dropTable('user_logins');
   }
 };

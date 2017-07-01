@@ -24,7 +24,7 @@ export default function sendResonatorEmail({from = 'mindharmoniesinc app', to, c
         mailOptions.cc = cc;
 
     return new Promise((resolve, reject) => {
-        transporter.sendMail(mailOptions, (error, info) => {
+        transporter.sendMail(mailOptions, (error) => {
             if (error) {
                 return reject(error);
             }

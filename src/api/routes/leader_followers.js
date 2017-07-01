@@ -10,8 +10,6 @@ import {
     unfreezeFollower
 } from '../../application/leaderFollowers';
 
-import userRepository from '../../db/repositories/UserRepository' ;
-
 express.get('/api/leader_followers\.:ext?', routeHandler(async (request, response) => {
     const {user} = request.appSession;
 
@@ -33,7 +31,7 @@ express.post('/api/leader_followers\.:ext?', routeHandler(async (request, respon
 }));
 
 express.put('/api/leader_followers/:followerId\.:ext?', routeHandler(async (request, response) => {
-    const {user: userRequest, leader} = request.body;
+    const {user: userRequest} = request.body;
     const {followerId} = request.params;
 
     await updateFollowerUser(followerId, userRequest);

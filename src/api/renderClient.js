@@ -1,5 +1,4 @@
 import fs from 'fs';
-import path from 'path';
 import {getLatestAssetLink} from '../application/versionableAssets';
 
 export default async function renderClient(request, response, pageData) {
@@ -25,7 +24,7 @@ export default async function renderClient(request, response, pageData) {
 }
 
 function readVersion() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         fs.readFile('./version.txt', 'utf8', (err, data) => {
             if (err)
                 return resolve({});

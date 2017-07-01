@@ -7,7 +7,7 @@ module.exports = {
       })
   },
 
-  down: function (queryInterface, Sequelize) {
+  down: function (queryInterface) {
       return queryInterface.removeColumn('versionable_assets', 'tag');
   }
 };

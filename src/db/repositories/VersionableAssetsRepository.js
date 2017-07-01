@@ -1,7 +1,6 @@
 import Repository from './Repository';
 import {versionable_assets} from '../sequelize/models';
 import * as dbToDomain from '../dbToDomain';
-import uuid from 'uuid/v4';
 
 class VersionableAssetsRepository extends Repository {
     constructor(...args) {

@@ -28,7 +28,7 @@ module.exports = {
             // return queryInterface.addIndex('versionable_assets', ['asset_id', 'created_at']);
         });
     },
-    down: function(queryInterface, Sequelize) {
+    down: function(queryInterface) {
         return queryInterface.dropTable('versionable_assets');
     }
 };

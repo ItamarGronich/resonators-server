@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import google from 'googleapis';
 import dispatch from './dispatcher';
 
@@ -21,6 +20,5 @@ export function removeCalendar(tokens, calendarId) {
     });
 }
 
-export function createEvent(args) {
-    return; 
+export function createEvent() {
 }

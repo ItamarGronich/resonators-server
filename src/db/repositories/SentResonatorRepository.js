@@ -1,6 +1,5 @@
 import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
-import SentResonator from '../../domain/entities/sentResonator';
 import {sent_resonators} from '../sequelize/models';
 
 class SentResonatorRepository extends Repository {

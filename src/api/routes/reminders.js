@@ -1,6 +1,5 @@
 import express from '../express';
 import routeHandler from '../routeHandler';
-import enforceLeaderFollowers from '../permissions/enforceLeaderFollowers';
 import multer from 'multer';
 import * as service from '../../application/resonators';
 

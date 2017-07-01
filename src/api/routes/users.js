@@ -1,7 +1,6 @@
 import express from '../express';
 import routeHandler from '../routeHandler';
 import {registerUser} from '../../application/registerUser';
-import * as dtoFactory from '../../application/dto';
 import setSuccessfulLoginResponse from './setSuccessfulLoginResponse';
 
 express.post('/api/users\.:ext?', routeHandler(async (request, response) => {

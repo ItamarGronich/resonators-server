@@ -22,7 +22,7 @@ export default async function sendResetPasswordEmail(email) {
     await sendEmail({
         to: email,
         subject: 'Password Reset to the Resonators system',
-        html: `Hello ${user.name},<br/><br/>` + 
+        html: `Hello ${user.name},<br/><br/>` +
               `Please click <a href='${cfg.host}resetPassword?token=${token}'>here</a> to reset your password to the Resonators system.`
     });
 

@@ -13,7 +13,7 @@ module.exports = function(sequelize, DataTypes) {
         google_email: DataTypes.STRING
     }, {
         classMethods: {
-            associate: function(models) {
+            associate: function() {
                 // associations can be defined here
             }
         }

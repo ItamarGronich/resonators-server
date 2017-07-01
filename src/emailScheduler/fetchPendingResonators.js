@@ -1,5 +1,4 @@
 import db from '../db/sequelize/dbConnection';
-import {resonators} from '../../src/db/sequelize/models';
 
 export default function fetchPendingResonators(getNow = (() => new Date())) {
     const now = "'" + getNow().toJSON() + "'";

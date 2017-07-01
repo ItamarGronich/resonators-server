@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import express from '../express';
 import login from '../../application/login';
 import relogin from '../../application/relogin';
@@ -6,7 +5,6 @@ import logout from '../../application/logout';
 import routeHandler from '../routeHandler';
 import * as dtoFactory from '../../application/dto';
 import setSuccessfulLoginResponse from './setSuccessfulLoginResponse';
-import moment from 'moment';
 
 express.post('/api/user_sessions\.:ext?', routeHandler(async (request, response) => {
     const {email, password} = request.body;

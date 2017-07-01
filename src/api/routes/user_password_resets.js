@@ -2,7 +2,6 @@ import express from '../express';
 import routeHandler from '../routeHandler';
 import sendResetPasswordEmail from '../../application/sendResetPasswordEmail';
 import resetPasswordTokenValidator from '../../application/resetPasswordTokenValidator';
-import {getLatestAssetLink} from '../../application/versionableAssets';
 import changePassword from '../../application/changePassword';
 import renderClient from '../renderClient';
 

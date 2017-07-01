@@ -9,7 +9,7 @@ export function startEmailSchedulingLoop(getNow) {
     if (cfg.emailSchedulerOn) {
         log.info(`starting email scheduler loop. interval: ${Interval}`);
         stopped = false;
-        loop();
+        loop(getNow);
     }
 }
 

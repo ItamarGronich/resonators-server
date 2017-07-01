@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
 
@@ -10,7 +9,6 @@ import {
     answers
 } from '../sequelize/models';
 
-import Resonators from '../../domain/entities/resonator';
 import addRemoveChangedEntities from './addedRemovedEntities';
 
 class ResonatorsRepository extends Repository {

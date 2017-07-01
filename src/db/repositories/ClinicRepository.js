@@ -1,7 +1,5 @@
-import _ from 'lodash';
-import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
-import {users, clinics} from '../sequelize/models';
+import {clinics} from '../sequelize/models';
 
 class ClinicRepository extends Repository {
     constructor(...args) {
@@ -14,8 +12,8 @@ class ClinicRepository extends Repository {
         };
     }
 
-    async save(clinic, transaction, lastClinic) {
-        return await clinics.create(clinic, {transaction});
+    save(clinic, transaction) {
+        return clinics.create(clinic, {transaction});
     }
 }
 

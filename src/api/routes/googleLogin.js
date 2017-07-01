@@ -2,7 +2,6 @@ import express from '../express';
 import routeHandler from '../routeHandler';
 import {getLoginUrl, loginGoogleUser} from '../../application/google/googleLogin';
 import setLoginCookie from './setLoginCookie';
-import renderClient from '../renderClient';
 
 express.get('/api/startGoogleLogin', routeHandler(async (request, response) => {
     const url = await getLoginUrl();

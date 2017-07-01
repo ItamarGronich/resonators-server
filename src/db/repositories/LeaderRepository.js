@@ -1,7 +1,5 @@
-import _ from 'lodash';
-import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
-import {users, leaders} from '../sequelize/models';
+import {leaders} from '../sequelize/models';
 
 class LeaderRepository extends Repository {
     constructor(...args) {
@@ -14,8 +12,8 @@ class LeaderRepository extends Repository {
         };
     }
 
-    async save(leader, transaction, lastLeader) {
-        return await leaders.create(leader, {transaction});
+    save(leader, transaction) {
+        return leaders.create(leader, {transaction});
     }
 }
 

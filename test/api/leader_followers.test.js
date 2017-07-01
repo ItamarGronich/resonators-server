@@ -2,18 +2,16 @@ import _ from 'lodash';
 import {users, followers} from '../../src/db/sequelize/models';
 import {fooUserLogin} from '../dbFixtures/user_logins';
 import {putFollower} from '../dbFixtures/followers';
-import {clinic} from '../dbFixtures/clinics';
-import setLoginCookie from './setLoginCookie';
 import * as dbToDomain from '../../src/db/dbToDomain';
 import {assert} from 'chai';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt-nodejs';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 import request from './supertestWrapper';
 import {getFollowers, freezeFollower, unfreezeFollower} from './calls';
 
 describe('leader_followers', () => {
     it('get followers', async () => {
-        const { user, userLogin, leader, clinic, follower } = await generateFixtures().preset1();
+        const { userLogin, leader, clinic, follower } = await generateFixtures().preset1();
 
         const {status, body} = await getFollowers(userLogin.id);
 
@@ -39,7 +37,7 @@ describe('leader_followers', () => {
     });
 
     it('add follower', async () => {
-        const { user, userLogin, leader, clinic } = await generateFixtures().preset1();
+        const { userLogin, leader, clinic } = await generateFixtures().preset1();
 
         const {status, body} = await request({
             method: 'post',
@@ -73,7 +71,7 @@ describe('leader_followers', () => {
     });
 
     it('cannot put unfollowed user', async () => {
-        const {status, body} = await request({
+        const {status} = await request({
             method: 'put',
             url: `/api/leader_followers/${putFollower.id}`,
             cookie: `loginId=${fooUserLogin.id}`,
@@ -84,9 +82,9 @@ describe('leader_followers', () => {
     });
 
     it('put follower', async () => {
-        const { user, userLogin, leader, follower } = await generateFixtures().preset1();
+        const { userLogin, follower } = await generateFixtures().preset1();
 
-        const {status, body} = await request({
+        const {status} = await request({
             method: 'put',
             url: `/api/leader_followers/${follower.id}`,
             body: {user: {email: 'uv@gmail.com', name:'ppp'}},
@@ -107,12 +105,12 @@ describe('leader_followers', () => {
     });
 
     describe('delete follower', () => {
-        let userLogin, follower, status, body;
+        let userLogin, follower, status;
 
         before(async () => {
             ({ userLogin, follower } = await generateFixtures().preset1());
 
-            ({status, body} = await request({
+            ({status} = await request({
                 method: 'delete',
                 url: `/api/leader_followers/${follower.id}`,
                 authorization: userLogin.id
@@ -147,11 +145,11 @@ describe('leader_followers', () => {
     });
 
     describe('disable follower', () => {
-        let userLogin, follower, status, body;
+        let userLogin, follower, status;
 
         before(async () => {
             ({ userLogin, follower } = await generateFixtures().preset1());
-            ({status, body} = await freezeFollower(userLogin.id, follower.id));
+            ({status} = await freezeFollower(userLogin.id, follower.id));
         });
 
         it('status 200', () => {
@@ -164,7 +162,7 @@ describe('leader_followers', () => {
         });
 
         it('unfreeze follower', async () => {
-            const {status, body} = await unfreezeFollower(userLogin.id, follower.id);
+            const {status} = await unfreezeFollower(userLogin.id, follower.id);
             assert.equal(status, 200);
 
             const f = await getFollower(follower.id);

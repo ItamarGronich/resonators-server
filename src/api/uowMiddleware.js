@@ -1,6 +1,5 @@
 import {UnitOfWork} from 'ddd-helpers';
 import dbConn from '../db/sequelize/dbConnection';
-import userRepository from '../db/repositories/UserRepository';
 import getEntityRepository from '../application/getEntityRepository';
 import ctx from 'request-local';
 import uuid from 'uuid/v4';

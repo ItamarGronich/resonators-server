@@ -14,8 +14,8 @@ class FollowerRepository extends Repository {
         };
     }
 
-    async save(follower, transaction, lastFollower) {
-        return await followers.upsert(follower, {transaction});
+    save(follower, transaction) {
+        return followers.upsert(follower, {transaction});
     }
 
     async findByLeaderUserId(leaderUserId) {
