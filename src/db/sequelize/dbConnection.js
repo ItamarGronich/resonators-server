@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize';
 import cfg from '../../cfg';
 
-const {username, host, database, options = {}} = cfg.db;
+const {username, password, host, database, options = {}} = cfg.db;
 
-export default new Sequelize(`postgres://${username}@${host}/${database}`, options);
+export default new Sequelize(`postgres://${username}${password ? ':' + password : ''}@${host}/${database}`, options);
