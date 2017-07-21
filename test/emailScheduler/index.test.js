@@ -99,15 +99,6 @@ describe('email scheduler', () => {
             subject: r1.title
         }), 3000).catch(() => {});
 
-        const sendR1Called = sendResonatorEmailStub.calledWithMatch({
-            to: r1.follower.user.email,
-            subject: r1.title,
-            html: sinon.match(
-                txt => _.includes(txt, r1.link) &&
-                       _.includes(txt, r1.content)
-            )
-        });
-
         const r1Call = resonatorEmailCalledWithMatch(sendResonatorEmailStub, r1);
         assert.isFalse(r1Call, 'r1 was called, even though it should not have been.');
     }).timeout(5000);
