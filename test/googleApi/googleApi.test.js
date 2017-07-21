@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import fetchBasicDetails from '../../src/google/fetchBasicDetails.prod';
 import * as calendarApi from '../../src/google/calendarApi';
 import {assert} from 'chai';
@@ -10,7 +9,7 @@ const tokens = {
 };
 
 describe('google api', function() {
-    this.timeout(20000);
+    this.timeout(60000);
 
     it('fetch details', async () => {
         const details = await fetchBasicDetails(tokens);
@@ -30,31 +29,85 @@ describe('google api', function() {
         it('create + remove calendar', async function() {
             this.timeout(20000);
 
+            const id = await createCalendar();
+
+            assert.isOk(id);
+
+            await removeCalendar(id);
+        });
+
+        it('create event', async () => {
+            const calendarId = await createCalendar();
+            const ev = await createEvent(calendarId);
+            assert.isOk(ev.id);
+            assert.equal(ev.status, 'confirmed');
+            await removeCalendar(calendarId);
+        });
+
+        it('edit event', async () => {
+            const calendarId = await createCalendar();
+
+            const createdEvent = await createEvent(calendarId);
+
+            await calendarApi.updateEvent(tokens, {
+                calendarId,
+                eventId: createdEvent.id,
+                resource: {
+                    description: 'overridden'
+                }
+            });
+
+            const updatedEvents = await getEvents(calendarId);
+
+            assert.equal(updatedEvents.items[0].description, 'overridden');
+
+            await removeCalendar(calendarId);
+        });
+
+        it('delete event', async () => {
+            const calendarId = await createCalendar();
+            const event = await createEvent(calendarId);
+            await deleteEvent(calendarId, event.id);
+            const events = await getEvents(calendarId);
+            assert.equal(events.items.length, 0);
+        });
+
+        it('get events', async () => {
+            const calendarId = await createCalendar();
+            const createdEvent = await createEvent(calendarId);
+            const events = await getEvents(calendarId);
+
+            assert.equal(events.items.length, 1);
+            const firstEvent = events.items[0];
+            assert.equal(firstEvent.id, createdEvent.id);
+            assert.equal(firstEvent.status, 'confirmed');
+            await removeCalendar(calendarId);
+        });
+
+        async function createCalendar() {
             const {id} = await calendarApi.createCalendar(tokens, {
                 resource: {
                     summary: 'Resonators'
                 }
             });
 
-            assert.isOk(id);
+            return id;
+        }
 
-            await calendarApi.removeCalendar(tokens, id);
-        });
+        function removeCalendar(id) {
+            return calendarApi.removeCalendar(tokens, id);
+        }
 
-        it('edit event', async () => {
-            const calendarId = '0dr2hrboeic2l2rdm22fl82oss@group.calendar.google.com';
+        function createEvent(calendarId) {
+            return calendarApi.createEvent(tokens, calendarId);
+        }
 
-            const events = await calendarApi.getEvents(tokens, calendarId);
+        function deleteEvent(calendarId, eventId) {
+            return calendarApi.deleteEvent(tokens, calendarId, eventId);
+        }
 
-            const lastEventId = _.last(events.items).id;
-
-            await calendarApi.updateEvent(tokens, {
-                calendarId,
-                eventId: lastEventId,
-                resource: {
-                    description: 'overridden'
-                }
-            });
-        });
+        function getEvents(calendarId) {
+            return calendarApi.getEvents(tokens, calendarId);
+        }
     });
 });

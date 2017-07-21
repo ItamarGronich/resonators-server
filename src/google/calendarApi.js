@@ -30,5 +30,21 @@ export function getEvents(tokens, calendarId) {
     });
 }
 
-export function createEvent() {
+export function createEvent(tokens, calendarId, start = '2019-01-01', end = '2019-01-02', params) {
+    return dispatch(calendar.events.insert, tokens, {
+        calendarId,
+        resource: {
+            start: {
+                date: start
+            },
+            end: {
+                date: end
+            },
+            ...params
+        }
+    });
+}
+
+export function deleteEvent(tokens, calendarId, eventId) {
+    return dispatch(calendar.events.delete, tokens, { calendarId, eventId });
 }
