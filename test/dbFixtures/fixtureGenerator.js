@@ -14,7 +14,8 @@ import {
     resonator_answers,
     sent_resonators,
     versionable_assets,
-    google_accounts
+    google_accounts,
+    leader_calendars
 } from '../../src/db/sequelize/models';
 
 import uuid from 'uuid/v4';
@@ -40,11 +41,13 @@ export default function generateFixtures() {
         generateSentResonator: (...args) => generateFixture(generateSentResonator(...args)),
         generateVersionableAsset: (...args) => generateFixture(generateVersionableAsset(...args)),
         generateGoogleAccount: (...args) => generateFixture(generateGoogleAccount(...args)),
+        generateLeaderCalendar: (...args) => generateFixture(generateLeaderCalendar(...args)),
         last: () => _.last(fixtureList),
         fixtures: () => fixtureList,
         done() {
-            return Promise.all(queue)
-                          .then(_ => fixtureList);
+            return Promise
+                .all(queue)
+                .then(() => fixtureList);
         },
 
         preset1() {
@@ -132,6 +135,8 @@ export default function generateFixtures() {
             description: randStr('leader description'),
             visible: 1
         };
+
+        Object.defineProperty(entity, 'user', {value: user});
 
         queue.push(leaders.create(entity));
 
@@ -358,17 +363,39 @@ export default function generateFixtures() {
         return entity;
     }
 
-    function generateGoogleAccount({account, user_id = generateUser()}) {
+    function generateGoogleAccount({
+        account,
+        user = generateUser()
+    } = {}) {
         const entity = {
             id: uuid(),
-            user_id,
+            user_id: user.id,
             access_token: uuid(),
             id_token: uuid(),
             refresh_token: uuid(),
+            access_token_expiry_date: null,
             ...account
         };
 
+        Object.defineProperty(entity, 'user', {value: user});
+
         queue.push(google_accounts.create(entity));
+
+        return entity;
+    }
+
+    function generateLeaderCalendar({
+        leader = generateLeader(),
+        calendar_id = uuid()
+    } = {}) {
+        const entity = {
+            leader_id: leader.id,
+            calendar_id
+        };
+
+        Object.defineProperty(entity, 'leader', {value: leader});
+
+        queue.push(leader_calendars.create(entity));
 
         return entity;
     }

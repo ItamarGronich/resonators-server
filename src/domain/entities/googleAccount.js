@@ -26,4 +26,12 @@ export default class GoogleAccount {
     init() {
         this.id = uuid();
     }
+
+    getTokens() {
+        return {
+            access_token: this.access_token,
+            refresh_token: this.refresh_token,
+            access_token_expiry_date: this.access_token_expiry_date
+        };
+    }
 }

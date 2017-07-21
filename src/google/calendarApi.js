@@ -20,5 +20,15 @@ export function removeCalendar(tokens, calendarId) {
     });
 }
 
+export function updateEvent(tokens, params) {
+    return dispatch(calendar.events.patch, tokens, params);
+}
+
+export function getEvents(tokens, calendarId) {
+    return dispatch(calendar.events.list, tokens, {
+        calendarId
+    });
+}
+
 export function createEvent() {
 }

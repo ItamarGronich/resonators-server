@@ -13,3 +13,14 @@ export const emailSchedulerLogger = logWrapper(new winston.Logger({
         })
     ]
 }), true);
+
+export const calendarsSyncLog = logWrapper(new winston.Logger({
+    transports: [
+        new winston.transports.File({
+            filename: path.join(__dirname, '../../logs/calendarsSyncLog'),
+            maxsize: 1024 * 1024 * 10,
+            level: 'debug'
+        }),
+        new winston.transports.Console()
+    ]
+}), true);
