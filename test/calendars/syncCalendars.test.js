@@ -16,7 +16,7 @@ describe('sync calendars', () => {
             '../../google/calendarApi': {
                 createCalendar: createCalendarStub
             }
-        });
+        }).default;
     });
 
     describe('create a new Resonators calendar for new users', function() {

@@ -1,11 +1,14 @@
 import api from './api';
-import { startEmailSchedulingLoop } from './emailScheduler';
+import emailSchedulingJob from './emailScheduler';
 import syncCalendarsJob from './calendars/calendarsSync';
 import initInfra from './infra';
+import cfg from './cfg';
 
 initInfra();
 
-startEmailSchedulingLoop();
+if (cfg.emailSchedulerOn)
+    emailSchedulingJob.start();
+
 syncCalendarsJob.start();
 
 api.set('port', (process.env.PORT || 8080));

@@ -10,7 +10,7 @@ import {getArgsOf} from '../utils';
 import * as apiCalls from '../api/calls';
 
 describe('email scheduler', () => {
-    let startEmailSchedulingLoop, stopEmailSchedulingLoop, sendResonatorEmailStub;
+    let startEmailSchedulingJob, stopEmailSchedulingJob, sendResonatorEmailStub;
 
     beforeEach(() => {
         sendResonatorEmailStub = sinon.stub().returns(Promise.resolve());
@@ -22,13 +22,13 @@ describe('email scheduler', () => {
             }
         };
 
-        const scheduleEmailsLoop = proxyquire('../../src/emailScheduler/index', stubs);
-        startEmailSchedulingLoop = scheduleEmailsLoop.startEmailSchedulingLoop;
-        stopEmailSchedulingLoop = scheduleEmailsLoop.stopEmailSchedulingLoop;
+        const scheduleEmailsJob = proxyquire('../../src/emailScheduler/index', stubs).default;
+        startEmailSchedulingJob = scheduleEmailsJob.start;
+        stopEmailSchedulingJob = scheduleEmailsJob.stop;
     });
 
     afterEach(() => {
-        stopEmailSchedulingLoop();
+        stopEmailSchedulingJob();
     });
 
     describe('schedule pending resonator', async () => {
@@ -52,7 +52,7 @@ describe('email scheduler', () => {
                             })
                             .done();
 
-            startEmailSchedulingLoop();
+            startEmailSchedulingJob();
 
             await waitFor(() => sendResonatorEmailStub.calledWithMatch({
                 subject: r1.title
@@ -93,7 +93,7 @@ describe('email scheduler', () => {
                             }})
                         .done();
 
-        startEmailSchedulingLoop();
+        startEmailSchedulingJob();
 
         await waitFor(() => sendResonatorEmailStub.calledWithMatch({
             subject: r1.title
@@ -121,7 +121,7 @@ describe('email scheduler', () => {
                             }})
                         .done();
 
-        startEmailSchedulingLoop();
+        startEmailSchedulingJob();
 
         let row;
         await waitFor(() => {
@@ -143,7 +143,7 @@ describe('email scheduler', () => {
                             }})
                         .done();
 
-        startEmailSchedulingLoop();
+        startEmailSchedulingJob();
 
         await waitFor(() => sendResonatorEmailStub.called, 5000);
 
@@ -160,7 +160,7 @@ describe('email scheduler', () => {
                             }})
                         .done();
 
-        startEmailSchedulingLoop();
+        startEmailSchedulingJob();
 
         await waitFor(() => sendResonatorEmailStub.called, 5000);
 
@@ -181,7 +181,7 @@ describe('email scheduler', () => {
                             }})
                         .done();
 
-        startEmailSchedulingLoop();
+        startEmailSchedulingJob();
 
         await waitFor(() => sendResonatorEmailStub.callCount > 1, 800).catch(_.noop);
 
@@ -207,7 +207,7 @@ describe('email scheduler', () => {
         await apiCalls.unsubscribe(userRecipient.id);
 
         //When
-        startEmailSchedulingLoop();
+        startEmailSchedulingJob();
 
         //Then
         const predicate = () => sendResonatorEmailStub.calledWithMatch({
@@ -239,7 +239,7 @@ describe('email scheduler', () => {
         await apiCalls.freezeFollower(userLogin.id, r1.follower.id);
 
         //When
-        startEmailSchedulingLoop();
+        startEmailSchedulingJob();
 
         //Then
         const predicate = () => sendResonatorEmailStub.calledWithMatch({
