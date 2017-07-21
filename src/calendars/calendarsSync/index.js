@@ -3,36 +3,18 @@ import {createCalendar} from '../../google/calendarApi';
 import LeaderCalendar from '../../domain/entities/leaderCalendar';
 import createUow from '../../application/createUow';
 import {calendarsSyncLog as log} from '../../infra/log';
+import createJob from '../../createJob';
 
 const ResonatorsCalendarName = 'Resonators';
 const CreateCalendarsInteval = 30 * 1000;
 
-let stopped = true;
-
-export function start() {
-    stopped = false;
-
-    log.info('starting loop');
-    loopSyncCalendars();
-}
-
-export function stop() {
-    log.info('stopping loop');
-    stopped = true;
-}
-
-async function loopSyncCalendars() {
-    try {
-        if (stopped)
-            return;
-
-        await createCalendarsForGoogleUsers();
-    } catch (err) {
-        log.error('failed syncing calendars', err);
-    }
-
-    setTimeout(loopSyncCalendars, CreateCalendarsInteval);
-}
+export default createJob({
+    runner: createCalendarsForGoogleUsers,
+    interval: CreateCalendarsInteval,
+    onStart: () => log.info('starting loop'),
+    onStop: () => log.info('stopping loop'),
+    onError: err => log.error('failed syncing calendars', err)
+});
 
 async function createCalendarsForGoogleUsers() {
     const accountsWithoutCalendars = await
