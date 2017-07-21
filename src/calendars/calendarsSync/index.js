@@ -31,7 +31,7 @@ async function loopSyncCalendars() {
         log.error('failed syncing calendars', err);
     }
 
-    setTimeout(createCalendarsForGoogleUsers, CreateCalendarsInteval);
+    setTimeout(loopSyncCalendars, CreateCalendarsInteval);
 }
 
 async function createCalendarsForGoogleUsers() {
