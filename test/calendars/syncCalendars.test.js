@@ -5,7 +5,6 @@ import {leader_calendars} from '../../src/db/sequelize/models';
 import sinon from 'sinon';
 import waitFor from 'wait-for-cond';
 import uuid from 'uuid/v4';
-import {assert} from 'chai';
 
 describe('sync calendars', () => {
     let calendarsSync, createCalendarStub;
@@ -24,9 +23,6 @@ describe('sync calendars', () => {
         this.timeout(5000);
 
         let userGoogleAccount, leader, calendarId;
-
-        beforeEach(async () => {
-        });
 
         afterEach(() => {
             calendarsSync.stop();
