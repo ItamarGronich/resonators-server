@@ -1,10 +1,12 @@
 import api from './api';
 import { startEmailSchedulingLoop } from './emailScheduler';
+import { start as startCalendarSyncLoop} from './calendars/calendarsSync';
 import initInfra from './infra';
 
 initInfra();
 
 startEmailSchedulingLoop();
+startCalendarSyncLoop();
 
 api.set('port', (process.env.PORT || 8080));
 

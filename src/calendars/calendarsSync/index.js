@@ -5,16 +5,19 @@ import createUow from '../../application/createUow';
 import {calendarsSyncLog as log} from '../../infra/log';
 
 const ResonatorsCalendarName = 'Resonators';
-const CreateCalendarsInteval = 5000;
+const CreateCalendarsInteval = 30 * 1000;
+
 let stopped = true;
 
 export function start() {
     stopped = false;
 
+    log.info('starting loop');
     loopSyncCalendars();
 }
 
 export function stop() {
+    log.info('stopping loop');
     stopped = true;
 }
 
@@ -35,11 +38,15 @@ async function createCalendarsForGoogleUsers() {
     const accountsWithoutCalendars = await
         leaderCalendarRepository.getGoogleAccountsWithoutCalendars();
 
+    log.info(`fetched ${accountsWithoutCalendars.length} pending accounts`);
+
     const uow = createUow();
 
     for (const account of accountsWithoutCalendars) {
         try {
             const {leader, googleAccount} = account;
+
+            log.info(`creating a Resonators calendar for googleAccountId: ${googleAccount.id}`);
 
             const calendar = await createCalendar(googleAccount.getTokens(), {
                 resource: {
