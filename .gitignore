@@ -7,4 +7,3 @@ static/common.bundle.*.json
 npm-debug.log.*
 secrets.js
 logs/
-sslcert/
