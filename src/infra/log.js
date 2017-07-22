@@ -2,7 +2,7 @@ import logWrapper from './logWrapper';
 import winston from 'winston';
 import path from 'path';
 
-export default logWrapper(winston);
+export default createLogger('api');
 
 export const emailSchedulerLogger = createLogger('emailSchedulerLog');
 export const calendarsSyncLog = createLogger('calendarsSyncLog');
