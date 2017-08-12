@@ -17,7 +17,7 @@
     "start:prodHttp": "sudo NODE_ENV=production ENV=production PORT=80 ./node_modules/.bin/pm2 start index.http.js --name resonatorsHttp",
     "start:prodHttps": "sudo NODE_ENV=production ENV=production HTTPS_PORT=443 ./node_modules/.bin/pm2 start index.js --name resonatorsHttps",
     "start:prod": "npm run start:prodHttp && npm run start:prodHttps",
-    "restart:prod": "sudo pm2 restart resonators"
+    "restart:prod": "sudo pm2 restart resonatorsHttp resonatorsHttps"
   },
   "author": "InterAl",
   "license": "ISC",
