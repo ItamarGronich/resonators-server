@@ -1,7 +1,3 @@
-import http from 'http';
-import cfg from './cfg';
-
-http.createServer((req, res) => {
-    res.redirect(cfg.host);
-    res.end();
-}).listen(process.env.PORT || 80);
+global.regeneratorRuntime = require('babel-regenerator-runtime');
+require("babel-register")();
+require("./src/index.http.js");
