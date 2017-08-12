@@ -9,7 +9,11 @@ import path from 'path';
 
 initInfra();
 startJobs();
-startHttpsServer();
+
+if (process.env.ENV !== 'production')
+    startHttpServer();
+else
+    startHttpsServer();
 
 function startJobs() {
     if (cfg.emailSchedulerOn)
@@ -24,4 +28,12 @@ function startHttpsServer() {
     const credentials = { key: privateKey, cert: certificate };
     const httpsServer = https.createServer(credentials, api);
     httpsServer.listen(process.env.HTTPS_PORT || 8443);
+}
+
+function startHttpServer() {
+    api.set('port', (process.env.HTTP_PORT || 8080));
+
+    api.listen(api.get('port'), '0.0.0.0', function() {
+        console.log('Node app is running on port', api.get('port'), '| env:', process.env.ENV);
+    });
 }
