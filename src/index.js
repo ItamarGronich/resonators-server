@@ -9,7 +9,6 @@ import path from 'path';
 
 initInfra();
 startJobs();
-// startHttpServer();
 startHttpsServer();
 
 function startJobs() {
@@ -17,14 +16,6 @@ function startJobs() {
         emailSchedulingJob.start();
 
     syncCalendarsJob.start();
-}
-
-function startHttpServer() {
-    api.set('port', (process.env.HTTP_PORT || 8080));
-
-    api.listen(api.get('port'), '0.0.0.0', function() {
-        console.log('Node app is running on port', api.get('port'), '| env:', process.env.ENV);
-    });
 }
 
 function startHttpsServer() {
