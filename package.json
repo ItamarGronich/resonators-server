@@ -16,7 +16,7 @@
     "storybook": "start-storybook -p 9007 -c .storybook",
     "start:prodHttp": "sudo PORT=80 ./node_modules/.bin/pm2 start index.http.js --name resonatorsHttp",
     "start:prodHttps": "sudo HTTPS_PORT=443 ./node_modules/.bin/pm2 start index.js --name resonatorsHttps",
-    "start:prod": "npm run start:prodHttp && npm run start:prodHttps",
+    "start:prod": "npm NODE_ENV=production ENV=production run start:prodHttp && npm run start:prodHttps",
     "restart:prod": "sudo pm2 restart resonators"
   },
   "author": "InterAl",
