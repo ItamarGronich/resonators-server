@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "source ~/.nvm/nvm.sh && nvm use && ENV=dev node index.js",
-    "test": "source ~/.nvm/nvm.sh && nvm use && ./test/run -- --watch test/**/*.test.js",
-    "test:noinit": "source ~/.nvm/nvm.sh && nvm use && ./test/run noinit -- --watch test/**/*.test.js",
+    "test": "~/.nvm/nvm.sh && nvm use && ./test/run -- --watch test/**/*.test.js",
+    "test:noinit": "~/.nvm/nvm.sh && nvm use && ./test/run noinit -- --watch test/**/*.test.js",
     "test:watchSingle": "source ~/.nvm/nvm.sh && nvm use && ./test/run noinit -- --watch",
     "lint": "eslint ./src",
     "migrate": "./node_modules/.bin/sequelize db:migrate",

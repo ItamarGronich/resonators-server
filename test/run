@@ -28,8 +28,8 @@ function initBabel() {
     require("babel-register")({});
 }
 
-function initDB() {
-    return execSync('DB=resonators_test ./scripts/initdb', {
+function initDB() { 
+    return execSync('node ./scripts/initdb', {
         stdio: 'inherit'
     });
 }

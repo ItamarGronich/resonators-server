@@ -41,7 +41,7 @@ class QuestionRepository extends Repository {
         });
 
         if (!dbQuestion)
-            return null;
+            return null;        
 
         const question = dbToDomain.toQuestion(dbQuestion);
 
@@ -103,6 +103,20 @@ class QuestionRepository extends Repository {
         return questionEntities;
     }
 
+     async deleteById(id) {         
+        return await questions.destroy({
+            where: {
+                id
+            }
+        });
+    }
+     async deleteAnswersByQuestionId(id) {         
+        return await answers.destroy({
+            where: {
+                question_id:id
+            }
+        });
+    }
     getInclude() {
         return [answers];
     }

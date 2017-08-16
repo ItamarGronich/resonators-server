@@ -15,10 +15,10 @@ const exec = (...args) => require('child_process').execSync(...args, {stdio: 'in
 console.log('***************\nDB SETUP\n***************\n');
 
 databases.forEach(dbName => {
-    console.log(`dropdb ${dbName}`);
-    exec(`dropdb ${dbName} -U postgres --if-exists`);
-    console.log(`createdb ${dbName}`);
-    exec(`createdb ${dbName} -U postgres`);
+    console.log(`dropdb  -U postgres ${dbName}`);
+    exec(`dropdb -U postgres --if-exists ${dbName}`);
+    console.log(`createdb -U postgres ${dbName}`);
+    exec(`createdb -U postgres ${dbName}`);
 });
 
 console.log('\n***************\nDB MIGRATION\n***************\n');

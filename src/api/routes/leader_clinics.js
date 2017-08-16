@@ -4,7 +4,8 @@ import {
     getLeaderClinics,
     getLeaderClinicsCriteria,
     addQuestionToClinic,
-    updateQuestion
+    updateQuestion,
+    deleteQuestion
 } from '../../application/leaderClinics';
 
 express.get('/api/leader_clinics', routeHandler(async (request, response) => {
@@ -52,4 +53,16 @@ express.put('/api/leader_clinics/:clinicId/criteria/:criterionId\.:ext?', routeH
         response.status(200);
 
     response.json(updatedQuestion);
+}));
+express.delete('/api/leader_clinics/:clinicId/criteria/:criterionId\.:ext?', routeHandler(async (request, response) => {
+    let question = request.body;
+    const {criterionId} = request.params;
+    console.log(question);
+    console.log(criterionId);
+    const result = await deleteQuestion(criterionId);
+    console.log(result);
+    response.status(result ? 200 : 422);
+    response.json({});
+}, {
+    enforceLeaderFollower: true
 }));

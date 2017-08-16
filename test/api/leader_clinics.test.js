@@ -204,9 +204,27 @@ describe('leader_clinics', () => {
 
         assertQuestions(clinicQuestionsResponse.body,
                         [updatedQuestion]);
-    });
+    });   
 });
 
+describe('leader_clinics', () => {
+        it('delete clinic criteria', async () => {
+        const {userLogin, clinics, questions} = await generateFixtures().presetLeaderWithManyClinics();
+
+        const originalQuestion = questions[0];
+        const clinic = clinics[0];
+        console.log("Question ID: "+ originalQuestion.id);
+        const response = await request({
+            method: 'delete',
+            url: `/api/leader_clinics/${clinic.id}/criteria/${originalQuestion.id}`,
+            cookie: `loginId=${userLogin.id}`,
+            body: originalQuestion
+        });
+
+        assert.equal(response.status, 200);
+    });
+   
+});
 function assertQuestions(actual, expected) {
     actual = _.orderBy(actual, q => q.id);
     expected = _.orderBy(expected, q => q.id);
