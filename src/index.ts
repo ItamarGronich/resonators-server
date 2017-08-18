@@ -3,9 +3,9 @@ import emailSchedulingJob from './emailScheduler';
 import syncCalendarsJob from './calendars/calendarsSync';
 import initInfra from './infra';
 import cfg from './cfg';
-import fs from 'fs';
-import https from 'https';
-import path from 'path';
+import * as fs from 'fs';
+import * as https from 'https';
+import * as path from 'path';
 
 initInfra();
 startJobs();

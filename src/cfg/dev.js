@@ -1,4 +1,4 @@
-import dbCfg from '../db/sequelize/config/config';
+const dbCfg = require('../db/sequelize/config/config.json');
 
 export default {
     db: {

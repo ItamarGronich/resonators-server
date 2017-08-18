@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-initBabel();
+initTs();
 
 process.env.ENV = 'test';
 
@@ -23,9 +23,8 @@ if (noInit) {
 
 //********************************************
 
-function initBabel() {
-    global.regeneratorRuntime = require('babel-regenerator-runtime');
-    require("babel-register")({});
+function initTs() {
+    require('ts-node').register();
 }
 
 function initDB() {
