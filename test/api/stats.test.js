@@ -45,10 +45,13 @@ describe('resonator stats', () => {
 
         assert.deepEqual(result.body, {
             questions: resonator.questions.map(q => _.omitDeep(q.question, ['question_id'])),
-            answers: resonator.answers.map(a => ({
+            answers: _(resonator.answers)
+            .sortedUniqBy(a => a.resonator_question_id)
+            .map(a => ({
                 question_id: resonator.questions.find(q => q.id === a.resonator_question_id).question_id,
                 rank: resonator.questions.find(q => q.id === a.resonator_question_id).question.answers.find(_a => _a.id === a.answer_id).rank,
             }))
+            .value()
         });
     }
 
@@ -230,5 +233,53 @@ describe('resonator stats', () => {
 
             assert.equal(response.status, 200);
         });
+
+        it('only the last answer counts per day', async () => {
+            const {resonator, userLogin} = await generateFixtures().preset1();
+            const [sentResonator1, sentResonator2] = await generateFixtures()
+                .generateSentResonator(resonator)
+                .generateSentResonator(resonator)
+                .done();
+
+            const question = resonator.questions[0].question;
+
+            const answer = {
+                resonator_id: resonator.id,
+                question_id: question.id,
+                answer_id: question.answers[0].id,
+                sent_resonator_id: sentResonator1.id
+            };
+
+            const response = await request({
+                method: 'get',
+                url: `/api/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                cookie: `loginId=${userLogin.id}`
+            });
+
+            assert.equal(response.status, 200);
+
+            const response2 = await request({
+                method: 'get',
+                url: `/api/criteria/stats/reminders/${answer.resonator_id}/criteria/submit?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                cookie: `loginId=${userLogin.id}`
+            });
+
+            assert.equal(response2.status, 200);
+
+            const getResponse = await request({
+                method: 'get',
+                url: `/api/criteria/stats/reminders/${resonator.id}?question_id=${answer.question_id}&answer_id=${answer.answer_id}&sent_resonator_id=${answer.sent_resonator_id}`,
+                cookie: `loginId=${userLogin.id}`
+            });
+
+            assert.deepEqual(_.omitDeep(getResponse.body.answers, 'time'), [{
+                question_id: question.id,
+                rank: 1
+            }]);
+        });
     });
+
+    function _getUtcDay(timestamp) {
+        return Math.floor(new Date(timestamp).getTime() / (1000 * 3600 * 24));
+    }
 });

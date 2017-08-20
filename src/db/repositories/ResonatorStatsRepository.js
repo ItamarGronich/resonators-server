@@ -81,7 +81,13 @@ class ResonatorStatsRepository extends Repository {
         let questionGroup = _.groupBy(questionAnswerPair, p => p.question_id);
 
         questionGroup = _.reduce(Object.keys(questionGroup), (acc, cur) => {
-            acc[cur] = questionGroup[cur].map(a => _.omit(a, 'question_id', 'updated_at'));
+            const answers = questionGroup[cur];
+            const lastAnswerPerDay = _(answers)
+                .orderBy('created_at')
+                .sortedUniqBy(a => `${a.question_id}#${this._getUtcDay(a.created_at)}`)
+                .value();
+
+            acc[cur] = lastAnswerPerDay.map(a => _.omit(a, 'question_id', 'updated_at'));
             return acc;
         }, {});
 
@@ -93,6 +99,10 @@ class ResonatorStatsRepository extends Repository {
         this.trackEntity(resonatorStats);
 
         return resonatorStats;
+    }
+
+    _getUtcDay(timestamp) {
+        return Math.floor(new Date(timestamp).getTime() / (1000 * 3600 * 24));
     }
 }
 
