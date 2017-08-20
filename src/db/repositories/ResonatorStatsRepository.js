@@ -83,7 +83,7 @@ class ResonatorStatsRepository extends Repository {
         questionGroup = _.reduce(Object.keys(questionGroup), (acc, cur) => {
             const answers = questionGroup[cur];
             const lastAnswerPerDay = _(answers)
-                .orderBy('created_at')
+                .orderBy('created_at', ['desc'])
                 .sortedUniqBy(a => `${a.question_id}#${this._getUtcDay(a.created_at)}`)
                 .value();
 
