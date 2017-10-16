@@ -5,6 +5,7 @@ import Question from '../domain/entities/question';
 import * as dtoFactory from './dto';
 import getUow from './getUow';
 import updatePermittedFields from './updatePermittedFields';
+import resonatorRepository from '../db/repositories/ResonatorRepository';
 
 export async function getLeaderClinics(user_id) {
     const rows = await clinics.findAll({
@@ -78,3 +79,25 @@ export async function updateQuestion(questionRequest) {
     const savedQuestion = await questionsRepository.findById(question.id);
     return dtoFactory.toQuestion(savedQuestion);
 }
+
+export async function deleteQuestion(Id) {
+    const question = await questionsRepository.findById(Id);
+    if (!question)
+        return null;
+     return Promise.all([
+        questionsRepository.deleteById(question.id),
+        questionsRepository.deleteAnswersByQuestionId(question.id),
+        resonatorRepository.deleteResonatorAnswersByQuestionId(question.id),
+        resonatorRepository.deleteResonatorsQuestionByQuestionId(question.id)
+    ]);
+    
+}
+export async function getQuestion(id)
+{
+    const question = await questionsRepository.findById(id);
+    if (!question)
+        return [];
+    return dtoFactory.toQuestion(question);
+}
+
+

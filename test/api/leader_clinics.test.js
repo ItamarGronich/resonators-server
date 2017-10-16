@@ -4,6 +4,7 @@ import generateFixtures from '../dbFixtures/fixtureGenerator';
 import {assert} from 'chai';
 import request from '../api/supertestWrapper';
 
+
 describe('leader_clinics', () => {
     it('get clinics', async () => {
         const { user, userLogin, clinic } = await generateFixtures().preset1();
@@ -204,9 +205,40 @@ describe('leader_clinics', () => {
 
         assertQuestions(clinicQuestionsResponse.body,
                         [updatedQuestion]);
-    });
+    });   
 });
 
+describe.only('leader_clinics', () => {        
+        let userLogin, clinics, questions, status;
+
+         before(async () => {
+            ({userLogin, clinics, questions} = await generateFixtures().presetLeaderWithManyClinics());
+            const originalQuestion = questions[0];
+            const clinic = clinics[0];
+            
+            ({status} =  await request({
+            method: 'delete',
+            url: `/api/leader_clinics/${clinic.id}/criteria/${originalQuestion.id}`,
+            cookie: `loginId=${userLogin.id}`,
+            body: originalQuestion
+            }));                       
+        });
+        it('status 200', () => {
+            assert.equal(status, 200);   
+        });        
+         it('Question is deleted', async () => {         
+            const originalQuestion = questions[0];
+            const clinic = clinics[0];
+
+            const {body} = await request({
+            method: 'get',
+            url: `/api/leader_clinics/${clinic.id}/criteria/${originalQuestion.id}`,
+            authorization: userLogin.id
+            });   
+
+            assert.lengthOf(body,0);          
+        });      
+});
 function assertQuestions(actual, expected) {
     actual = _.orderBy(actual, q => q.id);
     expected = _.orderBy(expected, q => q.id);
@@ -221,5 +253,5 @@ function assertQuestions(actual, expected) {
     actual.forEach(q => {
         assert.isOk(q.created_at);
         assert.isOk(q.updated_at);
-    });
+    }); 
 }

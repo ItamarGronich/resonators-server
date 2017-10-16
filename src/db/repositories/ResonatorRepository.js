@@ -5,6 +5,7 @@ import {
     resonators,
     resonator_attachments,
     resonator_questions,
+    resonator_answers,
     questions,
     answers
 } from '../sequelize/models';
@@ -57,7 +58,29 @@ class ResonatorsRepository extends Repository {
             }
         });
     }
+    deleteResonatorsQuestionByQuestionId(question_id) {
+        return resonator_questions.destroy({
+            where: {
+                question_id:question_id
+            }
+        });
+    }
+    async deleteResonatorAnswersByQuestionId(question_id) {
+        question_id = '8b40d070-af85-4213-afbb-31471acad67b';
+          const rows = await resonator_answers.findAll({
+            include: 
+                {
+                    model: resonator_questions,
+                    where: {question_id: question_id}
+                }
+        });
+        if (!rows) 
+            return null;
 
+        rows.map(row=>{
+            row.destroy();
+        });    
+    }
     deleteById(id) {
         return resonators.destroy({
             where: {
