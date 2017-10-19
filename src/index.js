@@ -10,10 +10,11 @@ import path from 'path';
 initInfra();
 startJobs();
 
-if (process.env.ENV !== 'production')
-    startHttpServer();
-else
-    startHttpsServer();
+startHttpServer();
+// if (process.env.ENV !== 'production')
+//     startHttpServer();
+// else
+//     startHttpsServer();
 
 function startJobs() {
     if (cfg.emailSchedulerOn)
