@@ -3,19 +3,20 @@ import _ from 'lodash';
 export default function addRemoveChangedEntities({
     currentGroup,
     previousGroup,
-    dbModel
+    dbModel,
+    transaction
 }) {
     const {
         addedEntities,
         removedEntities
     } = getAddedRemovedEntities(currentGroup, previousGroup);
 
-    const addEntitiesPromises = addedEntities.map(e => dbModel.create(e));
+    const addEntitiesPromises = addedEntities.map(e => dbModel.create(e, {transaction}));
     const removedEntitiesPromises = removedEntities.map(e => dbModel.destroy({
         where: {
             id: e.id
         }
-    }));
+    }, {transaction}));
 
     return [...addEntitiesPromises, ...removedEntitiesPromises];
 }

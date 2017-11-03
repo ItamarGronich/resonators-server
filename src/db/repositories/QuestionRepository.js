@@ -28,7 +28,8 @@ class QuestionRepository extends Repository {
         const addRemovedAnswersPromises = addRemoveChangedEntities({
             currentGroup: self.toAnswersDbEntities(question),
             previousGroup: self.toAnswersDbEntities(lastQuestion),
-            dbModel: answers
+            dbModel: answers,
+            transaction
         });
 
         return Promise.all([questionPromise, ...addRemovedAnswersPromises]);

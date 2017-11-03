@@ -29,24 +29,26 @@ class ResonatorsRepository extends Repository {
 
     save(resonator, transaction, lastResonator = {}) {
         const upsertPromise = resonators.upsert(resonator, {transaction});
-        const questionsPromises = this.saveQuestions(resonator, lastResonator);
-        const itemsPromises = this.saveItems(resonator, lastResonator);
+        const questionsPromises = this.saveQuestions(resonator, lastResonator, transaction);
+        const itemsPromises = this.saveItems(resonator, lastResonator, transaction);
         return Promise.all([upsertPromise, ...questionsPromises, ...itemsPromises]);
     }
 
-    saveQuestions(resonator, lastResonator) {
+    saveQuestions(resonator, lastResonator, transaction) {
         return addRemoveChangedEntities({
             currentGroup: resonator.questions,
             previousGroup: lastResonator.questions,
-            dbModel: resonator_questions
+            dbModel: resonator_questions,
+            transaction
         });
     }
 
-    saveItems(resonator, lastResonator) {
+    saveItems(resonator, lastResonator, transaction) {
         return addRemoveChangedEntities({
             currentGroup: resonator.items,
             previousGroup: lastResonator.items,
-            dbModel: resonator_attachments
+            dbModel: resonator_attachments,
+            transaction
         });
     }
 
