@@ -18,7 +18,7 @@ export async function getResonatorStats(resonatorId) {
 
     const answers = _(stats.criteria)
     .map((arr, question_id) => _.map(arr, a => ({
-        question_id, rank: answersMap[a.answer_id].rank, time: a.created_at
+        question_id, rank: _.get(answersMap[a.answer_id], 'rank'), time: a.created_at
     })))
     .reduce((acc, cur) => acc.concat(cur), []);
 
