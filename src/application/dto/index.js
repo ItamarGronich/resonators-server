@@ -8,7 +8,12 @@ export function toUser(user) {
         unsubscribed: user.unsubscribed
     };
 }
-
+export function toLeader(leader){
+    return{
+        id: leader.id,
+        default_clinic_id:leader.default_clinic_id
+    }
+}
 export function toFollower(follower) {
     let dto = {
         ...follower,

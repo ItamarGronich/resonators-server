@@ -7,7 +7,8 @@ import {
     addLeaderFollower,
     deleteLeaderFollower,
     freezeFollower,
-    unfreezeFollower
+    unfreezeFollower,
+    getLeader
 } from '../../application/leaderFollowers';
 
 express.get('/api/leader_followers\.:ext?', routeHandler(async (request, response) => {
@@ -18,7 +19,12 @@ express.get('/api/leader_followers\.:ext?', routeHandler(async (request, respons
     response.status(200);
     response.json(followers);
 }));
-
+express.get('/api/leader_followers/leaders.:ext?', routeHandler(async (request, response) => {
+    const {leader} = request.appSession;
+    const leaders = await getLeader(leader.id);
+    response.status(200);
+    response.json(leaders);
+}));
 express.post('/api/leader_followers\.:ext?', routeHandler(async (request, response) => {
     const {leader} = request.appSession;
     let followerRequest = request.body;

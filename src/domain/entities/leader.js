@@ -4,6 +4,7 @@ export default class Leader {
         user_id,
         title,
         description,
+        default_clinic_id,
         visible
     }) {
         this.id = id;
@@ -11,5 +12,6 @@ export default class Leader {
         this.title = title;
         this.description = description;
         this.visible = visible;
+        this.default_clinic_id = default_clinic_id;
     }
 }

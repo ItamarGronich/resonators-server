@@ -1,6 +1,7 @@
 import log from '../infra/log';
 import followerRepository from '../db/repositories/FollowerRepository';
 import resonatorRepository from '../db/repositories/ResonatorRepository';
+import leaderRepository from '../db/repositories/LeaderRepository';
 import userRepository from '../db/repositories/UserRepository';
 import User from '../domain/entities/user';
 import Follower from '../domain/entities/follower';
@@ -13,6 +14,11 @@ export async function getLeaderFollowers(user_id) {
     return followersDto;
 }
 
+export async function getLeader(leader_id) {
+    const leader = await leaderRepository.findById(leader_id);
+    const dto = dtoFactory.toLeader(leader);
+    return dto;
+}
 export async function addLeaderFollower({leader_id, clinic_id, email, name, password}) {
     const user = new User({name, email, pass: password});
 

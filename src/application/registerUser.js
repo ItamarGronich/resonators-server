@@ -16,17 +16,20 @@ export async function registerUser({name, email, password}) {
 
     const user = new User({ name, email, pass: password });
 
-    const leader = new Leader({
-        id: uuid(),
-        user_id: user.id,
-        title: user.name,
-        visible: 1
-    });
+
 
     const clinic = new Clinic({
         id: uuid(),
         user_id: user.id,
         name: `${name}'s clinic`
+    });
+
+    const leader = new Leader({
+        id: uuid(),
+        user_id: user.id,
+        title: user.name,
+        default_clinic_id: clinic.id,
+        visible: 1
     });
 
     if (user.error)
