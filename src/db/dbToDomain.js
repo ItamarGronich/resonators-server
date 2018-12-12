@@ -24,6 +24,7 @@ export function toUser(dbUser) {
 export function toLeader(r) {
     return new Leader({
         id: r.get('id'),
+        user_id: r.get('user_id'),
         default_clinic_id:r.get('default_clinic_id')
     });
 }

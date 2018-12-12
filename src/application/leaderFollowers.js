@@ -3,6 +3,7 @@ import followerRepository from '../db/repositories/FollowerRepository';
 import resonatorRepository from '../db/repositories/ResonatorRepository';
 import leaderRepository from '../db/repositories/LeaderRepository';
 import userRepository from '../db/repositories/UserRepository';
+import clinicRepository from '../db/repositories/ClinicRepository';
 import User from '../domain/entities/user';
 import Follower from '../domain/entities/follower';
 import * as dtoFactory from './dto/index';
@@ -17,6 +18,12 @@ export async function getLeaderFollowers(user_id) {
 export async function getLeader(leader_id) {
     const leader = await leaderRepository.findById(leader_id);
     const dto = dtoFactory.toLeader(leader);
+    dto.default_clinic_id = null;
+    if(dto.default_clinic_id == null)
+    {
+        const row = await clinicRepository.findByUserid(dto.user_id);
+        dto.default_clinic_id = row[0].id;
+    }
     return dto;
 }
 export async function addLeaderFollower({leader_id, clinic_id, email, name, password}) {
