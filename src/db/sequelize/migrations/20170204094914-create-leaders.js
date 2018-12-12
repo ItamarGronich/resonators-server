@@ -16,6 +16,9 @@ module.exports = {
       description: {
         type: Sequelize.TEXT
       },
+      deafult_clinic_id: {
+        type: Sequelize.UUID
+      },
       visible: {
         type: Sequelize.INTEGER
       },
