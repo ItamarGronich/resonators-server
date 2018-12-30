@@ -92,8 +92,6 @@ export async function removeQuestionFromResonator(resonator_id, question_id) {
 
     return true;
 }
-
-
 export async function addItemToResonator(resonator_id, item, stream) {
     const resonator = await resonatorRepository.findById(resonator_id);
 
