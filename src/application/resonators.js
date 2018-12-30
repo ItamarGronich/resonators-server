@@ -62,13 +62,24 @@ export async function addQuestionToResonator(resonator_id, question_id) {
 
     if (!resonator || !question)
         return null;
-
     resonator.addQuestion(question_id);
-
     await getUow().commit();
     return true;
 }
+export async function addBulkQuestionsToResonator(resonator_id, question_ids) {
 
+    for (const question_id of question_ids) {
+        const [resonator, question] = await Promise.all([
+        resonatorRepository.findById(resonator_id),
+        questionRepository.findById(question_id)
+    ]);
+    if (!resonator || !question)
+        return null;
+    resonator.addQuestion(question_id);
+    }
+    await getUow().commit();
+    return true;
+}
 export async function removeQuestionFromResonator(resonator_id, question_id) {
     const resonator = await resonatorRepository.findById(resonator_id);
 
