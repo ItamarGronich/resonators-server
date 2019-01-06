@@ -7,7 +7,6 @@ const upload = multer();
 
 express.get('/api/leader_followers/:followerId/reminders\.:ext?', routeHandler(async (request, response) => {
     const resonators = await service.getResonators(request.params.followerId);
-
     response.status(200);
     response.json(resonators);
 }, {
@@ -16,7 +15,6 @@ express.get('/api/leader_followers/:followerId/reminders\.:ext?', routeHandler(a
 
 express.get('/api/leader_followers/:followerId/reminders/:reminderId\.:ext?', routeHandler(async (request, response) => {
     const resonator = await service.getResonator(request.params.reminderId);
-
     response.status(200);
     response.json(resonator);
 }, {
@@ -45,9 +43,7 @@ express.put('/api/leader_followers/:followerId/reminders/:reminderId\.:ext?', ro
 
 express.post('/api/leader_followers/:followerId/reminders/:reminderId/criteria\.:ext?', routeHandler(async (request, response) => {
     const {reminder_id, question_id} = request.body;
-
-    const result = await service.addQuestionToResonator(reminder_id, question_id);
-
+    const result = await service.addBulkQuestionsToResonator(reminder_id, question_id);
     if (!result) {
         response.status(422);
     } else
