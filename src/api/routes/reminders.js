@@ -137,3 +137,18 @@ express.delete('/api/leader_followers/:followerId/reminders/:reminderId\.:ext?',
 }, {
     enforceLeaderFollower: true
 }));
+
+express.delete('/api/leader_followers/:followerId/reminders/:reminderId/removeImage\.:ext?', routeHandler(async (request, response) => {
+    const {reminderId} = request.params;
+
+    const result = await service.removeResonatorImage(reminderId);
+
+    if (!result)
+        response.status(422);
+    else
+        response.status(200);
+
+    response.json({});
+}, {
+    enforceLeaderFollower: true
+}));

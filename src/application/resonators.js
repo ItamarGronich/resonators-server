@@ -125,3 +125,18 @@ export async function removeResonatorItem(resonator_id, item_id) {
 
     return true;
 }
+
+export async function removeResonatorImage(resonator_id) {
+    const resonator = await resonatorRepository.findById(resonator_id);
+
+    if (!resonator)
+        return null;
+
+    await s3.deleteFile(resonator.id);
+
+    resonator.removeItem(resonator.id);
+
+    await getUow().commit();
+
+    return true;
+}
