@@ -1,10 +1,10 @@
 FROM node:7.5.0-alpine
 
-RUN mkdir /usr/app
+RUN mkdir -p /usr/app /usr/app/logs && touch /usr/app/logs/emailSchedulerLog
 WORKDIR /usr/app
 
-COPY package.json ./
-RUN npm i
+COPY package*.json ./
+RUN npm i -q
 
 COPY . ./
-CMD ["/bin/sh", "-c", "ENV=dev", "node", "index.js"]
+CMD ["/usr/app/entrypoint.sh"]
