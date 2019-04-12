@@ -91,7 +91,7 @@ export default class Resonator {
             return '';
     }
 
-    getImage(itemId) {
+    getImageInfo(itemId) {
         const picture = _(this.items)
             .filter(i => i.id === itemId)
             .orderBy('created_at', ['desc'])

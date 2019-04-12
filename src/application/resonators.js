@@ -132,7 +132,7 @@ export async function removeResonatorImage(resonator_id, item_id) {
     if (!resonator)
         return null;
 
-    let imageInfo = resonator.getImage(item_id);
+    let imageInfo = resonator.getImageInfo(item_id);
 
     if (imageInfo) {
         await s3.deleteFile(imageInfo.id);
