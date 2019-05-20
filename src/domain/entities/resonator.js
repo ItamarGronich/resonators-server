@@ -78,7 +78,7 @@ export default class Resonator {
     getImage() {
         const picture = _(this.items)
             .filter(i => i.media_kind === 'image' ||
-                         i.media_kind === 'picture')
+                i.media_kind === 'picture')
             .orderBy('created_at', ['desc'])
             .head();
 
@@ -91,17 +91,14 @@ export default class Resonator {
             return '';
     }
 
-    removeImage()
-    {
+    getImageInfo(itemId) {
         const picture = _(this.items)
-            .filter(i => i.media_kind === 'image' ||
-                         i.media_kind === 'picture')
+            .filter(i => i.id === itemId)
             .orderBy('created_at', ['desc'])
             .head();
-
-
+        return picture;
     }
-    
+
     getResonatorQuestionId(question_id) {
         const q = _.find(this.questions, q => q.question_id === question_id);
         return q ? q.id : null;

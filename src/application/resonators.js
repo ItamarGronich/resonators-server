@@ -26,7 +26,7 @@ export async function createResonator(leader_id, resonatorRequest) {
         leader_id
     });
 
-    uow.trackEntity(resonator, {isNew: true});
+    uow.trackEntity(resonator, { isNew: true });
     await uow.commit();
 
     const savedResonator = dtoFactory.toResonator(await resonatorRepository.findById(resonator.id));
@@ -70,12 +70,12 @@ export async function addBulkQuestionsToResonator(resonator_id, question_ids) {
 
     for (const question_id of question_ids) {
         const [resonator, question] = await Promise.all([
-        resonatorRepository.findById(resonator_id),
-        questionRepository.findById(question_id)
-    ]);
-    if (!resonator || !question)
-        return null;
-    resonator.addQuestion(question_id);
+            resonatorRepository.findById(resonator_id),
+            questionRepository.findById(question_id)
+        ]);
+        if (!resonator || !question)
+            return null;
+        resonator.addQuestion(question_id);
     }
     await getUow().commit();
     return true;
@@ -100,7 +100,7 @@ export async function addItemToResonator(resonator_id, item, stream) {
 
     const id = uuid();
 
-    const {Location} = await s3.uploadImage(id, stream);
+    const { Location } = await s3.uploadImage(id, stream);
 
     resonator.addItem({
         ...item,
@@ -126,17 +126,21 @@ export async function removeResonatorItem(resonator_id, item_id) {
     return true;
 }
 
-export async function removeResonatorImage(resonator_id) {
+export async function removeResonatorImage(resonator_id, item_id) {
     const resonator = await resonatorRepository.findById(resonator_id);
 
     if (!resonator)
         return null;
 
-    await s3.deleteFile(resonator.id);
+    let imageInfo = resonator.getImageInfo(item_id);
 
-    resonator.removeItem(resonator.id);
+    if (imageInfo) {
+        await s3.deleteFile(imageInfo.id);
 
-    await getUow().commit();
+        resonator.removeItem(item_id);
+
+        await getUow().commit();
+    }
 
     return true;
 }
