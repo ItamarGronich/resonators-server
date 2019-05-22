@@ -82,12 +82,13 @@ class ResonatorStatsRepository extends Repository {
 
         questionGroup = _.reduce(Object.keys(questionGroup), (acc, cur) => {
             const answers = questionGroup[cur];
-            const lastAnswerPerDay = _(answers)
-                .orderBy('created_at', ['desc'])
-                .sortedUniqBy(a => `${a.question_id}#${this._getUtcDay(a.created_at)}`)
-                .value();
+            
+            // const lastAnswerPerDay = _(answers)
+            //     .orderBy('created_at', ['desc'])
+            //     .sortedUniqBy(a => `${a.question_id}#${this._getUtcDay(a.created_at)}`)
+            //     .value();
 
-            acc[cur] = lastAnswerPerDay.map(a => _.omit(a, 'question_id', 'updated_at'));
+            acc[cur] = answers.map(a => _.omit(a, 'question_id', 'updated_at'));
             return acc;
         }, {});
 
