@@ -17,12 +17,16 @@ export default {
 
     uploadFile(id, stream, options) {
         return upload(id, stream, options);
+    },
+
+    deleteFile(id, options) {
+        return remove(id, options);
     }
 };
 
 function upload(key, stream, options) {
     if (process.env.ENV === 'test')
-        return Promise.resolve({Location: ''});
+        return Promise.resolve({ Location: '' });
 
     return new Promise((resolve, reject) => {
         s3.upload({
@@ -30,6 +34,25 @@ function upload(key, stream, options) {
             Key: key,
             Body: stream,
             ACL: 'public-read',
+            ...options
+        }, (err, data) => {
+            if (err) {
+                return reject(err);
+            }
+
+            resolve(data);
+        });
+    });
+}
+
+function remove(key, options) {
+    if (process.env.ENV === 'test')
+        return null;
+
+        return new Promise((resolve, reject) => {
+        s3.deleteObject({
+            Bucket: cfg.s3.bucket,
+            Key: key,
             ...options
         }, (err, data) => {
             if (err) {

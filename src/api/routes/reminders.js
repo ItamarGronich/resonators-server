@@ -10,27 +10,27 @@ express.get('/api/leader_followers/:followerId/reminders\.:ext?', routeHandler(a
     response.status(200);
     response.json(resonators);
 }, {
-    enforceLeaderFollower: true
-}));
+        enforceLeaderFollower: true
+    }));
 
 express.get('/api/leader_followers/:followerId/reminders/:reminderId\.:ext?', routeHandler(async (request, response) => {
     const resonator = await service.getResonator(request.params.reminderId);
     response.status(200);
     response.json(resonator);
 }, {
-    enforceLeaderFollower: true
-}));
+        enforceLeaderFollower: true
+    }));
 
 express.post('/api/leader_followers/:followerId/reminders\.:ext?', routeHandler(async (request, response) => {
-    const {leader} = request.appSession;
+    const { leader } = request.appSession;
 
     const result = await service.createResonator(leader.id, request.body);
 
     response.status(201);
     response.json(result);
 }, {
-    enforceLeaderFollower: true
-}));
+        enforceLeaderFollower: true
+    }));
 
 express.put('/api/leader_followers/:followerId/reminders/:reminderId\.:ext?', routeHandler(async (request, response) => {
     const result = await service.updateResonator(request.params.reminderId, request.body);
@@ -38,11 +38,11 @@ express.put('/api/leader_followers/:followerId/reminders/:reminderId\.:ext?', ro
     response.status(200);
     response.json(result);
 }, {
-    enforceLeaderFollower: true
-}));
+        enforceLeaderFollower: true
+    }));
 
 express.post('/api/leader_followers/:followerId/reminders/:reminderId/criteria\.:ext?', routeHandler(async (request, response) => {
-    const {reminder_id, question_id} = request.body;
+    const { reminder_id, question_id } = request.body;
     const result = await service.addBulkQuestionsToResonator(reminder_id, question_id);
     if (!result) {
         response.status(422);
@@ -51,11 +51,11 @@ express.post('/api/leader_followers/:followerId/reminders/:reminderId/criteria\.
 
     response.json(result);
 }, {
-    enforceLeaderFollower: true
-}));
+        enforceLeaderFollower: true
+    }));
 
 express.delete('/api/leader_followers/:followerId/reminders/:reminderId/criteria/:criterionId\.:ext?', routeHandler(async (request, response) => {
-    const {reminderId, criterionId} = request.params;
+    const { reminderId, criterionId } = request.params;
 
     const result = await service.removeQuestionFromResonator(reminderId, criterionId);
 
@@ -68,8 +68,8 @@ express.delete('/api/leader_followers/:followerId/reminders/:reminderId/criteria
 
     response.json(result);
 }, {
-    enforceLeaderFollower: true
-}));
+        enforceLeaderFollower: true
+    }));
 
 (() => {
     var itemsUpload = upload.fields([{
@@ -104,12 +104,12 @@ express.delete('/api/leader_followers/:followerId/reminders/:reminderId/criteria
         response.status(201);
         response.json({});
     }, {
-        enforceLeaderFollower: true
-    }));
+            enforceLeaderFollower: true
+        }));
 })();
 
 express.delete('/api/leader_followers/:followerId/reminders/:reminderId/items/:itemId\.:ext?', routeHandler(async (request, response) => {
-    const {reminderId, itemId} = request.params;
+    const { reminderId, itemId } = request.params;
 
     const result = await service.removeResonatorItem(reminderId, itemId);
 
@@ -120,11 +120,11 @@ express.delete('/api/leader_followers/:followerId/reminders/:reminderId/items/:i
 
     response.json({});
 }, {
-    enforceLeaderFollower: true
-}));
+        enforceLeaderFollower: true
+    }));
 
 express.delete('/api/leader_followers/:followerId/reminders/:reminderId\.:ext?', routeHandler(async (request, response) => {
-    const {reminderId} = request.params;
+    const { reminderId } = request.params;
 
     const result = await service.removeResonator(reminderId);
 
@@ -135,5 +135,20 @@ express.delete('/api/leader_followers/:followerId/reminders/:reminderId\.:ext?',
 
     response.json({});
 }, {
-    enforceLeaderFollower: true
-}));
+        enforceLeaderFollower: true
+    }));
+
+express.delete('/api/leader_followers/:followerId/reminders/:reminderId/removeImage/:itemId\.:ext?', routeHandler(async (request, response) => {
+    const { reminderId, itemId } = request.params;
+
+    const result = await service.removeResonatorImage(reminderId, itemId);
+
+    if (!result)
+        response.status(422);
+    else
+        response.status(200);
+
+    response.json({});
+}, {
+        enforceLeaderFollower: true
+    }));

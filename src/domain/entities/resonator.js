@@ -78,7 +78,7 @@ export default class Resonator {
     getImage() {
         const picture = _(this.items)
             .filter(i => i.media_kind === 'image' ||
-                         i.media_kind === 'picture')
+                i.media_kind === 'picture')
             .orderBy('created_at', ['desc'])
             .head();
 
@@ -89,6 +89,14 @@ export default class Resonator {
                 return `https://reminders-uploads.s3.amazonaws.com/${picture.media_id}.jpg`;
         } else
             return '';
+    }
+
+    getImageInfo(itemId) {
+        const picture = _(this.items)
+            .filter(i => i.id === itemId)
+            .orderBy('created_at', ['desc'])
+            .head();
+        return picture;
     }
 
     getResonatorQuestionId(question_id) {
