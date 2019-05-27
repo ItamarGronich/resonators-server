@@ -28,7 +28,7 @@ export async function registerUser({name, email, password}) {
         id: uuid(),
         user_id: user.id,
         title: user.name,
-        default_clinic_id: clinic.id,
+        current_clinic_id: clinic.id,
         visible: 1
     });
 

@@ -2,16 +2,24 @@ import express from '../express';
 import routeHandler from '../routeHandler';
 import {
     getLeaderClinics,
+    getLeaderClinicsIncludingSecondary,
     getLeaderClinicsCriteria,
     addQuestionToClinic,
     updateQuestion
 } from '../../application/leaderClinics';
 
+// express.get('/api/leader_clinics', routeHandler(async (request, response) => {
+//     const {user} = request.appSession;
+
+//     const clinics = await getLeaderClinics(user.id);
+
+//     response.status(200);
+//     response.json(clinics);
+// }));
+
 express.get('/api/leader_clinics', routeHandler(async (request, response) => {
-    const {user} = request.appSession;
-
-    const clinics = await getLeaderClinics(user.id);
-
+    const {leader} = request.appSession;
+    const clinics = await getLeaderClinicsIncludingSecondary(leader.id);
     response.status(200);
     response.json(clinics);
 }));

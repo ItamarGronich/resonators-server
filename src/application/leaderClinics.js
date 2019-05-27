@@ -5,6 +5,7 @@ import Question from '../domain/entities/question';
 import * as dtoFactory from './dto';
 import getUow from './getUow';
 import updatePermittedFields from './updatePermittedFields';
+import {leader_clinics} from '../db/sequelize/models';
 
 export async function getLeaderClinics(user_id) {
     const rows = await clinics.findAll({
@@ -17,6 +18,27 @@ export async function getLeaderClinics(user_id) {
         id: r.get('id'),
         user_id: r.get('user_id'),
         name: r.get('name'),
+        created_at: r.get('created_at'),
+        updated_at: r.get('updated_at'),
+    }));
+
+    return foundClinics;
+}
+
+export async function getLeaderClinicsIncludingSecondary(leader_id) {
+    const rows = await leader_clinics.findAll({
+        where: {
+            leader_id: leader_id
+        },
+        include: [clinics]
+    });
+    
+    const foundClinics = rows.map(r => ({
+        id: r.get('clinic_id'),
+        user_id: r.get('leader_id'),
+        name: r.get('clinic').get('name'),
+        isPrimary: r.get('isPrimary'),
+        isLeaderAccepted: r.get('isLeaderAccepted'),
         created_at: r.get('created_at'),
         updated_at: r.get('updated_at'),
     }));

@@ -25,7 +25,7 @@ export function toLeader(r) {
     return new Leader({
         id: r.get('id'),
         user_id: r.get('user_id'),
-        default_clinic_id:r.get('default_clinic_id')
+        current_clinic_id:r.get('current_clinic_id')
     });
 }
 
@@ -156,5 +156,18 @@ export function toGoogleAccount(row) {
         access_token_expiry_date: row.get('access_token_expiry_date'),
         user_id: row.get('user_id'),
         google_email: row.get('google_email')
+    });
+}
+function toLeaderClinic(r) {
+    const leader = toLeader(r.get('leader'));
+
+    return new LeaderClinic({
+        leader_id: r.get('leader_id'),
+        clinic_id: r.get('clinic_id'),
+        isPrimary: r.get('isPrimary'),
+        isLeaderAccepted: r.get('isLeaderAccepted'),
+        created_at: r.get('created_at'),
+        updated_at: r.get('updated_at'),
+        leader
     });
 }
