@@ -18,11 +18,11 @@ export async function getLeaderFollowers(user_id) {
 export async function getLeader(leader_id) {
     const leader = await leaderRepository.findById(leader_id);
     const dto = dtoFactory.toLeader(leader);
-    dto.default_clinic_id = null;
-    if(dto.default_clinic_id == null)
+    dto.current_clinic_id = null;
+    if(dto.current_clinic_id == null)
     {
         const row = await clinicRepository.findByUserid(dto.user_id);
-        dto.default_clinic_id = row[0].id;
+        dto.current_clinic_id = row[0].id;
     }
     return dto;
 }

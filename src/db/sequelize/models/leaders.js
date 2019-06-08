@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
         user_id: DataTypes.UUID,
         title: DataTypes.STRING,
         description: DataTypes.TEXT,
-        default_clinic_id: DataTypes.UUID,
+        current_clinic_id: DataTypes.UUID,
         visible: DataTypes.INTEGER
     }, {
         underscored: true,
