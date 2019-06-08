@@ -12,7 +12,7 @@ export function toLeader(leader){
     return{
         id: leader.id,
         user_id: leader.user_id,
-        default_clinic_id:leader.default_clinic_id
+        current_clinic_id:leader.current_clinic_id
     }
 }
 export function toFollower(follower) {
