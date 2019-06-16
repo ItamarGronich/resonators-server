@@ -25,6 +25,9 @@ export function toLeader(r) {
     return new Leader({
         id: r.get('id'),
         user_id: r.get('user_id'),
+        title: r.get('title'),
+        description: r.get('description'),
+        visible: r.get('visible'),     
         current_clinic_id:r.get('current_clinic_id')
     });
 }
