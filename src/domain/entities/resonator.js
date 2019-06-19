@@ -18,6 +18,10 @@ export default class Resonator {
         repeat_days,
         last_pop_time,
         disable_copy_to_leader,
+        one_off,
+        interaction_type,
+        selected_questionnaire,
+        questionnaire_details,
         items,
         questions,
         created_at,
@@ -44,6 +48,10 @@ export default class Resonator {
         this.disable_copy_to_leader = disable_copy_to_leader;
         this.items = items || [];
         this.questions = questions || [];
+        this.one_off = one_off;
+        this.interaction_type = interaction_type;
+        this.selected_questionnaire = selected_questionnaire;
+        this.questionnaire_details = questionnaire_details;
         this.created_at = created_at;
         this.updated_at = updated_at;
 

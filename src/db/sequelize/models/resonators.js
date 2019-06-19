@@ -17,7 +17,11 @@ module.exports = function(sequelize, DataTypes) {
         pop_time: DataTypes.DATE,
         repeat_days: DataTypes.STRING,
         last_pop_time: DataTypes.DATE,
-        disable_copy_to_leader: DataTypes.BOOLEAN
+        disable_copy_to_leader: DataTypes.BOOLEAN,
+        one_off: DataTypes.BOOLEAN,
+        interaction_type: DataTypes.INTEGER,
+        selected_questionnaire: DataTypes.STRING,
+        questionnaire_details: DataTypes.STRING
     }, {
         underscored: true,
         classMethods: {
