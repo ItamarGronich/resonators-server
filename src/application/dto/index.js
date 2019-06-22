@@ -45,6 +45,10 @@ export function toResonator(resonator) {
                        'questions',
                        'pop_email',
                        'pop_time',
+                       'one_off',
+                       'interaction_type',
+                       'selected_questionnaire',
+                       'questionnaire_details',
                        'created_at',
                        'updated_at'
                       );

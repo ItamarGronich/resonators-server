@@ -102,7 +102,12 @@ function sendEmail({resonator, followerUser, leaderUser}) {
 
             return sendResonatorEmail(msg);
         })
-        .then(() => setResonatorLastSentTime(resonator.id));
+        .then(() => setResonatorLastSentTime(resonator.id))
+        .then(() => {
+            if (resonator.one_off)
+                return disableResonatorForSendOneOff(resonator.id);
+            else return;
+        });
 }
 
 function recordSentResonator(resonator_id) {
@@ -121,4 +126,14 @@ function setResonatorLastSentTime(resonatorId) {
             id: resonatorId
         }
     });
+}
+
+function disableResonatorForSendOneOff(resonatorId) {
+    return resonators.update({
+        pop_email: false
+    }, {
+            where: {
+                id: resonatorId
+            }
+        });
 }
