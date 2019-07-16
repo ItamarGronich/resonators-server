@@ -43,7 +43,8 @@ express.post('/api/contactForm', routeHandler(async (request, response) => {
         });
         response.status(200);
     } catch (e) {
-        response.status(500)
+        response.status(500);
+        response.json(e);
     }
 
     response.json({});
