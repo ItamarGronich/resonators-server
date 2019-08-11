@@ -22,7 +22,7 @@ express.get('/api/completeGoogleLogin', routeHandler(async (request, response) =
 
     setLoginCookie({response, loginId: result.loginId});
 
-    response.redirect(301, '/');
+    response.redirect(301, '/followers');
 }, {
     enforceLogin: false
 }));
