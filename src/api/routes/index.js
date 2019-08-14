@@ -11,3 +11,5 @@ import './versionableAssets'
 import './visitors';
 import './unsubscribe';
 import './googleLogin';
+import './questionnaireStats.js';
+import './dailyDiaryStats.js';

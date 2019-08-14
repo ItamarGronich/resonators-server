@@ -7,6 +7,8 @@ import fs from 'fs';
 import https from 'https';
 import path from 'path';
 
+require('./google/sheets/googleSheetApi.js');
+
 initInfra();
 startJobs();
 
