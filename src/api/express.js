@@ -11,6 +11,7 @@ import requestLogger from './requestLoggerMiddleware';
 import uuid from 'uuid/v4';
 import cors from 'cors';
 import path from 'path';
+import userAgent from 'express-useragent';
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use((req, res, next) => {
 });
 
 app.use(cors());
+app.use(userAgent.express());
 app.use(requestLogger);
 app.use(compressionMiddleware());
 app.use(cookieParserMiddleware());

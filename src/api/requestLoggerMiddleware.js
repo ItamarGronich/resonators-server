@@ -1,10 +1,17 @@
 import log from '../infra/log';
 
 export default function requestLoggerMiddleware(req, res, next) {
+    const method = req.method;
+    const path = req.path;
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    const ua = req.useragent.source;
+
     const reqMsg = {
-        type: 'request',
-        method: req.method,
-        url: req.path
+        ip: ip,
+        method: method,
+        type: 'REQ',
+        url: path,
+        userAgent: ua
     };
 
     if (req.method === 'post')
@@ -14,8 +21,12 @@ export default function requestLoggerMiddleware(req, res, next) {
 
     res.on('finish', () => {
         const resMsg = {
-            type: 'response',
-            statusCode: res.statusCode
+            ip: ip,
+            method: method,
+            type: 'RES',
+            url: path,
+            statusCode: res.statusCode,
+            userAgent: ua
         };
 
         log.info(resMsg);
