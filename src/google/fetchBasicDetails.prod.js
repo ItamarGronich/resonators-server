@@ -2,15 +2,16 @@ import _ from 'lodash';
 import google from 'googleapis';
 import dispatch from './dispatcher';
 
-const plus = google.plus('v1');
+const people = google.people('v1');
 
 export default async function fetchBasicDetails(tokens) {
-    const result = await dispatch(plus.people.get, tokens, {
-        userId: 'me'
+    const result = await dispatch(people.people.get, tokens, {
+        resourceName: 'people/me',
+        personFields: 'emailAddresses,names',
     });
 
     return {
-        name: _.get(result, 'displayName'),
-        email: _.get(result, 'emails[0].value')
-    };
+        name: _.get(result, 'names[0].displayName'),
+        email: _.get(result, 'emailAddresses[0].value')
+    }
 }
