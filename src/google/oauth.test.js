@@ -3,8 +3,8 @@ import createOauthClient from './createOauthClient';
 
 // generate a url that asks permissions for Google+ and Google Calendar scopes
 const scopes = [
-    'https://www.googleapis.com/auth/plus.me',
-    'https://www.googleapis.com/auth/calendar'
+    'https://www.googleapis.com/auth/plus.me'
+//    'https://www.googleapis.com/auth/calendar'
 ];
 
 export function generateAuthUrl(state) {
