@@ -20,7 +20,7 @@ async function createCalendarsForGoogleUsers() {
     const accountsWithoutCalendars = await
         leaderCalendarRepository.getGoogleAccountsWithoutCalendars();
 
-    log.info(`fetched ${accountsWithoutCalendars.length} pending accounts`);
+    log.info(`[CalendarSync] fetched ${accountsWithoutCalendars.length} pending accounts`);
 
     const uow = createUow();
 

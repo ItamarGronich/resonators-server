@@ -20,7 +20,7 @@ function startJobs() {
     if (cfg.emailSchedulerOn)
         emailSchedulingJob.start();
 
-    syncCalendarsJob.start();
+   // syncCalendarsJob.start();
 }
 
 function startHttpsServer() {
