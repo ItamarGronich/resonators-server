@@ -32,7 +32,7 @@ function formatMeta(message) {
 
 function formatter({timestamp, level, message, meta}) {
     const actualMessage = message || formatMeta(meta.message);
-    return `[${timestamp()}] ${level.toUpperCase()}: ${actualMessage}`
+    return (`[${timestamp()}] ${level.toUpperCase()}: ${actualMessage} ${meta.other || ''}`).trim()
 }
 
 function createLogger(fileName) {
