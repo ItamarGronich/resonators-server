@@ -8,7 +8,8 @@ import {
     updateQuestion,
     UpsertLeaderClinics,
     UpdateCurrentClinicId,
-    addLeaderToClinic
+    addLeaderToClinic,
+    removeQuestion
 } from '../../application/leaderClinics';
 
 express.get('/api/leader_clinics', routeHandler(async (request, response) => {
@@ -65,8 +66,23 @@ express.post('/api/leader_clinics/:clinicId/criteria\.:ext?', routeHandler(async
     response.json(newQuestion);
 }));
 
+
+express.delete('/api/leader_clinics/:clinicId/criteria/:criterionId\.:ext?', routeHandler(async (request, response) => {
+    const { clinicId, criterionId } = request.params;
+    const result = await removeQuestion(criterionId)
+    if (!result) {
+        response.status(422);
+    } else{
+        response.status(200);
+    }
+      
+    response.json(result);
+   
+}));
+
 express.put('/api/leader_clinics/:clinicId/criteria/:criterionId\.:ext?', routeHandler(async (request, response) => {
     let question = request.body;
+    
     const updatedQuestion = await updateQuestion(question);
 
     if (!updatedQuestion)

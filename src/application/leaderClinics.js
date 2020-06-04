@@ -197,3 +197,12 @@ export async function updateQuestion(questionRequest) {
     const savedQuestion = await questionsRepository.findById(question.id);
     return dtoFactory.toQuestion(savedQuestion);
 }
+
+export async function removeQuestion(id) {
+    const question = await questionsRepository.findById(id);
+    if (!question)
+        return false;
+    await questionsRepository.deleteById(id)
+
+    return question;
+}

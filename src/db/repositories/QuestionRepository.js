@@ -43,12 +43,20 @@ class QuestionRepository extends Repository {
 
         if (!dbQuestion)
             return null;
-
+        
         const question = dbToDomain.toQuestion(dbQuestion);
 
         this.trackEntity(question);
 
         return question;
+    }
+
+    async deleteById(id) {
+        return await questions.destroy({
+            where: {
+                id
+            }
+        });
     }
 
     async findByClinic(clinic_id) {
