@@ -1,0 +1,56 @@
+#!/usr/bin/env node
+initBabel();
+
+process.env.ENV = 'test';
+
+const {execSync} = require('child_process');
+const createDbFixtures = require('./dbFixtures').default;
+const args = process.argv.slice(2);
+const noInit = args.indexOf('noinit') !== -1;
+
+//********************************************
+
+if (noInit) {
+    console.log('running tests without initing the test DB');
+    runMocha();
+} else {
+    initDB();
+
+    initFixtures()
+        .then(runMocha)
+        .catch(err => console.error(err));
+}
+
+//********************************************
+
+function initBabel() {
+    global.regeneratorRuntime = require('babel-regenerator-runtime');
+    require("babel-register")({});
+}
+
+function initDB() {
+    return execSync('DB=resonators_test ./scripts/initdb', {
+        stdio: 'inherit'
+    });
+}
+
+function initFixtures() {
+    return createDbFixtures();
+}
+
+function runMocha() {
+    const mochaArgsIdx = args.indexOf('--') + 1;
+    let mochaArgsArr = [];
+
+    if (mochaArgsIdx) {
+        mochaArgsArr = args.slice(mochaArgsIdx);
+    }
+
+    const mochaArgs = mochaArgsArr.join(' ');
+
+    const mochaCmd = `mocha --require test/setup test/before.test.js ${mochaArgs}`;
+
+    return execSync(mochaCmd, {
+        stdio: 'inherit'
+    });
+}

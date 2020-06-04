@@ -1,0 +1,32 @@
+#!/usr/bin/env node
+const path = require('path');
+const selectedDB = process.env.DB;
+
+const allDatabases = [
+    'resonators_dev',
+    'resonators_test',
+    'resonators_prod'
+];
+
+const databases = allDatabases.filter(dbName => !selectedDB || dbName === selectedDB);
+
+const exec = (...args) => require('child_process').execSync(...args, {stdio: 'inherit'});
+
+console.log('***************\nDB SETUP\n***************\n');
+
+databases.forEach(dbName => {
+    console.log(`dropdb ${dbName}`);
+    exec(`dropdb ${dbName} -U postgres --if-exists`);
+    console.log(`createdb ${dbName}`);
+    exec(`createdb ${dbName} -U postgres`);
+});
+
+console.log('\n***************\nDB MIGRATION\n***************\n');
+
+const cfgPath = path.resolve(__dirname + '/../src/db/sequelize/config/config.json');
+const cfgMigrationsPath = path.resolve(__dirname + '/../src/db/sequelize/migrations');
+const sequelize = args => path.resolve(__dirname + `/../node_modules/.bin/sequelize --config ${cfgPath} --migrations-path ${cfgMigrationsPath} `) + args;
+
+exec(sequelize('db:migrate --env development'));
+exec(sequelize('db:migrate --env test'));
+exec(sequelize('db:migrate --env production'));

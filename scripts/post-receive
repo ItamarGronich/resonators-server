@@ -1,0 +1,26 @@
+#!/bin/bash
+[ -d ${GIT_WORK_TREE} ] || mkdir ${GIT_WORK_TREE}
+
+GIT_WORK_TREE=../resonators-server
+export GIT_WORK_TREE
+git checkout -f
+
+commit_hash="$(git rev-parse --verify HEAD)"
+commit_time="$(git show -s --format=%ci HEAD)"
+
+echo "==========  CODE DEPLOYED - NPM INSTALL =========="
+cd ${GIT_WORK_TREE}
+
+echo ${commit_hash} > version.txt
+echo ${commit_time} >> version.txt
+
+npm install
+
+echo "========= MIGRATING DB =========="
+npm run migrate -- --env=production
+
+echo "==========  RESTARTING SERVER  =========="
+
+npm run restart:prod || npm run start:prod
+
+echo "==========  DONE  =========="
