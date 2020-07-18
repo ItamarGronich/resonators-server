@@ -8,13 +8,15 @@ export function toUser(user) {
         unsubscribed: user.unsubscribed
     };
 }
+
 export function toLeader(leader){
-    return{
+    return {
         id: leader.id,
         user_id: leader.user_id,
         current_clinic_id:leader.current_clinic_id
     }
 }
+
 export function toFollower(follower) {
     let dto = {
         ...follower,
@@ -24,6 +26,16 @@ export function toFollower(follower) {
         dto.user = toUser(follower.user);
 
     return dto;
+}
+
+export function toFollowerGroup(followerGroup){
+    return {
+        id: followerGroup.id,
+        group_name: followerGroup.group_name,
+        leader_id: followerGroup.leader_id,
+        clinic_id:followerGroup.clinic_id,
+        status: followerGroup.status,
+    }
 }
 
 export function toResonator(resonator) {

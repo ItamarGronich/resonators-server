@@ -11,6 +11,8 @@ module.exports = function(sequelize, DataTypes) {
         description: DataTypes.STRING,
         content: DataTypes.STRING,
         follower_id: DataTypes.UUID,
+        follower_group_id: DataTypes.UUID,
+        parent_resonator_id: DataTypes.UUID,
         pop_email: DataTypes.BOOLEAN,
         pop_location_lat: DataTypes.DOUBLE,
         pop_location_lng: DataTypes.DOUBLE,
@@ -28,7 +30,16 @@ module.exports = function(sequelize, DataTypes) {
             associate: function(models) {
                 resonators.hasMany(models.resonator_attachments);
                 resonators.hasMany(models.resonator_questions);
-                resonators.belongsTo(models.followers);
+                resonators.belongsTo(models.followers, {
+                    foreignKey: {
+                        allowNull: true,
+                    },
+                });
+                resonators.belongsTo(models.follower_groups, {
+                    foreignKey: {
+                        allowNull: true,
+                    },
+                });
                 resonators.belongsTo(models.leaders);
             }
         }

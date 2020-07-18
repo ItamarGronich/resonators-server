@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "source ~/.nvm/nvm.sh && nvm use && ENV=dev node index.js",
+    "win-start": "SET ENV=dev && node index.js",
     "test": "source ~/.nvm/nvm.sh && nvm use && ./test/run -- --watch test/**/*.test.js",
+    "win-test": "./test/run -- --watch test/**/*.test.js",
     "test:noinit": "source ~/.nvm/nvm.sh && nvm use && ./test/run noinit -- --watch test/**/*.test.js",
     "test:watchSingle": "source ~/.nvm/nvm.sh && nvm use && ./test/run noinit -- --watch",
     "lint": "eslint ./src",
@@ -13,6 +15,7 @@
     "migrate:undo": "./node_modules/.bin/sequelize db:migrate:undo",
     "model:create": "sequelize model:create --underscored --name table_name --attributes 'field_1:string, field_2:string'",
     "initdb": "./scripts/initdb",
+    "win-initdb": "node scripts\\initdb",
     "storybook": "start-storybook -p 9007 -c .storybook",
     "start:prodHttp": "sudo NODE_ENV=production ENV=production PORT=80 ./node_modules/.bin/pm2 -f start index.http.js --name resonatorsHttp",
     "start:prodHttps": "sudo NODE_ENV=production ENV=production HTTPS_PORT=443 HTTP_PORT=80 ./node_modules/.bin/pm2 -f start index.js --name resonatorsHttps",

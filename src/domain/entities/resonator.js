@@ -7,6 +7,8 @@ export default class Resonator {
         id,
         leader_id,
         follower_id,
+        follower_group_id,
+        parent_resonator_id,
         title,
         link,
         description,
@@ -35,6 +37,8 @@ export default class Resonator {
         this.id = id;
         this.leader_id = leader_id;
         this.follower_id = follower_id;
+        this.follower_group_id = follower_group_id;
+        this.parent_resonator_id = parent_resonator_id;
         this.description = description;
         this.title = title;
         this.link = link;
