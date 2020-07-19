@@ -81,10 +81,25 @@ class ResonatorsRepository extends Repository {
         }
 
         const resonator = dbToDomain.toResonator(row);
-
         this.trackEntity(resonator);
-
         return resonator;
+    }
+
+    async findChildrenById(resonatorId) {
+        const rows = await resonators.findAll({
+            where: {
+                parent_resonator_id: resonatorId
+            },
+            include: this.queryInclude()
+        });
+
+        if (!rows) {
+            return [];
+        }
+
+        const foundResonators = rows.map(dbToDomain.toResonator);
+        foundResonators.forEach(resonator => this.trackEntity(resonator));
+        return foundResonators;
     }
 
     async findByFollowerId(followerId) {
@@ -95,13 +110,29 @@ class ResonatorsRepository extends Repository {
             include: this.queryInclude()
         });
 
-        if (!rows)
+        if (!rows) {
             return [];
+        }
 
         const foundResonators = rows.map(dbToDomain.toResonator);
-
         foundResonators.forEach(resonator => this.trackEntity(resonator));
+        return foundResonators;
+    }
 
+    async findByFollowerGroupId(followerGroupId) {
+        const rows = await resonators.findAll({
+            where: {
+                follower_group_id: followerGroupId
+            },
+            include: this.queryInclude()
+        });
+
+        if (!rows) {
+            return [];
+        }
+
+        const foundResonators = rows.map(dbToDomain.toResonator);
+        foundResonators.forEach(resonator => this.trackEntity(resonator));
         return foundResonators;
     }
 
