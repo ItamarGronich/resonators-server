@@ -21,6 +21,12 @@ export async function getLeader(leader_id) {
     return dto;
 }
 export async function addLeaderFollower({leader_id, clinic_id, email, name, password}) {
+	
+	if (password === undefined) {
+		//Generate random password
+		password = Math.random().toString(36).substring(4);
+	}
+	
     const user = new User({name, email, pass: password});
 
     const follower = new Follower({
