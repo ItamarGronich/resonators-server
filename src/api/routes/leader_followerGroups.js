@@ -6,25 +6,27 @@ import {
     getLeaderFollowerGroups,
     addLeaderFollowerGroup,
     deleteLeaderFollowerGroup,
-    getLeader
+    getLeader,
+    addFollowersToGroup,
+    removeFollowerFromGroup
 } from '../../application/leaderFollowerGroups';
 
 express.get('/api/leader_followerGroups\.:ext?', routeHandler(async (request, response) => {
     const {user} = request.appSession;
     const followerGroups = await getLeaderFollowerGroups(user.id);
-    response.status(200).json(followerGroups);
+    response.json(followerGroups);
 }));
 
 express.get('/api/leader_followerGroups/leaders.:ext?', routeHandler(async (request, response) => {
     const {leader} = request.appSession;
     const leaders = await getLeader(leader.id);
-    response.status(200).json(leaders);
+    response.json(leaders);
 }));
 
 express.post('/api/leader_followerGroups\.:ext?', routeHandler(async (request, response) => {
     const {leader} = request.appSession;
     const followerGroupRequest = request.body;
-    followerGroupRequest = Object.assign({}, {...followerGroupRequest, leader_id: leader.id});
+    followerGroupRequest = Object.assign({}, followerGroupRequest, {leader_id: leader.id});
 
     const followerGroup = await addLeaderFollowerGroup(followerGroupRequest);
 
@@ -42,6 +44,22 @@ express.put('/api/leader_followerGroups/:followerGroupId\.:ext?', routeHandler(a
 express.delete('/api/leader_followerGroups/:followerGroupId\.:ext?', routeHandler(async (request, response) => {
     const {followerGroupId} = request.params;
     const result = await deleteLeaderFollowerGroup(followerGroupId);
+    response.status(result ? 200 : 422).json();
+}, {
+    enforceLeaderFollowerGroup: true
+}));
+
+express.put('/api/leader_followerGroups/:followerGroupId/followers\.:ext?', routeHandler(async (request, response) => {
+    const {followerGroupId} = request.params;
+    await addFollowersToGroup(followerGroupId, request.body);
+    response.status(202).json();
+}, {
+    enforceLeaderFollowerGroup: true
+}));
+
+express.delete('/api/leader_followerGroups/:followerGroupId/followers/:followerId\.:ext?', routeHandler(async (request, response) => {
+    const {followerGroupId, followerId} = request.params;
+    const result = await removeFollowerFromGroup(followerGroupId, followerId);
     response.status(result ? 200 : 422).json();
 }, {
     enforceLeaderFollowerGroup: true

@@ -1,9 +1,14 @@
 import followerGroupRepository from '../db/repositories/FollowerGroupRepository';
+import followerGroupFollowerRepository from '../db/repositories/FollowerGroupFollowersRepository';
 import resonatorRepository from '../db/repositories/ResonatorRepository';
 import leaderRepository from '../db/repositories/LeaderRepository';
 import FollowerGroup from '../domain/entities/followerGroup';
 import * as dtoFactory from './dto/index';
 import getUow from './getUow';
+import FollowerGroupFollower from '../domain/entities/followerGroupFollower';
+import uuid from 'uuid/v4';
+import * as R from 'ramda';
+
 
 export const getLeaderFollowerGroups = async (user_id) => {
     const followerGroups = await followerGroupRepository.findByLeaderUserId(user_id);
@@ -35,8 +40,8 @@ export const addLeaderFollowerGroup = async ({group_name, leader_id, clinic_id})
 
 export const deleteLeaderFollowerGroup = async (followerGroupId) =>
     await Promise.all([
-        followerGroupRepository.deleteById(followerGroupId),
-        resonatorRepository.deleteByFollowerGroupId(followerGroupId), // TODO: add function (with deleteByParentResonatorId for it to use)
+        await followerGroupRepository.deleteById(followerGroupId),
+        await resonatorRepository.deleteByFollowerGroupId(followerGroupId),
     ]);
 
 export const updateFollowerGroup = async (followerGroupId, data) => {
@@ -44,3 +49,25 @@ export const updateFollowerGroup = async (followerGroupId, data) => {
     followerGroup = Object.assign({}, {...followerGroup, data});
     await getUow().commit();
 }
+
+export const addFollowersToGroup = async (followerGroupId, data) => {
+    const uow = getUow();
+    const followerGroup = await followerGroupRepository.findById(followerGroupId);
+    R.map(async (follower) => {
+        const followerGroupFollower = new FollowerGroupFollower({
+            id: uuid(),
+            follower_group_id : followerGroup.id,
+            follower_id : follower,
+            });
+
+            uow.trackEntity(followerGroupFollower, {isNew: true});
+            await uow.commit();
+    }, data.followerIdList)
+}
+
+export const removeFollowerFromGroup = async (followerGroupId, followerId) =>
+await Promise.all([
+    await followerGroupFollowerRepository.delete(followerGroupId, followerId),
+    await resonatorRepository.deleteGroupResonatorForFollower(followerGroupId, followerId),
+]);
+    

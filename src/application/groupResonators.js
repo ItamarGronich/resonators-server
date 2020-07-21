@@ -59,7 +59,7 @@ export const updateGroupResonator = async (resonator_id, updatedFields) => {
 }
 
 export const removeGroupResonator = async (resonator_id) => {
-    await resonatorRepository.deleteById(resonator_id);
+    await resonatorRepository.deleteGroupResonatorById(resonator_id);
     return true;
 }
 
