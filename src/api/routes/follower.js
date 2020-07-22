@@ -1,7 +1,6 @@
 import express from '../express';
 
 import routeHandler from '../routeHandler';
-import { getResonators } from '../../application/resonators'
 import {
     leaders,
     resonators,
@@ -35,16 +34,16 @@ const getFollowerResonators = async follower =>
     await resonators.findAll({
         where: {
             follower_id: follower.id,
-            pop_email: true
+            pop_email: true  // filter out inactive resonators
         },
         include: [
-            leaders,
             resonator_attachments,
             {
                 model: resonator_questions,
                 include: [questions]
             },
             {
+                // required for checking for unanswered questions
                 model: sent_resonators,
                 order: [['created_at', 'DESC']],
                 limit: 1,
