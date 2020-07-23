@@ -2,7 +2,6 @@ import express from '../express';
 
 import routeHandler from '../routeHandler';
 import {
-    leaders,
     resonators,
     questions,
     resonator_attachments,
