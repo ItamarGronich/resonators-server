@@ -34,6 +34,7 @@ export const createGroupResonator = async (leader_id, resonatorRequest) => {
     const uow = getUow();
     const resonator = new Resonator({
         ...resonatorRequest,
+        pop_email: false,
         leader_id
     });
 
@@ -63,7 +64,7 @@ export const updateGroupResonator = async (resonator_id, updatedFields) => {
         return null;
 
     updatePermittedFields(resonator, updatedFields, [
-        'title', 'link', 'description', 'content', 'repeat_days', 'disable_copy_to_leader', 'pop_email', 'pop_time',
+        'title', 'link', 'description', 'content', 'repeat_days', 'disable_copy_to_leader', 'pop_time',
         'one_off', 'ttl_policy', 'interaction_type', 'selected_questionnaire', 'questionnaire_details'
     ]);
 
