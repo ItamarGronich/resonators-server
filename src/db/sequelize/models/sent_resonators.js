@@ -6,7 +6,8 @@ module.exports = function(sequelize, DataTypes) {
           primaryKey: true
       },
       resonator_id: DataTypes.UUID,
-      failed: DataTypes.BOOLEAN
+      failed: DataTypes.BOOLEAN,
+      expiry_date: DataTypes.DATE,
   }, {
     underscored: true,
     classMethods: {

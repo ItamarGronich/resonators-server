@@ -21,6 +21,7 @@ export default class Resonator {
         last_pop_time,
         disable_copy_to_leader,
         one_off,
+        ttl_policy,
         interaction_type,
         selected_questionnaire,
         questionnaire_details,
@@ -53,6 +54,7 @@ export default class Resonator {
         this.items = items || [];
         this.questions = questions || [];
         this.one_off = one_off;
+        this.ttl_policy = ttl_policy;
         this.interaction_type = interaction_type;
         this.selected_questionnaire = selected_questionnaire;
         this.questionnaire_details = questionnaire_details;

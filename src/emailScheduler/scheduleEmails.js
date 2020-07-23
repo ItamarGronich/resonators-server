@@ -110,10 +110,13 @@ function sendEmail({resonator, followerUser, leaderUser}) {
         });
 }
 
-function recordSentResonator(resonator_id) {
+function recordSentResonator({ id, ttl_policy }) {
+    const expiryDate = new Date();
+    expiryDate.setTime(expiryDate.getTime() + (ttl_policy * 60 * 60 * 1000));
     return sent_resonators.create({
         id: uuid(),
-        resonator_id,
+        resonator_id: id,
+        expiry_date: expiryDate,
         failed: false
     });
 }

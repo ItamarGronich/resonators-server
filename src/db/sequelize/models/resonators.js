@@ -21,6 +21,7 @@ module.exports = function(sequelize, DataTypes) {
         last_pop_time: DataTypes.DATE,
         disable_copy_to_leader: DataTypes.BOOLEAN,
         one_off: DataTypes.BOOLEAN,
+        ttl_policy: DataTypes.INTEGER, // In Hours (e.g 48 for 2 days)
         interaction_type: DataTypes.INTEGER,
         selected_questionnaire: DataTypes.STRING,
         questionnaire_details: DataTypes.STRING

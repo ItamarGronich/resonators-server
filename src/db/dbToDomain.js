@@ -75,6 +75,7 @@ export function toResonator(r) {
         last_pop_time: r.get('last_pop_time'),
         disable_copy_to_leader: r.get('disable_copy_to_leader'),
         one_off: r.get('one_off'),
+        ttl_policy: r.get('ttl_policy'),
         interaction_type: r.get('interaction_type'),
         selected_questionnaire: r.get('selected_questionnaire'),
         questionnaire_details: r.get('questionnaire_details'),
@@ -145,6 +146,7 @@ export function toSentResonator(r) {
     return new SentResonator({
         id: r.get('id'),
         resonator_id: r.get('resonator_id'),
+        expiry_date: r.get('expiry_date'),
         created_at: r.get('created_at'),
         updated_at: r.get('updated_at')
     });

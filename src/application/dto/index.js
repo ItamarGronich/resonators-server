@@ -60,6 +60,7 @@ export function toResonator(resonator) {
                        'pop_email',
                        'pop_time',
                        'one_off',
+                       'ttl_policy',
                        'interaction_type',
                        'selected_questionnaire',
                        'questionnaire_details',
