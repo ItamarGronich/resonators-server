@@ -52,6 +52,8 @@ export function toResonator(resonator) {
                        'link',
                        'disable_copy_to_leader',
                        'follower_id',
+                       'follower_group_id',
+                       'parent_resonator_id',
                        'repeat_days',
                        'items',
                        'questions',

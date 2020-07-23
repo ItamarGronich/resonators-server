@@ -160,7 +160,7 @@ class ResonatorsRepository extends Repository {
         return foundResonators;
     }
 
-    async deleteGroupResonatorForFollower(follower_group_id, follower_id) {
+    async deleteGroupResonatorsForFollower(follower_group_id, follower_id) {
         const groupResonators = await this.findByFollowerGroupId(follower_group_id);
         return resonators.destroy({
             where: {

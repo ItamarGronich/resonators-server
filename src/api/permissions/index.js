@@ -1,7 +1,7 @@
 const enforcementMap = {
     'enforceLogin': require('./enforceLogin').default,
     'enforceLeaderFollower': require('./enforceLeaderFollowers').default,
-    'enforceLeaderGroup': require('./enforceLeaderFollowerGroups').default,
+    'enforceLeaderFollowerGroup': require('./enforceLeaderFollowerGroups').default,
     'enforceLeaderResonator': require('./enforceLeaderResonator').default
 };
 

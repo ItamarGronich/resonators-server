@@ -34,7 +34,6 @@ express.post('/api/leader_followers/:followerId/reminders\.:ext?', routeHandler(
 
 express.put('/api/leader_followers/:followerId/reminders/:reminderId\.:ext?', routeHandler(async (request, response) => {
     const result = await service.updateResonator(request.params.reminderId, request.body);
-
     response.status(200);
     response.json(result);
 }, {

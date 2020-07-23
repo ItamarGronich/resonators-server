@@ -1,13 +1,16 @@
 import Resonator from '../domain/entities/resonator';
 import resonatorRepository from '../db/repositories/ResonatorRepository';
 import questionRepository from '../db/repositories/QuestionRepository';
+import followerGroupRepository from '../db/repositories/FollowerGroupRepository';
 import * as dtoFactory from './dto/index';
 import updatePermittedFields from './updatePermittedFields';
 import s3 from '../s3';
 import getUow from './getUow';
 import uuid from 'uuid/v4';
+import childResonators from './resonators';
+import FollowerGroupFollowersRepository from '../db/repositories/FollowerGroupFollowersRepository';
+import * as R from 'ramda';
 
-// TODO: Have all functions run on all child resonators
 
 export const getGroupResonators = async (followerGroupId) => {
     const resonators = await resonatorRepository.findByFollowerGroupId(followerGroupId);
@@ -37,8 +40,20 @@ export const createGroupResonator = async (leader_id, resonatorRequest) => {
     uow.trackEntity(resonator, { isNew: true });
     await uow.commit();
 
+    const followerGroup = await followerGroupRepository.findById(resonatorRequest.follower_group_id);
+    const followersInGroup = await FollowerGroupFollowersRepository.findFollowersByGroupId(followerGroup.id);
+
+    const savedResonators = await Promise.all(R.map(async (follower) => {
+        await childResonators.createResonator(leader_id, {
+            ...resonatorRequest,
+            parent_resonator_id: resonator.id,
+            follower_group_id: null,
+            follower_id: follower.id,
+        });
+    }, followersInGroup));
+
     const savedResonator = dtoFactory.toResonator(await resonatorRepository.findById(resonator.id));
-    return savedResonator;
+    return [savedResonator, ...savedResonators];
 }
 
 export const updateGroupResonator = async (resonator_id, updatedFields) => {
@@ -49,13 +64,18 @@ export const updateGroupResonator = async (resonator_id, updatedFields) => {
 
     updatePermittedFields(resonator, updatedFields, [
         'title', 'link', 'description', 'content', 'repeat_days', 'disable_copy_to_leader', 'pop_email', 'pop_time',
-        'one_off', 'interaction_type', 'selected_questionnaire', 'questionnaire_details'
+        'one_off', 'ttl_policy', 'interaction_type', 'selected_questionnaire', 'questionnaire_details'
     ]);
 
     await getUow().commit();
 
+    const foundChildResonators = await resonatorRepository.findChildrenById(resonator.id);
+    const savedResonators = await Promise.all(R.map(async (childResonator) => {
+        await childResonators.updateResonator(childResonator.id, updatedFields);
+    }, foundChildResonators));
+
     const savedResonator = dtoFactory.toResonator(await resonatorRepository.findById(resonator_id));
-    return savedResonator;
+    return [savedResonator, ...savedResonators];
 }
 
 export const removeGroupResonator = async (resonator_id) => {
@@ -71,19 +91,30 @@ export const addQuestionToGroupResonator = async (resonator_id, question_id) => 
 
     if (!resonator || !question)
         return null;
+    
+    const foundChildResonators = await resonatorRepository.findChildrenById(resonator.id);
+    R.map((childResonator) => {
+         childResonator.addQuestion(question_id);
+    }, foundChildResonators);
+
     resonator.addQuestion(question_id);
     await getUow().commit();
     return true;
 }
 export const addBulkQuestionsToGroupResonator = async (resonator_id, question_ids) => {
 
+    const resonator = resonatorRepository.findById(resonator_id);
+    const foundChildResonators = await resonatorRepository.findChildrenById(resonator.id);
+
     for (const question_id of question_ids) {
-        const [resonator, question] = await Promise.all([
-            resonatorRepository.findById(resonator_id),
-            questionRepository.findById(question_id)
-        ]);
+        const question = await questionRepository.findById(question_id);
         if (!resonator || !question)
             return null;
+
+        R.map((childResonator) => {
+            childResonator.addQuestion(question_id);
+        }, foundChildResonators);
+
         resonator.addQuestion(question_id);
     }
     await getUow().commit();
@@ -94,6 +125,11 @@ export const removeQuestionFromGroupResonator = async (resonator_id, question_id
 
     if (!resonator)
         return null;
+
+    const foundChildResonators = await resonatorRepository.findChildrenById(resonator.id);
+    R.map((childResonator) => {
+        childResonator.removeQuestion(question_id);
+    }, foundChildResonators);
 
     resonator.removeQuestion(question_id);
 
@@ -110,6 +146,15 @@ export const addItemToGroupResonator = async (resonator_id, item, stream) => {
     const id = uuid();
 
     const { Location } = await s3.uploadImage(id, stream);
+
+    const foundChildResonators = await resonatorRepository.findChildrenById(resonator.id);
+    R.map((childResonator) => {
+        childResonator.addItem({
+            ...item,
+            id,
+            link: Location
+        });
+    }, foundChildResonators);
 
     resonator.addItem({
         ...item,
@@ -128,6 +173,11 @@ export const removeGroupResonatorItem = async (resonator_id, item_id) => {
     if (!resonator)
         return null;
 
+    const foundChildResonators = await resonatorRepository.findChildrenById(resonator.id);
+    R.map((childResonator) => {
+        childResonator.removeItem(item_id);
+    }, foundChildResonators);
+
     resonator.removeItem(item_id);
 
     await getUow().commit();
@@ -141,10 +191,15 @@ export const removeGroupResonatorImage = async (resonator_id, item_id) => {
     if (!resonator)
         return null;
 
-    let imageInfo = resonator.getImageInfo(item_id);
+    const imageInfo = resonator.getImageInfo(item_id);
 
     if (imageInfo) {
         await s3.deleteFile(imageInfo.id);
+
+        const foundChildResonators = await resonatorRepository.findChildrenById(resonator.id);
+        R.map((childResonator) => {
+            childResonator.removeItem(item_id);
+        }, foundChildResonators);
 
         resonator.removeItem(item_id);
 

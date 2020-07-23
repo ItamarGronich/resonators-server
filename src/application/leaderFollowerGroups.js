@@ -53,11 +53,11 @@ export const updateFollowerGroup = async (followerGroupId, data) => {
 export const addFollowersToGroup = async (followerGroupId, data) => {
     const uow = getUow();
     const followerGroup = await followerGroupRepository.findById(followerGroupId);
-    R.map(async (follower) => {
+    R.map(async (followerId) => {
         const followerGroupFollower = new FollowerGroupFollower({
             id: uuid(),
             follower_group_id : followerGroup.id,
-            follower_id : follower,
+            follower_id : followerId,
             });
 
             uow.trackEntity(followerGroupFollower, {isNew: true});
@@ -68,6 +68,6 @@ export const addFollowersToGroup = async (followerGroupId, data) => {
 export const removeFollowerFromGroup = async (followerGroupId, followerId) =>
 await Promise.all([
     await followerGroupFollowerRepository.delete(followerGroupId, followerId),
-    await resonatorRepository.deleteGroupResonatorForFollower(followerGroupId, followerId),
+    await resonatorRepository.deleteGroupResonatorsForFollower(followerGroupId, followerId),
 ]);
     
