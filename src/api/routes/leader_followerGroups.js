@@ -8,12 +8,14 @@ import {
     deleteLeaderFollowerGroup,
     getLeader,
     addFollowersToGroup,
-    removeFollowerFromGroup
+    removeFollowerFromGroup,
+    freezeFollowerGroup,
+    unfreezeFollowerGroup
 } from '../../application/leaderFollowerGroups';
 
 express.get('/api/leader_followerGroups\.:ext?', routeHandler(async (request, response) => {
-    const {user} = request.appSession;
-    const followerGroups = await getLeaderFollowerGroups(user.id);
+    const {leader} = request.appSession;
+    const followerGroups = await getLeaderFollowerGroups(leader.id);
     response.json(followerGroups);
 }));
 
@@ -26,9 +28,9 @@ express.get('/api/leader_followerGroups/leaders.:ext?', routeHandler(async (requ
 express.post('/api/leader_followerGroups\.:ext?', routeHandler(async (request, response) => {
     const {leader} = request.appSession;
     const followerGroupRequest = request.body;
-    followerGroupRequest = Object.assign({}, followerGroupRequest, {leader_id: leader.id});
+    const followerGroupRequestWithLeader = Object.assign({}, followerGroupRequest, {leader_id: leader.id});
 
-    const followerGroup = await addLeaderFollowerGroup(followerGroupRequest);
+    const followerGroup = await addLeaderFollowerGroup(followerGroupRequestWithLeader);
 
     response.status(201).json(followerGroup);
 }));
@@ -63,4 +65,26 @@ express.delete('/api/leader_followerGroups/:followerGroupId/followers/:followerI
     response.status(result ? 200 : 422).json();
 }, {
     enforceLeaderFollowerGroup: true
+}));
+
+express.post('/api/leader_followerGroups/:followerGroupId/freeze\.:ext?', routeHandler(async (request, response) => {
+    const {followerGroupId} = request.params;
+
+    const result = await freezeFollowerGroup(followerGroupId);
+
+    response.status(result ? 200 : 422);
+    response.json({});
+}, {
+    enforceLeaderFollower: true
+}));
+
+express.post('/api/leader_followerGroups/:followerGroupId/unfreeze\.:ext?', routeHandler(async (request, response) => {
+    const {followerGroupId} = request.params;
+
+    const result = await unfreezeFollowerGroup(followerGroupId);
+
+    response.status(result ? 200 : 422);
+    response.json({});
+}, {
+    enforceLeaderFollower: true
 }));

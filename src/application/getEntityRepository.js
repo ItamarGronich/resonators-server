@@ -1,6 +1,8 @@
 import User from '../domain/entities/user';
 import Question from '../domain/entities/question';
 import Follower from '../domain/entities/follower';
+import FollowerGroup from '../domain/entities/followerGroup';
+import FollowerGroupFollower from '../domain/entities/followerGroupFollower';
 import Resonator from '../domain/entities/resonator';
 import Leader from '../domain/entities/leader';
 import Clinic from '../domain/entities/clinic';
@@ -14,6 +16,8 @@ import userRepository from '../db/repositories/UserRepository';
 import leadersRepository from  '../db/repositories/LeaderRepository';
 import clinicsRepository from  '../db/repositories/ClinicRepository';
 import followerRepository from  '../db/repositories/FollowerRepository';
+import followerGroupRepository from  '../db/repositories/FollowerGroupRepository';
+import followerGroupFollowerRepository from  '../db/repositories/FollowerGroupFollowersRepository';
 import resonatorRepository from  '../db/repositories/ResonatorRepository';
 import questionRepository from '../db/repositories/QuestionRepository';
 import resonatorStatsRepository from '../db/repositories/ResonatorStatsRepository';
@@ -22,6 +26,7 @@ import versionableAssetsRepository from '../db/repositories/VersionableAssetsRep
 import googleAccountsRepository from '../db/repositories/GoogleAccountRepository';
 import leaderCalendarsRepository from '../db/repositories/LeaderCalendarsRepository';
 import leadersClinicsRepository from  '../db/repositories/LeaderClinicsRepository';
+
 
 export default function getEntityRepository(entity) {
     if (entity.constructor === User)
@@ -35,6 +40,12 @@ export default function getEntityRepository(entity) {
 
     if (entity.constructor === Follower)
         return followerRepository;
+
+    if (entity.constructor === FollowerGroup)
+        return followerGroupRepository;
+
+    if (entity.constructor === FollowerGroupFollower)
+        return followerGroupFollowerRepository;
 
     if (entity.constructor === Resonator)
         return resonatorRepository;

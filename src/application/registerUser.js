@@ -30,6 +30,7 @@ export async function registerUser({name, email, password}) {
         user_id: user.id,
         title: user.name,
         current_clinic_id: clinic.id,
+        group_permissions: true,
         visible: 1
     });
 

@@ -13,7 +13,8 @@ export function toLeader(leader){
     return {
         id: leader.id,
         user_id: leader.user_id,
-        current_clinic_id:leader.current_clinic_id
+        current_clinic_id: leader.current_clinic_id,
+        group_permissions: leader.group_permissions,
     }
 }
 

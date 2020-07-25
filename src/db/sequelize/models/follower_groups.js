@@ -9,12 +9,15 @@ module.exports = function(sequelize, DataTypes) {
         leader_id: DataTypes.UUID,
         clinic_id: DataTypes.UUID,
         status: DataTypes.INTEGER,
+        frozen: DataTypes.BOOLEAN
     }, {
         underscored: true,
         classMethods: {
             associate: function(models) {
                 followers_groups.belongsTo(models.leaders);
                 followers_groups.belongsTo(models.clinics);
+                followers_groups.hasMany(models.resonators);
+                followers_groups.hasMany(models.follower_group_followers);
             }
         }
     });

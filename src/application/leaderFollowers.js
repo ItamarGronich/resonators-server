@@ -3,7 +3,6 @@ import followerRepository from '../db/repositories/FollowerRepository';
 import resonatorRepository from '../db/repositories/ResonatorRepository';
 import leaderRepository from '../db/repositories/LeaderRepository';
 import userRepository from '../db/repositories/UserRepository';
-import clinicRepository from '../db/repositories/ClinicRepository';
 import User from '../domain/entities/user';
 import Follower from '../domain/entities/follower';
 import * as dtoFactory from './dto/index';

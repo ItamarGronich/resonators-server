@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
-import {follower_groups, users, leaders} from '../sequelize/models';
+import {follower_groups, leaders} from '../sequelize/models';
 
 class FollowerGroupRepository extends Repository {
     constructor(...args) {
@@ -18,27 +18,18 @@ class FollowerGroupRepository extends Repository {
         return follower_groups.upsert(followerGroup, {transaction});
     }
 
-    async findByLeaderUserId(leaderUserId) {
-        const user = await users.findOne({
-            where: {id: leaderUserId},
-
+    async findByLeaderId(leaderId) {
+        const leader = await leaders.findOne({
+            where: {id: leaderId},
             include: [{
-                model: leaders,
-                include: [{
-                    model: follower_groups,
-                    include: [{
-                        model: users,
-                        required: true
-                    }]
-                }]
+                model: follower_groups,
             }]
         });
-
-        if (!_.get(user, 'leader.follower_groups'))
+        if (!_.get(leader, 'follower_groups')) {
             return [];
+        }
 
-        const foundFollowerGroups = user.leader.follower_groups.map(dbToDomain.toFollowerGroup);
-
+        const foundFollowerGroups = leader.follower_groups.map(dbToDomain.toFollowerGroup);
         foundFollowerGroups.forEach(followerGroup => this.trackEntity(followerGroup));
 
         return foundFollowerGroups;

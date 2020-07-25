@@ -196,6 +196,7 @@ export function toFollowerGroup(r) {
         leader_id: r.get('leader_id'),
         clinic_id: r.get('clinic_id'),
         status: r.get('status'),
+        frozen: !!r.get('frozen'),
         created_at: r.get('created_at'),
         updated_at: r.get('updated_at')
     });

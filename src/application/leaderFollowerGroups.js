@@ -1,3 +1,4 @@
+import log from '../infra/log';
 import followerGroupRepository from '../db/repositories/FollowerGroupRepository';
 import followerGroupFollowerRepository from '../db/repositories/FollowerGroupFollowersRepository';
 import resonatorRepository from '../db/repositories/ResonatorRepository';
@@ -10,8 +11,8 @@ import uuid from 'uuid/v4';
 import * as R from 'ramda';
 
 
-export const getLeaderFollowerGroups = async (user_id) => {
-    const followerGroups = await followerGroupRepository.findByLeaderUserId(user_id);
+export const getLeaderFollowerGroups = async (leader_id) => {
+    const followerGroups = await followerGroupRepository.findByLeaderId(leader_id);
     const followerGroupsDto = followerGroups.map(dtoFactory.toFollowerGroup);
     return followerGroupsDto;
 }
@@ -22,17 +23,18 @@ export const getLeader = async (leader_id) => {
     return dto;
 }
 export const addLeaderFollowerGroup = async ({group_name, leader_id, clinic_id}) => {
+    
     const followerGroup = new FollowerGroup({
         group_name,
         leader_id,
         clinic_id,
-        status: 2
+        status: 2,
+        frozen: false,
     });
 
     const uow = getUow();
     uow.trackEntity(followerGroup, {isNew: true});
     await uow.commit();
-
     const newFollowerGroup = await followerGroupRepository.findById(followerGroup.id);
     const followerGroupDto = dtoFactory.toFollowerGroup(newFollowerGroup);
     return followerGroupDto;
@@ -45,7 +47,7 @@ export const deleteLeaderFollowerGroup = async (followerGroupId) =>
     ]);
 
 export const updateFollowerGroup = async (followerGroupId, data) => {
-    const followerGroup = await followerGroupRepository.findById(followerGroupId);
+    let followerGroup = await followerGroupRepository.findById(followerGroupId);
     followerGroup = Object.assign({}, {...followerGroup, data});
     await getUow().commit();
 }
@@ -70,4 +72,25 @@ await Promise.all([
     await followerGroupFollowerRepository.delete(followerGroupId, followerId),
     await resonatorRepository.deleteGroupResonatorsForFollower(followerGroupId, followerId),
 ]);
-    
+
+export async function freezeFollowerGroup(followerGroupId) {
+    const followerGroup = await followerGroupRepository.findById(followerGroupId);
+
+    if (followerGroup) {
+        log.info('freezing follower group', followerGroupId);
+        followerGroup.freeze();
+        await getUow().commit();
+        return true;
+    }
+}
+
+export async function unfreezeFollowerGroup(followerGroupId) {
+    const followerGroup = await followerGroupRepository.findById(followerGroupId);
+
+    if (followerGroup) {
+        log.info('unfreezing follower group', followerGroupId);
+        followerGroup.unfreeze();
+        await getUow().commit();
+        return true;
+    }
+}
