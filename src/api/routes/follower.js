@@ -43,8 +43,14 @@ const getFollowerResonators = async follower =>
             pop_email: true  // filter out inactive resonators for followers
         },
         include: [
-            resonator_attachments,
             resonator_questions,  // required for counting total questions in resonators
+            {
+                // fetching the most up-to-date thumbnail
+                model: resonator_attachments,
+                where: { media_kind: "picture" },
+                order: [['created_at', 'DESC']],
+                limit: 1
+            },
             {
                 // required for checking for counting answered questions for last resonator instance
                 model: sent_resonators,
@@ -73,9 +79,36 @@ const formatResonatorPreview = resonator => ({
     popDays: resonator.repeat_days,
     lastPopTime: resonator.last_pop_time,
     isOneTime: resonator.one_off,
-    attachments: resonator.resonator_attachments,
+    thumbnail: getThumbnailUrl(resonator),
     questions: {
         total: resonator.resonator_questions.length,
-        answered: resonator.sent_resonators[0].resonator_answers.length
+        answered: getAnsweredQuestions(resonator)
     }
 })
+
+
+/**
+ * Compute the URL of the thumbnail for a queried resonator.
+ * 
+ * @param {Model} resonator - the resonator to get the image for
+ * @returns {String|null}
+ */
+const getThumbnailUrl = resonator => {
+    const thumbnail = resonator.resonator_attachments[0];
+    return (thumbnail && thumbnail.visible)
+        ? (thumbnail.link || `https://reminders-uploads.s3.amazonaws.com/${thumbnail.media_id}.jpg`)
+        : null
+}
+
+
+/**
+ * Compute the number of questions that were answered for the last instance of a given resonator,
+ * or null if it has never been sent yet.
+ * 
+ * @param {Model} resonator
+ * @returns {Number|null}
+ */
+const getAnsweredQuestions = resonator =>
+    resonator.last_pop_time
+        ? resonator.sent_resonators[0].resonator_answers.length
+        : null
