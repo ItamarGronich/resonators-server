@@ -47,9 +47,15 @@ export const deleteLeaderFollowerGroup = async (followerGroupId) =>
     ]);
 
 export const updateFollowerGroup = async (followerGroupId, data) => {
-    let followerGroup = await followerGroupRepository.findById(followerGroupId);
+    const followerGroup = await followerGroupRepository.findById(followerGroupId);
     followerGroup = Object.assign({}, {...followerGroup, data});
     await getUow().commit();
+}
+
+export const getGroupFollowers = async (followerGroupId) => {
+    const followers = await followerGroupFollowerRepository.findFollowersByGroupId(followerGroupId);
+    const followerGroupsDto = followers.map(dtoFactory.toFollower);
+    return followerGroupsDto;
 }
 
 export const addFollowersToGroup = async (followerGroupId, data) => {

@@ -7,6 +7,7 @@ import {
     addLeaderFollowerGroup,
     deleteLeaderFollowerGroup,
     getLeader,
+    getGroupFollowers,
     addFollowersToGroup,
     removeFollowerFromGroup,
     freezeFollowerGroup,
@@ -47,6 +48,14 @@ express.delete('/api/leader_followerGroups/:followerGroupId\.:ext?', routeHandle
     const {followerGroupId} = request.params;
     const result = await deleteLeaderFollowerGroup(followerGroupId);
     response.status(result ? 200 : 422).json();
+}, {
+    enforceLeaderFollowerGroup: true
+}));
+
+express.get('/api/leader_followerGroups/:followerGroupId/followers\.:ext?', routeHandler(async (request, response) => {
+    const {followerGroupId} = request.params;
+    const followers = await getGroupFollowers(followerGroupId);
+    response.json(followers);
 }, {
     enforceLeaderFollowerGroup: true
 }));
