@@ -52,7 +52,7 @@ const getFollowerResonators = async follower =>
                 limit: 1
             },
             {
-                // required for checking for counting answered questions for last resonator instance
+                // required for counting answered questions for last resonator instances
                 model: sent_resonators,
                 include: [resonator_answers],
                 order: [['created_at', 'DESC']],
