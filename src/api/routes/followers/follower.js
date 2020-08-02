@@ -1,15 +1,15 @@
 import { Model } from 'sequelize';
 
-import app from '../express';
-import routeHandler from '../routeHandler';
-import Follower from '../../domain/entities/follower';
+import app from '../../express';
+import routeHandler from '../../routeHandler';
+import Follower from '../../../domain/entities/follower';
 import {
     resonators,
     resonator_attachments,
     resonator_questions,
     sent_resonators,
     resonator_answers
-} from '../../db/sequelize/models'
+} from '../../../db/sequelize/models'
 
 
 app.get('/api/follower/resonators', routeHandler(async (request, response) => {
