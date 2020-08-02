@@ -1,1 +1,1 @@
-import "./follower";
+import "./resonators";
