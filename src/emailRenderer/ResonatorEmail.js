@@ -107,7 +107,7 @@ export default ({resonator, host, preview, sentResonatorId, recipientUser = {}})
             {resonator.link && (
                 <p>
                     <h2>
-                        <a href={resonator.link}>
+                        <a href={resonator.link} target="_blank">
                             {_.truncate(resonator.link, {length: 50})}
                         </a>
                     </h2>
