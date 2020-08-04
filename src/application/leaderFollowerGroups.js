@@ -5,6 +5,7 @@ import resonatorRepository from '../db/repositories/ResonatorRepository';
 import leaderRepository from '../db/repositories/LeaderRepository';
 import FollowerGroup from '../domain/entities/followerGroup';
 import * as dtoFactory from './dto/index';
+import { createResonator } from './resonators';
 import getUow from './getUow';
 import FollowerGroupFollower from '../domain/entities/followerGroupFollower';
 import uuid from 'uuid/v4';
@@ -22,8 +23,8 @@ export const getLeader = async (leader_id) => {
     const dto = dtoFactory.toLeader(leader);
     return dto;
 }
-export const addLeaderFollowerGroup = async ({group_name, leader_id, clinic_id}) => {
-    
+export const addLeaderFollowerGroup = async ({ group_name, leader_id, clinic_id }) => {
+
     const followerGroup = new FollowerGroup({
         group_name,
         leader_id,
@@ -33,7 +34,7 @@ export const addLeaderFollowerGroup = async ({group_name, leader_id, clinic_id})
     });
 
     const uow = getUow();
-    uow.trackEntity(followerGroup, {isNew: true});
+    uow.trackEntity(followerGroup, { isNew: true });
     await uow.commit();
     const newFollowerGroup = await followerGroupRepository.findById(followerGroup.id);
     const followerGroupDto = dtoFactory.toFollowerGroup(newFollowerGroup);
@@ -48,36 +49,39 @@ export const deleteLeaderFollowerGroup = async (followerGroupId) =>
 
 export const updateFollowerGroup = async (followerGroupId, data) => {
     let followerGroup = await followerGroupRepository.findById(followerGroupId);
-    followerGroup = Object.assign({}, {...followerGroup, data});
+    followerGroup = Object.assign({}, { ...followerGroup, data });
     await getUow().commit();
 }
 
 export const getGroupFollowers = async (followerGroupId) => {
     const followers = await followerGroupFollowerRepository.findFollowersByGroupId(followerGroupId);
-    const followerGroupsDto = followers.map(dtoFactory.toFollower);
-    return followerGroupsDto;
+    const followersDto = followers.map(dtoFactory.toFollower);
+    return followersDto;
 }
 
-export const addFollowersToGroup = async (followerGroupId, data) => {
+export const updateGroupFollowers = async (followerGroupId, data) => {
     const uow = getUow();
     const followerGroup = await followerGroupRepository.findById(followerGroupId);
-    R.map(async (followerId) => {
+    const followerGroupResonators = await resonatorRepository.findByFollowerGroupId(followerGroupId);
+    const members = await getGroupFollowers(followerGroupId);
+    const memberIds = R.map(({ id }) => id, members);
+
+    await Promise.all(R.difference(data, memberIds).map(async (followerId) => {
         const followerGroupFollower = new FollowerGroupFollower({
             id: uuid(),
-            follower_group_id : followerGroup.id,
-            follower_id : followerId,
-            });
+            follower_group_id: followerGroup.id,
+            follower_id: followerId,
+        });
 
-            uow.trackEntity(followerGroupFollower, {isNew: true});
-            await uow.commit();
-    }, data.followerIdList)
+        uow.trackEntity(followerGroupFollower, { isNew: true });
+        await uow.commit();
+        await Promise.all(R.map(async (resonator) => await createResonator(resonator.leader_id, resonator)), followerGroupResonators);
+    }));
+    
+    await Promise.all(R.difference(memberIds, data).map(async (followerId) =>
+        await removeFollowerFromGroup(followerGroupId, followerId)
+    ));
 }
-
-export const removeFollowerFromGroup = async (followerGroupId, followerId) =>
-await Promise.all([
-    await followerGroupFollowerRepository.delete(followerGroupId, followerId),
-    await resonatorRepository.deleteGroupResonatorsForFollower(followerGroupId, followerId),
-]);
 
 export async function freezeFollowerGroup(followerGroupId) {
     const followerGroup = await followerGroupRepository.findById(followerGroupId);
@@ -100,3 +104,9 @@ export async function unfreezeFollowerGroup(followerGroupId) {
         return true;
     }
 }
+
+const removeFollowerFromGroup = async (followerGroupId, followerId) =>
+    await Promise.all([
+        await followerGroupFollowerRepository.delete(followerGroupId, followerId),
+        await resonatorRepository.deleteGroupResonatorsForFollower(followerGroupId, followerId),
+    ]);

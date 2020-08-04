@@ -26,12 +26,12 @@ class FollowerGroupFollowersRepository extends Repository {
             },
         });
 
-        const foundFollowers = await Promise.all(R.map( async (followerGroupFollower) =>
+        const foundFollowers = await Promise.all(rows.map( async (followerGroupFollower) =>
             await followers.findOne({
                 where: {
-                    follower_id: followerGroupFollower.follower_id
+                    id: followerGroupFollower.follower_id
                 },
-            })), rows);
+            })));
 
         if (!foundFollowers) {
             return [];
