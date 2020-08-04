@@ -75,9 +75,13 @@ export const updateGroupFollowers = async (followerGroupId, data) => {
 
         uow.trackEntity(followerGroupFollower, { isNew: true });
         await uow.commit();
-        await Promise.all(R.map(async (resonator) => await createResonator(resonator.leader_id, resonator)), followerGroupResonators);
+        await Promise.all(R.map(async (resonator) =>
+            await createResonator(resonator.leader_id, {
+                ...resonator,
+                parent_resonator_id: resonator.id,
+            })), followerGroupResonators);
     }));
-    
+
     await Promise.all(R.difference(memberIds, data).map(async (followerId) =>
         await removeFollowerFromGroup(followerGroupId, followerId)
     ));
