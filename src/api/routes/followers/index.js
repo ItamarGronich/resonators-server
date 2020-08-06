@@ -1,0 +1,2 @@
+import "./resonatorList";
+import "./resonatorDetails";
