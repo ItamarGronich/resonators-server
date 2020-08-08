@@ -14,7 +14,8 @@ export default function fetchPendingResonators(getNow = (() => new Date())) {
         `position(extract(dow from ${now}::timestamp)::char in repeat_days) > 0 and ` +
         `pop_email = true and ` +
         `fu.id is not null and ` +
-        `lu.id is not null`;
+        `lu.id is not null and ` +
+        `r.follower_group_id is null`;
 
     return db.query(sql).spread(rows => rows.map(r => r.id));
 }
