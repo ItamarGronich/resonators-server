@@ -1,7 +1,7 @@
 {
   "development": {
-    "username": "gabi",
-    "password": "578983",
+    "username": "postgres",
+    "password": null,
     "database": "resonators_dev",
     "host": "127.0.0.1",
     "dialect": "postgres"
