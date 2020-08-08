@@ -2,8 +2,6 @@ const enforcementMap = {
     enforceLogin: require("./enforceLogin").default,
     enforceLeaderFollower: require("./enforceLeaderFollowers").default,
     enforceLeaderResonator: require("./enforceLeaderResonator").default,
-    enforceFollower: require("./enforceFollower").default,
-    enforceFollowerResonator: require("./enforceFollowerResonator").default,
 };
 
 export default async function enforcePermissionPolicy(request, response, options = {}) {
