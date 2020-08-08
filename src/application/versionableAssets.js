@@ -9,11 +9,12 @@ import log from '../infra/log';
 
 export async function save({asset_id, tag, fileBuf, secret, contentEncoding}) {
     log.info(`uploading asset: ${asset_id} to S3`)
-    if (cfg.uploadAssetsSecret !== secret)
+    if (cfg.uploadAssetsSecret !== secret) {
         log.error(`Failed to upload asset: ${asset_id}. Wrong secret given: ${secret}`)
         return {
             error: 'wrong secret'
         };
+    }
 
     const uow = getUow();
 
