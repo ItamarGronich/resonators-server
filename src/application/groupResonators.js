@@ -7,7 +7,7 @@ import updatePermittedFields from './updatePermittedFields';
 import s3 from '../s3';
 import getUow from './getUow';
 import uuid from 'uuid/v4';
-import childResonators from './resonators';
+import * as singleResonators from './resonators';
 import FollowerGroupFollowersRepository from '../db/repositories/FollowerGroupFollowersRepository';
 import * as R from 'ramda';
 
@@ -38,20 +38,22 @@ export const createGroupResonator = async (leader_id, resonatorRequest) => {
         leader_id
     });
 
-    uow.trackEntity(resonator, { isNew: true });
-    await uow.commit();
 
     const followerGroup = await followerGroupRepository.findById(resonatorRequest.follower_group_id);
     const followersInGroup = await FollowerGroupFollowersRepository.findFollowersByGroupId(followerGroup.id);
 
-    const savedResonators = await Promise.all(R.map(async (follower) => {
-        await childResonators.createResonator(leader_id, {
+    const savedResonators = [];
+    for (const follower of followersInGroup) {
+        savedResonators.push(await singleResonators.createResonator(leader_id, {
             ...resonatorRequest,
             parent_resonator_id: resonator.id,
             follower_group_id: null,
             follower_id: follower.id,
-        });
-    }, followersInGroup));
+        }));
+    }
+
+    uow.trackEntity(resonator, { isNew: true });
+    await uow.commit();
 
     const savedResonator = dtoFactory.toResonator(await resonatorRepository.findById(resonator.id));
     return [savedResonator, ...savedResonators];
@@ -63,20 +65,15 @@ export const updateGroupResonator = async (resonator_id, updatedFields) => {
     if (!resonator)
         return null;
 
-    updatePermittedFields(resonator, updatedFields, [
-        'title', 'link', 'description', 'content', 'repeat_days', 'disable_copy_to_leader', 'pop_time',
-        'one_off', 'ttl_policy', 'interaction_type', 'selected_questionnaire', 'questionnaire_details'
-    ]);
-
-    await getUow().commit();
-
     const foundChildResonators = await resonatorRepository.findChildrenById(resonator.id);
-    const savedResonators = await Promise.all(R.map(async (childResonator) => {
-        await childResonators.updateResonator(childResonator.id, updatedFields);
-    }, foundChildResonators));
+    const savedResonators = [];
+    for (const singleResonator of [...foundChildResonators, resonator]) {
+        savedResonators.push(await singleResonators.updateResonator(singleResonator.id, updatedFields));
+    }
 
-    const savedResonator = dtoFactory.toResonator(await resonatorRepository.findById(resonator_id));
-    return [savedResonator, ...savedResonators];
+    // We want to update the group resonator last, but to return
+    // as the first item in the array
+    return savedResonators.reverse();
 }
 
 export const removeGroupResonator = async (resonator_id) => {
