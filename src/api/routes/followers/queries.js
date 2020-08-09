@@ -39,7 +39,6 @@ export const fetchFollowerSentResonators = async (follower, pageNum) => {
                 model: resonators,
                 where: {
                     follower_id: follower.id,
-                    pop_email: true,
                 },
                 include: [
                     resonator_questions,
@@ -68,7 +67,6 @@ export const fetchSentResonator = async (follower, sentResonatorId) =>
                 model: resonators,
                 where: {
                     follower_id: follower.id,
-                    pop_email: true,
                 },
                 include: [
                     {
