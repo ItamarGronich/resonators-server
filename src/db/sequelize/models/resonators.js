@@ -31,6 +31,7 @@ module.exports = function(sequelize, DataTypes) {
             associate: function(models) {
                 resonators.hasMany(models.resonator_attachments);
                 resonators.hasMany(models.resonator_questions);
+                resonators.hasMany(models.sent_resonators);
                 resonators.belongsTo(models.followers, {
                     foreignKey: {
                         allowNull: true,
