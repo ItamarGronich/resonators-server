@@ -16,7 +16,6 @@ export const errorFormatMiddleware = (req, res, next) => {
  */
 export const followerLoader = async (req, res, next) => {
     const login = await fetchClientData(getLoginId(req));
-    console.log("LOGIN", getLoginId(req));
 
     if (!login) {
         return res.status(401).error("Client unauthorized. Don't forget to log in :)");
