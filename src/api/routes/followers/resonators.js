@@ -8,10 +8,11 @@ import { fetchFollowerSentResonators, fetchSentResonator, answerQuestion } from 
  * Returns a listing of a follower's resonator instances.
  */
 api.get("/resonators", validatePageNum, async (req, res) => {
-    const resonators = await fetchFollowerSentResonators(req.follower, req.query.page || 0);
+    const { resonators, totalCount } = await fetchFollowerSentResonators(req.follower, req.query.page || 0);
 
     res.status(200).json({
         resonators: resonators.map(formatSentResonatorPreview),
+        totalCount,
     });
 });
 

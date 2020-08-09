@@ -17,12 +17,13 @@ const PAGE_SIZE = 15;
 
 /**
  * Fetches a follower's sent resonators.
+ * Also returns their total number (outside of page limits).
  *
  * @param {followers} follower - the follower whose resonators are to be queried
  * @param {Number} pageNum - the page number to query. Pages are `PAGE_SIZE` big.
  */
-export const fetchFollowerSentResonators = async (follower, pageNum) =>
-    await sent_resonators.findAll({
+export const fetchFollowerSentResonators = async (follower, pageNum) => ({
+    resonators: await sent_resonators.findAll({
         limit: PAGE_SIZE,
         offset: pageNum * PAGE_SIZE,
         order: [["created_at", "DESC"]],
@@ -43,7 +44,21 @@ export const fetchFollowerSentResonators = async (follower, pageNum) =>
                 ],
             },
         ],
-    });
+    }),
+    // Include total number of sent resonators. Required for paging by clients.
+    // Avoiding use of `sent_resonators.findAndCount` since it counts rows before 
+    // associations are arranged hierarchically, thus containing duplicated because of the JOINs.
+    totalCount: await sent_resonators.count({
+        include: [
+            {
+                model: resonators,
+                where: {
+                    follower_id: follower.id,
+                },
+            },
+        ],
+    }),
+});
 
 /**
  * Fetches a follower's sent resonator.
