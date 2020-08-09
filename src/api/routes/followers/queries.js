@@ -13,7 +13,7 @@ import {
     resonator_attachments,
 } from "../../../db/sequelize/models";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 15;
 
 /**
  * Fetches a follower's sent resonators.
