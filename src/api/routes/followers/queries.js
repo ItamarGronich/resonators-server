@@ -1,5 +1,4 @@
 import uuid from "uuid/v4";
-import sequelize from "sequelize";
 
 import {
     users,
@@ -14,7 +13,7 @@ import {
     resonator_attachments,
 } from "../../../db/sequelize/models";
 
-const PAGE_SIZE = 6048e5 * 2; // 2 weeks
+const PAGE_SIZE = 10;
 
 /**
  * Fetches a follower's sent resonators.
@@ -22,16 +21,10 @@ const PAGE_SIZE = 6048e5 * 2; // 2 weeks
  * @param {followers} follower - the follower whose resonators are to be queried
  * @param {Number} pageNum - the page number to query. Pages are `PAGE_SIZE` big.
  */
-export const fetchFollowerSentResonators = async (follower, pageNum) => {
-    const now = new Date();
-
-    return await sent_resonators.findAll({
-        where: {
-            created_at: {
-                $lt: now - PAGE_SIZE * pageNum,
-                $gt: now - PAGE_SIZE * (pageNum + 1),
-            },
-        },
+export const fetchFollowerSentResonators = async (follower, pageNum) =>
+    await sent_resonators.findAll({
+        limit: PAGE_SIZE,
+        offset: pageNum * PAGE_SIZE,
         order: [["created_at", "DESC"]],
         include: [
             resonator_answers,
@@ -51,7 +44,6 @@ export const fetchFollowerSentResonators = async (follower, pageNum) => {
             },
         ],
     });
-};
 
 /**
  * Fetches a follower's sent resonator.
@@ -113,7 +105,7 @@ export const fetchClientData = async (loginId) =>
 
 /**
  * Creates a new resonator answer, or updates one if it exists.
- * 
+ *
  * @param {String} answerId - the ID of the answer chosen for the given question
  * @param {String} sentResonatorId - the ID of the sent resonator for which the answer is made
  * @param {String} resonatorQuestionId - the ID of the resonator question for which the answer is made
