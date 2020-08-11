@@ -11,7 +11,7 @@ express.post('/api/users\.:ext?', routeHandler(async (request, response) => {
     });
 
     if (registrationResult.isValid) {
-        setSuccessfulLoginResponse({
+        await setSuccessfulLoginResponse({
             response,
             user: registrationResult.user,
             loginId: registrationResult.loginId
