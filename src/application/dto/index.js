@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 export function toUser(user) {
     return {
+        id: user.id,
         name: user.name,
         email: user.email,
         country: user.country,

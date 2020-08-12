@@ -14,7 +14,7 @@ express.post('/api/user_sessions\.:ext?', routeHandler(async (request, response)
     response.status(200);
 
     if (isValid) {
-        setSuccessfulLoginResponse({
+        await setSuccessfulLoginResponse({
             response,
             loginId,
             user
@@ -34,7 +34,7 @@ express.get('/api/user_sessions', routeHandler(async (request, response) => {
     if (user) {
         const userDto = dtoFactory.toUser(user);
 
-        setSuccessfulLoginResponse({
+        await setSuccessfulLoginResponse({
             response,
             loginId,
             user: userDto
