@@ -22,7 +22,8 @@ express.get('/api/completeGoogleLogin', routeHandler(async (request, response) =
 
     setLoginCookie({response, loginId: result.loginId});
 
-    response.redirect(301, '/followers');
+    // Redirecting to login lets the client figure the proper route itself based on user type
+    response.redirect(301, '/login');
 }, {
     enforceLogin: false
 }));
