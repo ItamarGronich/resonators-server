@@ -11,7 +11,6 @@ import { emailSchedulerLogger as log } from '../infra/log';
 export default async function scheduleEmails(getNow) {
     log.info('[emailScheduler] fetching pending resonators');
     const resonatorIds = await fetchPendingResonators(getNow);
-    console.log({resonatorIds});
 
     if (resonatorIds.length > 0) {
         const resonatorData = await getResonatorsData(resonatorIds);
@@ -149,7 +148,6 @@ function disableResonatorForSendOneOff(resonatorId) {
 }
 
 function getParentFollowerGroup(parentResonatorId) {
-    console.log({parentResonatorId});
     return resonators.findOne({
         where: {
             id: parentResonatorId
