@@ -9,13 +9,15 @@ module.exports = function(sequelize, DataTypes) {
         title: DataTypes.STRING,
         description: DataTypes.TEXT,
         current_clinic_id: DataTypes.UUID,
-        visible: DataTypes.INTEGER
+        visible: DataTypes.INTEGER,
+        group_permissions: DataTypes.BOOLEAN,
     }, {
         underscored: true,
         classMethods: {
             associate: function(models) {
                 leaders.belongsTo(models.users);
                 leaders.hasMany(models.followers);
+                leaders.hasMany(models.follower_groups);
             }
         }
     });
