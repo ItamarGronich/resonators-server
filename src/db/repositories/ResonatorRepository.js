@@ -64,7 +64,7 @@ class ResonatorsRepository extends Repository {
     async deleteByFollowerGroupId(follower_group_id) {
         const groupResonators = await this.findByFollowerGroupId(follower_group_id);
         const rows = R.sum(R.map((resonator) => this.deleteChildrenById(resonator.id), groupResonators));
-        return rows + resonators.destroy({
+        return rows + await resonators.destroy({
             where: {
                 follower_group_id
             }
