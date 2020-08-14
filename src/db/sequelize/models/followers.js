@@ -15,8 +15,6 @@ module.exports = function(sequelize, DataTypes) {
         classMethods: {
             associate: function(models) {
                 followers.belongsTo(models.users);
-                // followers.belongsTo(models.leaders);
-                // followers.belongsTo(models.clinics);
                 followers.hasMany(models.resonators);
                 followers.hasMany(models.follower_group_followers);
             }
