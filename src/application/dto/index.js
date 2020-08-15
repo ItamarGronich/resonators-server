@@ -9,13 +9,16 @@ export function toUser(user) {
         unsubscribed: user.unsubscribed
     };
 }
+
 export function toLeader(leader){
-    return{
+    return {
         id: leader.id,
         user_id: leader.user_id,
-        current_clinic_id:leader.current_clinic_id
+        current_clinic_id: leader.current_clinic_id,
+        group_permissions: leader.group_permissions,
     }
 }
+
 export function toFollower(follower) {
     let dto = {
         ...follower,
@@ -25,6 +28,16 @@ export function toFollower(follower) {
         dto.user = toUser(follower.user);
 
     return dto;
+}
+
+export function toFollowerGroup(followerGroup){
+    return {
+        id: followerGroup.id,
+        group_name: followerGroup.group_name,
+        leader_id: followerGroup.leader_id,
+        clinic_id:followerGroup.clinic_id,
+        status: followerGroup.status,
+    }
 }
 
 export function toResonator(resonator) {
@@ -41,12 +54,15 @@ export function toResonator(resonator) {
                        'link',
                        'disable_copy_to_leader',
                        'follower_id',
+                       'follower_group_id',
+                       'parent_resonator_id',
                        'repeat_days',
                        'items',
                        'questions',
                        'pop_email',
                        'pop_time',
                        'one_off',
+                       'ttl_policy',
                        'interaction_type',
                        'selected_questionnaire',
                        'questionnaire_details',

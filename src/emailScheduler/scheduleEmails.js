@@ -1,12 +1,12 @@
 import _ from 'lodash';
 import fetchPendingResonators from './fetchPendingResonators';
-import {resonators, resonator_attachments, followers, leaders, users, resonator_questions, questions, answers, sent_resonators} from '../db/sequelize/models';
+import { resonators, resonator_attachments, followers, follower_groups, leaders, users, resonator_questions, questions, answers, sent_resonators } from '../db/sequelize/models';
 import * as dbToDomain from '../db/dbToDomain';
 import renderResonatorEmail from '../emailRenderer/index';
 import sendResonatorEmail from './sendResonatorEmail';
 import cfg from '../cfg';
 import uuid from 'uuid/v4';
-import {emailSchedulerLogger as log} from '../infra/log';
+import { emailSchedulerLogger as log } from '../infra/log';
 
 export default async function scheduleEmails(getNow) {
     log.info('[emailScheduler] fetching pending resonators');
@@ -15,12 +15,18 @@ export default async function scheduleEmails(getNow) {
     if (resonatorIds.length > 0) {
         const resonatorData = await getResonatorsData(resonatorIds);
 
-        const emailPromises = _(resonatorData).map(({
+        const emailPromises = _(resonatorData).map(async ({
             resonator,
             followerUser,
             follower,
             leaderUser
         }) => {
+            if (resonator.parent_resonator_id) {
+                const followerGroup = await getParentFollowerGroup(resonator.parent_resonator_id);
+                if ((followerGroup && followerGroup.frozen)) {
+                    return Promise.resolve();
+                }
+            }
             if (followerUser.unsubscribed) {
                 return Promise.resolve();
             }
@@ -110,10 +116,13 @@ function sendEmail({resonator, followerUser, leaderUser}) {
         });
 }
 
-function recordSentResonator(resonator_id) {
+function recordSentResonator({ id, ttl_policy }) {
+    // const expiryDate = new Date();
+    // expiryDate.setTime(expiryDate.getTime() + (ttl_policy * 60 * 60 * 1000));
     return sent_resonators.create({
         id: uuid(),
-        resonator_id,
+        resonator_id: id,
+        // expiry_date: expiryDate,
         failed: false
     });
 }
@@ -132,8 +141,23 @@ function disableResonatorForSendOneOff(resonatorId) {
     return resonators.update({
         pop_email: false
     }, {
-            where: {
-                id: resonatorId
+        where: {
+            id: resonatorId
+        }
+    });
+}
+
+function getParentFollowerGroup(parentResonatorId) {
+    return resonators.findOne({
+        where: {
+            id: parentResonatorId
+        },
+        include: [
+            {
+                model: follower_groups,
             }
-        });
+        ]
+    }).then((row) =>
+        row.follower_group && dbToDomain.toFollowerGroup(row.follower_group)
+    );
 }

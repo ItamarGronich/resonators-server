@@ -5,7 +5,8 @@ export default class Leader {
         title,
         description,
         current_clinic_id,
-        visible
+        visible,
+        group_permissions,
     }) {
         this.id = id;
         this.user_id = user_id;
@@ -13,5 +14,6 @@ export default class Leader {
         this.description = description;
         this.visible = visible;
         this.current_clinic_id = current_clinic_id;
+        this.group_permissions = group_permissions;
     }
 }

@@ -8,6 +8,10 @@ import ResonatorAttachment from '../domain/entities/resonatorAttachment';
 import SentResonator from '../domain/entities/sentResonator';
 import VersionableAsset from '../domain/entities/versionableAsset';
 import GoogleAccount from '../domain/entities/googleAccount';
+import LeaderClinic from '../domain/entities/leaderClinic';
+import FollowerGroup from '../domain/entities/followerGroup';
+import FollowerGroupFollower from '../domain/entities/followerGroupFollower';
+
 
 export function toUser(dbUser) {
     return new User({
@@ -27,8 +31,9 @@ export function toLeader(r) {
         user_id: r.get('user_id'),
         title: r.get('title'),
         description: r.get('description'),
-        visible: r.get('visible'),     
-        current_clinic_id:r.get('current_clinic_id')
+        visible: r.get('visible'),
+        current_clinic_id: r.get('current_clinic_id'),
+        group_permissions: r.get('group_permissions'),
     });
 }
 
@@ -56,6 +61,8 @@ export function toResonator(r) {
         id: r.get('id'),
         leader_id: r.get('leader_id'),
         follower_id: r.get('follower_id'),
+        follower_group_id: r.get('follower_group_id'),
+        parent_resonator_id: r.get('parent_resonator_id'),
         description: r.get('description'),
         title: r.get('title'),
         link: r.get('link'),
@@ -68,6 +75,7 @@ export function toResonator(r) {
         last_pop_time: r.get('last_pop_time'),
         disable_copy_to_leader: r.get('disable_copy_to_leader'),
         one_off: r.get('one_off'),
+        ttl_policy: r.get('ttl_policy'),
         interaction_type: r.get('interaction_type'),
         selected_questionnaire: r.get('selected_questionnaire'),
         questionnaire_details: r.get('questionnaire_details'),
@@ -138,6 +146,7 @@ export function toSentResonator(r) {
     return new SentResonator({
         id: r.get('id'),
         resonator_id: r.get('resonator_id'),
+        expiry_date: r.get('expiry_date'),
         created_at: r.get('created_at'),
         updated_at: r.get('updated_at')
     });
@@ -177,5 +186,28 @@ export function toLeaderClinic(r) {
         created_at: r.get('created_at'),
         updated_at: r.get('updated_at'),
         leader
+    });
+}
+
+export function toFollowerGroup(r) {
+    return new FollowerGroup({
+        id: r.get('id'),
+        group_name: r.get('group_name'),
+        leader_id: r.get('leader_id'),
+        clinic_id: r.get('clinic_id'),
+        status: r.get('status'),
+        frozen: !!r.get('frozen'),
+        created_at: r.get('created_at'),
+        updated_at: r.get('updated_at')
+    });
+}
+
+export function toFollowerGroupFollower(r) {
+    return new FollowerGroupFollower({
+        id: r.get('id'),
+        follower_group_id: r.get('follower_group_id'),
+        follower_id: r.get('follower_id'),
+        created_at: r.get('created_at'),
+        updated_at: r.get('updated_at')
     });
 }

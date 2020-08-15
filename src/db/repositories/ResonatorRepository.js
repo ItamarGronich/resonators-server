@@ -1,5 +1,6 @@
 import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
+import * as R from 'ramda';
 
 import {
     resonators,
@@ -59,6 +60,16 @@ class ResonatorsRepository extends Repository {
             }
         });
     }
+    
+    async deleteByFollowerGroupId(follower_group_id) {
+        const groupResonators = await this.findByFollowerGroupId(follower_group_id);
+        const rows = R.sum(R.map((resonator) => this.deleteChildrenById(resonator.id), groupResonators));
+        return rows + await resonators.destroy({
+            where: {
+                follower_group_id
+            }
+        });
+    }
 
     deleteById(id) {
         return resonators.destroy({
@@ -66,6 +77,19 @@ class ResonatorsRepository extends Repository {
                 id
             }
         });
+    }
+
+    async deleteGroupResonatorById(id) {
+        const rows = await this.deleteChildrenById(id);
+        return rows + resonators.destroy({
+            where: {
+                id
+            }
+        });
+    }
+    async deleteChildrenById(id) {
+        const childResonators = await this.findChildrenById(id);
+        return R.sum(R.map((resonator) => this.deleteById(resonator.id), childResonators));
     }
 
     async findById(resonatorId) {
@@ -81,10 +105,25 @@ class ResonatorsRepository extends Repository {
         }
 
         const resonator = dbToDomain.toResonator(row);
-
         this.trackEntity(resonator);
-
         return resonator;
+    }
+
+    async findChildrenById(resonatorId) {
+        const rows = await resonators.findAll({
+            where: {
+                parent_resonator_id: resonatorId
+            },
+            include: this.queryInclude()
+        });
+
+        if (!rows) {
+            return [];
+        }
+
+        const foundResonators = rows.map(dbToDomain.toResonator);
+        foundResonators.forEach(resonator => this.trackEntity(resonator));
+        return foundResonators;
     }
 
     async findByFollowerId(followerId) {
@@ -95,14 +134,40 @@ class ResonatorsRepository extends Repository {
             include: this.queryInclude()
         });
 
-        if (!rows)
+        if (!rows) {
             return [];
+        }
 
         const foundResonators = rows.map(dbToDomain.toResonator);
-
         foundResonators.forEach(resonator => this.trackEntity(resonator));
-
         return foundResonators;
+    }
+
+    async findByFollowerGroupId(followerGroupId) {
+        const rows = await resonators.findAll({
+            where: {
+                follower_group_id: followerGroupId
+            },
+            include: this.queryInclude()
+        });
+
+        if (!rows) {
+            return [];
+        }
+
+        const foundResonators = rows.map(dbToDomain.toResonator);
+        foundResonators.forEach(resonator => this.trackEntity(resonator));
+        return foundResonators;
+    }
+
+    async deleteGroupResonatorsForFollower(follower_group_id, follower_id) {
+        const groupResonators = await this.findByFollowerGroupId(follower_group_id);
+        return resonators.destroy({
+            where: {
+                follower_id,
+                parent_resonator_id: R.map((resonator) => resonator.id, groupResonators),
+            }
+        });
     }
 
     queryInclude() {

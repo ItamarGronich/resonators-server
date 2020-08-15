@@ -15,7 +15,6 @@ express.get('/api/leader_followers\.:ext?', routeHandler(async (request, respons
     const {user} = request.appSession;
 
     const followers = await getLeaderFollowers(user.id);
-
     response.status(200);
     response.json(followers);
 }));

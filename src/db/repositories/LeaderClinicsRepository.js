@@ -15,7 +15,7 @@ class LeaderClinicsRepository extends Repository {
 
     save(leaderClinic, transaction) {
         return leader_clinics.create(leaderClinic, {transaction});
-    }   
+    }
 }
 
 export default new LeaderClinicsRepository();
