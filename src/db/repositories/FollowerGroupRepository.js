@@ -14,8 +14,8 @@ class FollowerGroupRepository extends Repository {
         };
     }
 
-    save(followerGroup, transaction) {
-        return follower_groups.upsert(followerGroup, {transaction});
+    async save(followerGroup, transaction) {
+        return await follower_groups.upsert(followerGroup, {transaction});
     }
 
     async findByLeaderId(leaderId) {

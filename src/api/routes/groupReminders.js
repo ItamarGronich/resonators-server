@@ -22,7 +22,7 @@ express.get('/api/leader_followerGroups/:followerGroupId/reminders/:reminderId\.
 express.post('/api/leader_followerGroups/:followerGroupId/reminders\.:ext?', routeHandler(async (request, response) => {
     const { leader } = request.appSession;
     const result = await service.createGroupResonator(leader.id, request.body);
-    response.status(201).json(result);
+    response.status(201).json(result[0]);
 }, {
         enforceLeaderFollowerGroup: true
     }));

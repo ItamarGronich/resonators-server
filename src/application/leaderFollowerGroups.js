@@ -48,9 +48,13 @@ export const deleteLeaderFollowerGroup = async (followerGroupId) =>
     ]);
 
 export const updateFollowerGroup = async (followerGroupId, data) => {
-    let followerGroup = await followerGroupRepository.findById(followerGroupId);
-    followerGroup = Object.assign({}, { ...followerGroup, data });
-    await getUow().commit();
+    const uow = getUow();
+    const followerGroup = await followerGroupRepository.findById(followerGroupId);
+    for (const field in data) {
+        followerGroup[field] = data[field];
+    }
+    await uow.commit();
+    return followerGroup;
 }
 
 export const getGroupFollowers = async (followerGroupId) => {
@@ -65,23 +69,22 @@ export const updateGroupFollowers = async (followerGroupId, data) => {
     const followerGroupResonators = await resonatorRepository.findByFollowerGroupId(followerGroupId);
     const members = await getGroupFollowers(followerGroupId);
     const memberIds = R.map(({ id }) => id, members);
-
-    await Promise.all(R.difference(data, memberIds).map(async (followerId) => {
+    for (const followerId of R.difference(data, memberIds)) {
         const followerGroupFollower = new FollowerGroupFollower({
             id: uuid(),
             follower_group_id: followerGroup.id,
             follower_id: followerId,
         });
-        await Promise.all(R.map(async ({ id, follower_group_id, ...resonator }) => {
-            return await createResonator(resonator.leader_id, {
+        for (const { id, follower_group_id, ...resonator } of followerGroupResonators ) {
+            await createResonator(resonator.leader_id, {
                 ...resonator,
                 parent_resonator_id: id,
                 follower_id: followerId,
             })
-        }, followerGroupResonators));
+        }
         uow.trackEntity(followerGroupFollower, { isNew: true });
         await uow.commit();
-    }));
+    }
 
     await Promise.all(R.difference(memberIds, data).map(async (followerId) =>
         await removeFollowerFromGroup(followerGroupId, followerId)

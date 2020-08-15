@@ -37,8 +37,8 @@ express.post('/api/leader_followerGroups\.:ext?', routeHandler(async (request, r
 
 express.put('/api/leader_followerGroups/:followerGroupId\.:ext?', routeHandler(async (request, response) => {
     const { followerGroupId } = request.params;
-    await updateFollowerGroup(followerGroupId, request.body);
-    response.status(202).json();
+    const updatedFollowerGroup = await updateFollowerGroup(followerGroupId, request.body);
+    response.status(202).json(updatedFollowerGroup);
 }, {
     enforceLeaderFollowerGroup: true
 }));
