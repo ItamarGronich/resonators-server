@@ -16,6 +16,7 @@ module.exports = function(sequelize, DataTypes) {
             associate: function(models) {
                 followers.belongsTo(models.users);
                 followers.hasMany(models.resonators);
+                followers.hasMany(models.follower_group_followers);
             }
         }
     });
