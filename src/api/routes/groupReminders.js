@@ -80,7 +80,7 @@ express.delete('/api/leader_followerGroups/:followerGroupId/reminders/:reminderI
             title: media_title
         }, mediaData[0].buffer);
 
-        response.status(201).json();
+        response.status(201).json({});
     }, {
             enforceLeaderFollowerGroup: true
         }));

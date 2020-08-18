@@ -145,15 +145,7 @@ export const addItemToGroupResonator = async (resonator_id, item, stream) => {
 
     const { Location } = await s3.uploadImage(id, stream);
 
-    const foundChildResonators = await resonatorRepository.findChildrenById(resonator.id);
-    for (const childResonator of foundChildResonators) {
-        childResonator.addItem({
-            ...item,
-            id,
-            link: Location
-        });
-    }
-
+    
     resonator.addItem({
         ...item,
         id,
@@ -161,6 +153,11 @@ export const addItemToGroupResonator = async (resonator_id, item, stream) => {
     });
 
     await getUow().commit();
+
+    const foundChildResonators = await resonatorRepository.findChildrenById(resonator.id);
+    for (const childResonator of foundChildResonators) {
+        await singleResonators.addItemToResonator(childResonator.id, item, stream);
+    }
 
     return true;
 }
