@@ -81,7 +81,7 @@ function getResonatorsData(resonatorIds) {
 }
 
 function sendEmail({resonator, followerUser, leaderUser}) {
-    return recordSentResonator(resonator.id)
+    return recordSentResonator({id: resonator.id })
         .then(row => {
             const sentResonatorId = row.get('id');
 

@@ -89,11 +89,11 @@ export const addQuestionToGroupResonator = async (resonator_id, question_id) => 
 
     if (!resonator || !question)
         return null;
-    
+
     const foundChildResonators = await resonatorRepository.findChildrenById(resonator.id);
-    R.map((childResonator) => {
-         childResonator.addQuestion(question_id);
-    }, foundChildResonators);
+    for (const childResonator of foundChildResonators) {
+        childResonator.addQuestion(question_id);
+    }
 
     resonator.addQuestion(question_id);
     await getUow().commit();
@@ -101,7 +101,7 @@ export const addQuestionToGroupResonator = async (resonator_id, question_id) => 
 }
 export const addBulkQuestionsToGroupResonator = async (resonator_id, question_ids) => {
 
-    const resonator = resonatorRepository.findById(resonator_id);
+    const resonator = await resonatorRepository.findById(resonator_id);
     const foundChildResonators = await resonatorRepository.findChildrenById(resonator.id);
 
     for (const question_id of question_ids) {
@@ -109,9 +109,9 @@ export const addBulkQuestionsToGroupResonator = async (resonator_id, question_id
         if (!resonator || !question)
             return null;
 
-        R.map((childResonator) => {
+        for (const childResonator of foundChildResonators) {
             childResonator.addQuestion(question_id);
-        }, foundChildResonators);
+        }
 
         resonator.addQuestion(question_id);
     }
@@ -125,9 +125,9 @@ export const removeQuestionFromGroupResonator = async (resonator_id, question_id
         return null;
 
     const foundChildResonators = await resonatorRepository.findChildrenById(resonator.id);
-    R.map((childResonator) => {
+    for (const childResonator of foundChildResonators) {
         childResonator.removeQuestion(question_id);
-    }, foundChildResonators);
+    }
 
     resonator.removeQuestion(question_id);
 
@@ -145,15 +145,7 @@ export const addItemToGroupResonator = async (resonator_id, item, stream) => {
 
     const { Location } = await s3.uploadImage(id, stream);
 
-    const foundChildResonators = await resonatorRepository.findChildrenById(resonator.id);
-    R.map((childResonator) => {
-        childResonator.addItem({
-            ...item,
-            id,
-            link: Location
-        });
-    }, foundChildResonators);
-
+    
     resonator.addItem({
         ...item,
         id,
@@ -161,6 +153,11 @@ export const addItemToGroupResonator = async (resonator_id, item, stream) => {
     });
 
     await getUow().commit();
+
+    const foundChildResonators = await resonatorRepository.findChildrenById(resonator.id);
+    for (const childResonator of foundChildResonators) {
+        await singleResonators.addItemToResonator(childResonator.id, item, stream);
+    }
 
     return true;
 }
@@ -172,9 +169,9 @@ export const removeGroupResonatorItem = async (resonator_id, item_id) => {
         return null;
 
     const foundChildResonators = await resonatorRepository.findChildrenById(resonator.id);
-    R.map((childResonator) => {
+    for (const childResonator of foundChildResonators) {
         childResonator.removeItem(item_id);
-    }, foundChildResonators);
+    }
 
     resonator.removeItem(item_id);
 
@@ -195,9 +192,9 @@ export const removeGroupResonatorImage = async (resonator_id, item_id) => {
         await s3.deleteFile(imageInfo.id);
 
         const foundChildResonators = await resonatorRepository.findChildrenById(resonator.id);
-        R.map((childResonator) => {
+        for (const childResonator of foundChildResonators) {
             childResonator.removeItem(item_id);
-        }, foundChildResonators);
+        }
 
         resonator.removeItem(item_id);
 
