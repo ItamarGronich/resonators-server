@@ -1,33 +1,57 @@
 import _ from 'lodash';
 import resonatorStatsRepository from '../db/repositories/ResonatorStatsRepository';
 import resonatorRepository from '../db/repositories/ResonatorRepository';
+import userRepository from '../db/repositories/UserRepository';
 import questionRepository from '../db/repositories/QuestionRepository';
 import sentResonatorRepository from '../db/repositories/SentResonatorRepository';
 import * as dtoFactory from './dto';
 import getUow from './getUow';
+import { toCSV, uniqFlatten } from './utils';
 
-export async function getResonatorStats(resonatorId) {
-    const stats = await resonatorStatsRepository.findById(resonatorId);
-    const questionIds = _.map(stats.criteria, (v, qid) => qid);
-    const questions = await questionRepository.findManyById(questionIds);
 
-    const answersMap = _.flatMap(questions, 'answers').reduce((acc, cur) => {
-        acc[cur.id] = cur;
-        return acc;
-    }, {});
+export async function getResonatorStats(resonatorId, isDownload) {
+    const currentResonator = await resonatorRepository.findById(resonatorId);
+    const allResonators = currentResonator.follower_group_id ?
+        await resonatorRepository.findChildrenById(resonatorId) :
+        [currentResonator];
+    let allStats = []
+    for (const resonator of allResonators) {
+        const { name } = await userRepository.findByFollowerId(resonator.follower_id);
+        const stats = await resonatorStatsRepository.findById(resonator.id);
+        const questionIds = _.map(stats.criteria, (v, qid) => qid);
+        const questions = await questionRepository.findManyById(questionIds);
 
-    const answers = _(stats.criteria)
-    .map((arr, question_id) => _.map(arr, a => ({
-        question_id, rank: _.get(answersMap[a.answer_id], 'rank'), time: a.created_at
-    })))
-    .reduce((acc, cur) => acc.concat(cur), []);
+        const answersMap = _.flatMap(questions, 'answers').reduce((acc, cur) => {
+            acc[cur.id] = cur;
+            return acc;
+        }, {});
 
-    const sortedAnswers = _.orderBy(answers, a => a.time, ['desc']);
+        const answers = _(stats.criteria)
+            .map((arr, question_id) => _.map(arr, a => ({
+                question_id, rank: _.get(answersMap[a.answer_id], 'rank'), time: a.created_at
+            })))
+            .reduce((acc, cur) => acc.concat(cur), []);
 
-    return { questions, answers: sortedAnswers };
+        const sortedAnswers = _.orderBy(answers, a => a.time, ['desc']);
+        allStats.push({
+            questions,
+            answers: sortedAnswers.map((answer) => ({
+                followerName: name,
+                ...answer,
+            }))
+        });
+    }
+    const finalStats = {
+        questions: uniqFlatten(allStats.map(({ questions }) => questions)),
+        answers: uniqFlatten(allStats.map(({ answers }) => answers)),
+    }
+
+    return isDownload ?
+        convertStatsToCSV(finalStats) :
+        finalStats;
 }
 
-export async function sendResonatorAnswer({resonator_id, question_id, answer_id, sent_resonator_id}) {
+export async function sendResonatorAnswer({ resonator_id, question_id, answer_id, sent_resonator_id }) {
     const [resonator, resonatorStats, sentResonator] = await Promise.all([
         resonatorRepository.findById(resonator_id),
         resonatorStatsRepository.findById(resonator_id),
@@ -53,4 +77,17 @@ export async function sendResonatorAnswer({resonator_id, question_id, answer_id,
     return {
         resonator: resonatorDto
     };
+}
+
+function convertStatsToCSV({ questions, answers }) {
+    return toCSV(answers.map((answer) => {
+        const question = questions.find(_.matches({ id: answer.question_id }));
+        return {
+            followerName: answer.followerName,
+            title: question.title,
+            description: question.description,
+            rank: answer.rank,
+            time: answer.time,
+        };
+    }));
 }
