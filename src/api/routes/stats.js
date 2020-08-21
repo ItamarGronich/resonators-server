@@ -21,7 +21,7 @@ express.get('/api/criteria/stats/reminders/:resonatorId/download\.:ext?', routeH
         response.setHeader('Content-Disposition', `attachment; filename="resonatorStats-${(new Date()).toLocaleString("en-US")}.csv"`);
         convertStatsToCSV(stats).pipe(response);
     } else {
-        response.status(422);
+        response.sendStatus(422);
     }
 }, {
     enforceLeaderResonator: true
