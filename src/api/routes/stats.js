@@ -18,7 +18,7 @@ express.get('/api/criteria/stats/reminders/:resonatorId/download\.:ext?', routeH
     if (stats) {
         response.status(200);
         response.setHeader('Content-Type', 'text/csv');
-        response.setHeader('Content-Disposition', 'attachment');
+        response.setHeader('Content-Disposition', `attachment; filename="resonatorStats-${(new Date()).toLocaleString("en-US")}.csv"`);
         convertStatsToCSV(stats).pipe(response);
     } else {
         response.status(422);
