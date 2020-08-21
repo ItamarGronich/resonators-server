@@ -9,7 +9,7 @@ import getUow from './getUow';
 import { toCSV, uniqFlatten } from './utils';
 
 
-export async function getResonatorStats(resonatorId, isDownload) {
+export async function getResonatorStats(resonatorId) {
     const currentResonator = await resonatorRepository.findById(resonatorId);
     const allResonators = currentResonator.follower_group_id ?
         await resonatorRepository.findChildrenById(resonatorId) :
@@ -46,9 +46,7 @@ export async function getResonatorStats(resonatorId, isDownload) {
         answers: uniqFlatten(allStats.map(({ answers }) => answers)),
     }
 
-    return isDownload ?
-        convertStatsToCSV(finalStats) :
-        finalStats;
+    return finalStats;
 }
 
 export async function sendResonatorAnswer({ resonator_id, question_id, answer_id, sent_resonator_id }) {
@@ -79,7 +77,7 @@ export async function sendResonatorAnswer({ resonator_id, question_id, answer_id
     };
 }
 
-function convertStatsToCSV({ questions, answers }) {
+export function convertStatsToCSV({ questions, answers }) {
     return toCSV(answers.map((answer) => {
         const question = questions.find(_.matches({ id: answer.question_id }));
         return {

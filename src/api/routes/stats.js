@@ -1,26 +1,27 @@
 import express from '../express';
 import routeHandler from '../routeHandler';
-import { getResonatorStats, sendResonatorAnswer } from '../../application/resonatorStats';
+import { getResonatorStats, sendResonatorAnswer, convertStatsToCSV } from '../../application/resonatorStats';
 import renderClient from '../renderClient';
-import fs from 'fs';
 
 
 express.get('/api/criteria/stats/reminders/:resonatorId\.:ext?', routeHandler(async (request, response) => {
     const { resonatorId } = request.params;
-    const isDownload = request.query.download === 'true';
-    const stats = await getResonatorStats(resonatorId, isDownload);
-    response.status(stats ? 200 : 422);
-    if (isDownload) {
-        const fileName = 'currentStats.csv';
-        fs.writeFile(fileName, stats, (err) => {
-            if (err) console.log(err);
-            response.download(fileName, fileName, (err) => {
-                if (err) throw err;
-                fs.unlink(fileName, (err) => err && (console.log(err)));
-            });
-        });
+    const stats = await getResonatorStats(resonatorId);
+    response.status(stats ? 200 : 422).send(stats);
+}, {
+    enforceLeaderResonator: true
+}));
+
+express.get('/api/criteria/stats/reminders/:resonatorId/download\.:ext?', routeHandler(async (request, response) => {
+    const { resonatorId } = request.params;
+    const stats = await getResonatorStats(resonatorId);
+    if (stats) {
+        response.status(200);
+        response.setHeader('Content-Type', 'text/csv');
+        response.setHeader('Content-Disposition', 'attachment');
+        convertStatsToCSV(stats).pipe(response);
     } else {
-        response.send(stats);
+        response.status(422);
     }
 }, {
     enforceLeaderResonator: true
