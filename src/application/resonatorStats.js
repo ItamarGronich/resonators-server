@@ -7,6 +7,7 @@ import sentResonatorRepository from '../db/repositories/SentResonatorRepository'
 import * as dtoFactory from './dto';
 import getUow from './getUow';
 import { toCSV, uniqFlatten } from './utils';
+import FollowerGroupRepository from '../db/repositories/FollowerGroupRepository';
 
 
 export async function getResonatorStats(resonatorId) {
@@ -88,4 +89,13 @@ export function convertStatsToCSV({ questions, answers }) {
             time: answer.time,
         };
     }));
+}
+
+export async function getStatsFileName(resonatorId) {
+    const resonator = await resonatorRepository.findById(resonatorId);
+    if (!resonator) return null;
+    const targetName =
+        (resonator.follower_id && (await userRepository.findByFollowerId(resonator.follower_id)).name) ||
+        (resonator.follower_group_id && (await FollowerGroupRepository.findById(resonator.follower_group_id)).group_name);
+    return `${resonator.title}-${targetName}-${(new Date()).toLocaleDateString("en-US")}.csv"`;
 }

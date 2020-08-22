@@ -1,6 +1,6 @@
 import express from '../express';
 import routeHandler from '../routeHandler';
-import { getResonatorStats, sendResonatorAnswer, convertStatsToCSV } from '../../application/resonatorStats';
+import { getResonatorStats, sendResonatorAnswer, convertStatsToCSV, getStatsFileName } from '../../application/resonatorStats';
 import renderClient from '../renderClient';
 
 
@@ -18,7 +18,7 @@ express.get('/api/criteria/stats/reminders/:resonatorId/download\.:ext?', routeH
     if (stats) {
         response.status(200);
         response.setHeader('Content-Type', 'text/csv');
-        response.setHeader('Content-Disposition', `attachment; filename="resonatorStats-${(new Date()).toLocaleString("en-US")}.csv"`);
+        response.setHeader('Content-Disposition', `attachment; filename="${await getStatsFileName(resonatorId)}`);
         convertStatsToCSV(stats).pipe(response);
     } else {
         response.sendStatus(422);
