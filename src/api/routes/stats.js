@@ -1,7 +1,6 @@
 import express from '../express';
 import routeHandler from '../routeHandler';
 import {getResonatorStats, sendResonatorAnswer} from '../../application/resonatorStats';
-import renderClient from '../renderClient';
 
 express.get('/api/criteria/stats/reminders/:resonatorId\.:ext?', routeHandler(async (request, response) => {
     const {resonatorId} = request.params;
@@ -40,7 +39,7 @@ express.get(`/api/criteria/stats/reminders/:resonator_id/criteria/submit`, route
     const result = await sendAnswer({resonator_id, question_id, answer_id, sent_resonator_id});
 
     if (result)
-        await renderClient(request, response, result);
+        response.status(200).json(result);
     else {
         response.status(422);
         response.send('Answer submission failed.');
