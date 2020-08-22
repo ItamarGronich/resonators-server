@@ -94,8 +94,11 @@ export function convertStatsToCSV({ questions, answers }) {
 export async function getStatsFileName(resonatorId) {
     const resonator = await resonatorRepository.findById(resonatorId);
     if (!resonator) return null;
+    const resonatorTitle = resonator.title;
     const targetName =
         (resonator.follower_id && (await userRepository.findByFollowerId(resonator.follower_id)).name) ||
         (resonator.follower_group_id && (await FollowerGroupRepository.findById(resonator.follower_group_id)).group_name);
-    return `${resonator.title}-${targetName}-${(new Date()).toLocaleDateString("en-US")}.csv"`;
+    const date = (new Date()).toLocaleDateString("en-US");
+    const fields = [resonatorTitle, targetName, date].map((field) => field.substring(0, 20));
+    return `${fields.join('-')}.csv"`;
 }
