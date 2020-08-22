@@ -1,12 +1,6 @@
 import express from '../express';
 import routeHandler from '../routeHandler';
-<<<<<<< HEAD
-import {getResonatorStats, sendResonatorAnswer} from '../../application/resonatorStats';
-=======
 import { getResonatorStats, sendResonatorAnswer, convertStatsToCSV } from '../../application/resonatorStats';
-import renderClient from '../renderClient';
->>>>>>> master
-
 
 express.get('/api/criteria/stats/reminders/:resonatorId\.:ext?', routeHandler(async (request, response) => {
     const { resonatorId } = request.params;
