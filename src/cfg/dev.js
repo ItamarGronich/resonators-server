@@ -8,5 +8,6 @@ export default {
         }
     },
     host: 'http://localhost:8080/',
+    port: 8080,
     emailSchedulerOn: true
 };
