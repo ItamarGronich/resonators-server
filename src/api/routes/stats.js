@@ -1,6 +1,13 @@
 import express from '../express';
 import routeHandler from '../routeHandler';
-import { getResonatorStats, sendResonatorAnswer, convertStatsToCSV, getStatsFileName } from '../../application/resonatorStats';
+import {
+    getResonatorStats,
+    getAllGroupStats,
+    sendResonatorAnswer,
+    convertStatsToCSV,
+    getResonatorStatsFileName,
+    getGroupStatsFileName
+} from '../../application/resonatorStats';
 import renderClient from '../renderClient';
 
 
@@ -18,13 +25,28 @@ express.get('/api/criteria/stats/reminders/:resonatorId/download\.:ext?', routeH
     if (stats) {
         response.status(200);
         response.setHeader('Content-Type', 'text/csv');
-        response.setHeader('Content-Disposition', `attachment; filename="${await getStatsFileName(resonatorId)}`);
+        response.setHeader('Content-Disposition', `attachment; filename="${await getResonatorStatsFileName(resonatorId)}`);
         convertStatsToCSV(stats).pipe(response);
     } else {
         response.sendStatus(422);
     }
 }, {
     enforceLeaderResonator: true
+}));
+
+express.get('/api/criteria/stats/followerGroups/:followerGroupId/download\.:ext?', routeHandler(async (request, response) => {
+    const { followerGroupId } = request.params;
+    const stats = await getAllGroupStats(followerGroupId);
+    if (stats) {
+        response.status(200);
+        response.setHeader('Content-Type', 'text/csv');
+        response.setHeader('Content-Disposition', `attachment; filename="${await getGroupStatsFileName(followerGroupId)}`);
+        convertStatsToCSV(stats).pipe(response);
+    } else {
+        response.sendStatus(422);
+    }
+}, {
+    enforceLeaderFollowerGroup: true
 }));
 
 express.post(`/api/criteria/stats/reminders/:resonator_id/criteria/submit`, routeHandler(async (request, response) => {
