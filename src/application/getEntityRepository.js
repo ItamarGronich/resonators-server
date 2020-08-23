@@ -8,7 +8,6 @@ import Leader from '../domain/entities/leader';
 import Clinic from '../domain/entities/clinic';
 import LeaderClinic from '../domain/entities/leaderClinic';
 import SentResonator from '../domain/entities/sentResonator';
-import VersionableAsset from '../domain/entities/versionableAsset';
 import ResonatorStats from '../domain/entities/resonatorStats';
 import GoogleAccount from '../domain/entities/googleAccount';
 import LeaderCalendar from '../domain/entities/leaderCalendar';
@@ -22,7 +21,6 @@ import resonatorRepository from  '../db/repositories/ResonatorRepository';
 import questionRepository from '../db/repositories/QuestionRepository';
 import resonatorStatsRepository from '../db/repositories/ResonatorStatsRepository';
 import sentResonatorRepository from '../db/repositories/SentResonatorRepository';
-import versionableAssetsRepository from '../db/repositories/VersionableAssetsRepository';
 import googleAccountsRepository from '../db/repositories/GoogleAccountRepository';
 import leaderCalendarsRepository from '../db/repositories/LeaderCalendarsRepository';
 import leadersClinicsRepository from  '../db/repositories/LeaderClinicsRepository';
@@ -58,9 +56,6 @@ export default function getEntityRepository(entity) {
 
     if (entity.constructor === SentResonator)
         return sentResonatorRepository;
-
-    if (entity.constructor === VersionableAsset)
-        return versionableAssetsRepository;
 
     if (entity.constructor === GoogleAccount)
         return googleAccountsRepository;
