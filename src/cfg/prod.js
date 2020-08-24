@@ -7,5 +7,6 @@ export default {
             logging: false
         }
     },
+    port: 8080,
     emailSchedulerOn: true
 };

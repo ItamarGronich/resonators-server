@@ -6,7 +6,6 @@ import Resonator from '../domain/entities/resonator';
 import Question from '../domain/entities/question';
 import ResonatorAttachment from '../domain/entities/resonatorAttachment';
 import SentResonator from '../domain/entities/sentResonator';
-import VersionableAsset from '../domain/entities/versionableAsset';
 import GoogleAccount from '../domain/entities/googleAccount';
 import LeaderClinic from '../domain/entities/leaderClinic';
 import FollowerGroup from '../domain/entities/followerGroup';
@@ -149,17 +148,6 @@ export function toSentResonator(r) {
         expiry_date: r.get('expiry_date'),
         created_at: r.get('created_at'),
         updated_at: r.get('updated_at')
-    });
-}
-
-export function toVersionableAsset(row) {
-    return new VersionableAsset({
-        id: row.get('id'),
-        asset_id: row.get('asset_id'),
-        version: row.get('asset_version'),
-        link: row.get('link'),
-        tag: row.get('tag'),
-        created_at: row.get('created_at')
     });
 }
 

@@ -3,7 +3,6 @@ import routeHandler from '../routeHandler';
 import sendResetPasswordEmail from '../../application/sendResetPasswordEmail';
 import resetPasswordTokenValidator from '../../application/resetPasswordTokenValidator';
 import changePassword from '../../application/changePassword';
-import renderClient from '../renderClient';
 
 express.post('/api/user_password_resets\.:ext?', routeHandler(async (request, response) => {
     const {email} = request.body;
@@ -39,8 +38,7 @@ express.get('/api/resetPassword', routeHandler(async (request, response) => {
     const tokenValid = await resetPasswordTokenValidator(request.query.token);
 
     if (tokenValid) {
-        response.status(200);
-        await renderClient(request, response);
+        response.sendStatus(200);
     } else {
         response.status(400);
         response.json({
