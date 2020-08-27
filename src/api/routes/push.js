@@ -1,10 +1,11 @@
+import uuid from "uuid/v4";
 import webpush from "web-push";
 
 import cfg from "../../cfg";
 import api from "../express";
 import routeHandler from "../routeHandler";
 
-const subscriptions = {};
+import { push_subscriptions } from "../../db/sequelize/models";
 
 webpush.setVapidDetails("mailto:bla@bla.com", cfg.vapid.publicKey, cfg.vapid.privateKey);
 
@@ -13,19 +14,38 @@ webpush.setVapidDetails("mailto:bla@bla.com", cfg.vapid.publicKey, cfg.vapid.pri
  */
 api.post(
     "/api/push-subscribe",
-    routeHandler((req, res) => {
-        subscriptions[req.appSession.user.id] = req.body;
-        console.log(subscriptions);
-        res.status(201).json({ status: "saved" });
+    routeHandler(async (req, res) => {
+        await saveSubscription(req.appSession.user, req.body);
+        res.sendStatus(201);
     })
 );
 
-api.get("/api/notify/:userId", (req, res) => {
-    const sub = subscriptions[req.params.userId];
-    if (sub)
-        webpush
-            .sendNotification(sub, JSON.stringify({ title: "Hello there!!", body: "blablablablabla" }))
-            .then(() => res.sendStatus(200))
-            .catch(() => res.sendStatus(500));
-    else res.status(404).json({ status: "User not subscribed!" });
+api.get("/api/notify/:userId", async (req, res) => {
+    const subscriptions = await getSubscriptions(req.params.userId);
+    subscriptions.forEach((subscription) => webpush.sendNotification(subscription, getNotificationPayload()));
+    res.sendStatus(200);
 });
+
+async function saveSubscription(user, subscription) {
+    return await push_subscriptions.create({
+        id: uuid(),
+        subscription,
+        user_id: user.id,
+    });
+}
+
+async function getSubscriptions(user_id) {
+    const subscriptions = await push_subscriptions.findAll({
+        where: {
+            user_id,
+        },
+    });
+    return subscriptions.map((subscription) => subscription.subscription);
+}
+
+function getNotificationPayload() {
+    return JSON.stringify({
+        title: "Hello there!!",
+        body: "blablablablabla",
+    });
+}

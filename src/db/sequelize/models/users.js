@@ -20,6 +20,7 @@ module.exports = function(sequelize, DataTypes) {
                 users.hasOne(models.leaders);
                 users.hasOne(models.followers);
                 users.hasOne(models.user_password_resets);
+                users.hasMany(models.push_subscriptions);
             }
         }
     });
