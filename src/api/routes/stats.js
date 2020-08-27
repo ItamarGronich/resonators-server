@@ -4,10 +4,10 @@ import {
     getResonatorStats,
     getAllGroupStats,
     sendResonatorAnswer,
-    convertStatsToCSV,
     getResonatorStatsFileName,
     getGroupStatsFileName
 } from '../../application/resonatorStats';
+import { sendCsvDownload } from './utils';
 
 
 express.get('/api/criteria/stats/reminders/:resonatorId\.:ext?', routeHandler(async (request, response) => {
@@ -23,9 +23,7 @@ express.get('/api/criteria/stats/reminders/:resonatorId/download\.:ext?', routeH
     const stats = await getResonatorStats(resonatorId);
     if (stats) {
         response.status(200);
-        response.setHeader('Content-Type', 'text/csv');
-        response.setHeader('Content-Disposition', `attachment; filename="${await getResonatorStatsFileName(resonatorId)}`);
-        convertStatsToCSV(stats).pipe(response);
+        await sendCsvDownload(response, stats, 'text/csv', await getResonatorStatsFileName(resonatorId))
     } else {
         response.sendStatus(422);
     }
@@ -38,9 +36,7 @@ express.get('/api/criteria/stats/followerGroups/:followerGroupId/download\.:ext?
     const stats = await getAllGroupStats(followerGroupId);
     if (stats) {
         response.status(200);
-        response.setHeader('Content-Type', 'text/csv');
-        response.setHeader('Content-Disposition', `attachment; filename="${await getGroupStatsFileName(followerGroupId)}`);
-        convertStatsToCSV(stats).pipe(response);
+        await sendCsvDownload(response, stats, 'text/csv', await getGroupStatsFileName(followerGroupId))
     } else {
         response.sendStatus(422);
     }
@@ -56,7 +52,7 @@ express.post(`/api/criteria/stats/reminders/:resonator_id/criteria/submit`, rout
 
     if (result)
         response.status(200).json(result);
-    else 
+    else
         response.status(422).send('Answer submission failed.');
 }, {
     enforceLogin: false

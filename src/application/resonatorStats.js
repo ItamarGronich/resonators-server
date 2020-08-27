@@ -29,9 +29,14 @@ export async function getResonatorStats(resonatorId) {
         }, {});
 
         const answers = _(stats.criteria)
-            .map((arr, question_id) => _.map(arr, a => ({
-                question_id, rank: _.get(answersMap[a.answer_id], 'rank'), time: a.created_at
-            })))
+            .map((arr, question_id) =>
+                _.map(arr, a => ({
+                    question_id,
+                    rank: _.get(answersMap[a.answer_id], 'rank'),
+                    time: a.created_at,
+                    resonator: resonator.title,
+                }))
+            )
             .reduce((acc, cur) => acc.concat(cur), []);
 
         const sortedAnswers = _.orderBy(answers, a => a.time, ['desc']);
@@ -53,25 +58,13 @@ export async function getResonatorStats(resonatorId) {
 
 export async function getAllGroupStats(followerGroupId) {
     const resonators = await resonatorRepository.findByFollowerGroupId(followerGroupId);
-    const allGroupStats = [];
-    for (const resonator of resonators) {
+    return resonators.reduce(async (acc, resonator) => {
         const resonatorStats = await getResonatorStats(resonator.id);
-        const answers = Object.values(resonatorStats.answers).map((answer) => ({
-            ...answer,
-            resonator: resonator.title,
-        }));
-        allGroupStats.push({ ...resonatorStats, answers });
-    }
-    return allGroupStats.reduce((acc, stat) => ({
-        questions: {
-            ...acc.questions,
-            ...stat.questions,
-        },
-        answers: {
-            ...acc.answers,
-            ...stat.answers,
+        return {
+            questions: resonatorStats.questions.concat(acc.questions || []),
+            answers: resonatorStats.answers.concat(acc.answers || []),
         }
-    }));
+    }, {});
 }
 
 export async function sendResonatorAnswer({ resonator_id, question_id, answer_id, sent_resonator_id }) {
@@ -106,17 +99,17 @@ export function convertStatsToCSV({ questions, answers }) {
     return toCSV(answers.map((answer) => {
         const question = questions.find(_.matches({ id: answer.question_id }));
         const answerCSV = {
+            resonator: answer.resonator,
             followerName: answer.followerName,
             title: question.title,
             description: question.description,
             rank: answer.rank,
             time: answer.time,
         };
-        return answer.resonator ?
-            { resonator: answer.resonator, ...answerCSV } :
-            answerCSV;
+        return answerCSV;
     }));
 }
+
 
 export async function getResonatorStatsFileName(resonatorId) {
     const resonator = await resonatorRepository.findById(resonatorId);
