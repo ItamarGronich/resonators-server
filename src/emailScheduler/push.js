@@ -3,13 +3,25 @@ import webpush from "web-push";
 import cfg from "../cfg";
 import { push_subscriptions } from "../db/sequelize/models";
 
-export async function notifyUser(user, sentResonatorId, resonator) {
+export function sendResonatorNotification(sentResonator, resonator, user) {
+    return sendPushNotification(user, {
+        type: "resonator",
+        title: "New Resonator",
+        body: "You have been sent a new resonator",
+        options: {
+            id: sentResonator.id,
+            image: resonator.getImage(),
+        },
+    });
+}
+
+async function sendPushNotification(user, payload) {
     const subscriptions = await getUserSubscriptions(user);
-    return Promise.all(
-        subscriptions.map((subscription) =>
-            webpush.sendNotification(subscription, getNotificationPayload(sentResonatorId, resonator))
-        )
-    );
+    return Promise.all(subscriptions.map(dispatchNotification(JSON.stringify(payload))));
+}
+
+function dispatchNotification(payload) {
+    return (subscription) => webpush.sendNotification(subscription, payload);
 }
 
 async function getUserSubscriptions(user) {
@@ -18,19 +30,7 @@ async function getUserSubscriptions(user) {
             user_id: user.id,
         },
     });
-    return subscriptions.map((subscription) => subscription.subscription);
-}
-
-function getNotificationPayload(sentResonatorId, resonator) {
-    return JSON.stringify({
-        type: "resonator",
-        title: "New Resonator",
-        body: "You have been sent a new resonator",
-        options: {
-            id: sentResonatorId,
-            image: resonator.getImage(),
-        },
-    });
+    return subscriptions.map((sub) => sub.subscription);
 }
 
 export function setVapidKeys() {

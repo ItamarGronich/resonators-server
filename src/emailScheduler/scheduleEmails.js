@@ -7,7 +7,7 @@ import sendResonatorEmail from './sendResonatorEmail';
 import cfg from '../cfg';
 import uuid from 'uuid/v4';
 import { emailSchedulerLogger as log } from '../infra/log';
-import { notifyUser } from "./push";
+import { sendResonatorNotification } from "./push";
 
 export default async function scheduleEmails(getNow) {
     log.info('[emailScheduler] fetching pending resonators');
@@ -83,10 +83,9 @@ function getResonatorsData(resonatorIds) {
 
 function sendNewResonator({ resonator, followerUser, leaderUser }) {
     return recordSentResonator({ id: resonator.id })
-        .then((sentResonator) => sentResonator.get("id"))
-        .then((sentResonatorId) => {
-            sendMail(sentResonatorId, resonator, followerUser, leaderUser);
-            notifyUser(followerUser, sentResonatorId, resonator);
+        .then((sentResonator) => {
+            sendMail(sentResonator.id, resonator, followerUser, leaderUser);
+            sendResonatorNotification(sentResonator, resonator, followerUser);
         })
         .then(() => setResonatorLastSentTime(resonator.id))
         .then(() => {
