@@ -34,5 +34,5 @@ function getNotificationPayload(sentResonatorId, resonator) {
 }
 
 export function setVapidKeys() {
-    webpush.setVapidDetails("mailto:bla@bla.com", cfg.vapid.publicKey, cfg.vapid.privateKey);
+    webpush.setVapidDetails(`mailto:${cfg.supportMail}`, cfg.vapid.publicKey, cfg.vapid.privateKey);
 }
