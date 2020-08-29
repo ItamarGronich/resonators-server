@@ -75,12 +75,17 @@ export const updateGroupFollowers = async (followerGroupId, data) => {
             follower_group_id: followerGroup.id,
             follower_id: followerId,
         });
-        for (const { id, follower_group_id, ...resonator } of followerGroupResonators ) {
-            await createResonator(resonator.leader_id, {
+        for (const { id, follower_group_id, questions, items, ...resonator } of followerGroupResonators) {
+            const newResonator = await createResonator(resonator.leader_id, {
                 ...resonator,
                 parent_resonator_id: id,
                 follower_id: followerId,
-            })
+            });
+            const newResonatorObject = await resonatorRepository.findById(newResonator.id);
+            for (const question of questions)
+                newResonatorObject.addQuestion(question.question_id);
+            for (const { id, ...item } of items)
+                newResonatorObject.addItem({ id: uuid(), ...item });
         }
         uow.trackEntity(followerGroupFollower, { isNew: true });
         await uow.commit();
