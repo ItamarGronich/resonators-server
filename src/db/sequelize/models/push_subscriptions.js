@@ -3,9 +3,15 @@ module.exports = function (sequelize, DataTypes) {
     const push_subscriptions = sequelize.define(
         "push_subscriptions",
         {
-            id: { type: DataTypes.UUID, primaryKey: true },
-            subscription: DataTypes.JSON,
-            user_id: DataTypes.UUID,
+            endpoint: {
+                type: DataTypes.STRING(500),
+                primaryKey: true,
+            },
+            keys: {
+                type: DataTypes.JSON,
+                allowNull: false,
+            },
+            last_sent: DataTypes.DATE,
         },
         {
             underscored: true,
