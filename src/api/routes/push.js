@@ -53,8 +53,7 @@ api.delete(
  */
 async function saveSubscription(user, subscription) {
     return await push_subscriptions.create({
-        endpoint: subscription.endpoint,
-        keys: subscription.keys,
+        ...subscription,
         user_id: user.id,
     });
 }

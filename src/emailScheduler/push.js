@@ -21,16 +21,34 @@ async function sendPushNotification(user, payload) {
 }
 
 function dispatchNotification(payload) {
-    return (subscription) => webpush.sendNotification(subscription, payload);
+    return (subscription) =>
+        webpush
+            .sendNotification(subscription, payload)
+            .then(() => setLastSent(subscription))
+            .catch(deleteExpired(subscription));
 }
 
 async function getUserSubscriptions(user) {
-    const subscriptions = await push_subscriptions.findAll({
+    return await push_subscriptions.findAll({
         where: {
             user_id: user.id,
         },
     });
-    return subscriptions.map((sub) => sub.subscription);
+}
+
+async function setLastSent(subscription) {
+    return await subscription.update({
+        last_sent: new Date(),
+    });
+}
+
+function deleteExpired(subscription) {
+    return async (response) => {
+        if (response.statusCode === 410) {
+            await subscription.destroy();
+        }
+        throw response;
+    };
 }
 
 export function setVapidKeys() {
