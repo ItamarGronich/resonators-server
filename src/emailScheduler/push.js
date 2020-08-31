@@ -7,10 +7,10 @@ export function sendResonatorNotification(sentResonator, resonator, user) {
     return sendPushNotification(user, {
         type: "resonator",
         title: "New Resonator",
-        body: "You have been sent a new resonator",
         options: {
             id: sentResonator.id,
             image: resonator.getImage(),
+            body: "You have been sent a new resonator",
         },
     });
 }
