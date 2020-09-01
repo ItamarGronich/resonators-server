@@ -2,6 +2,7 @@ import api from "./api";
 import cfg from "./cfg";
 import initInfra from "./infra";
 import emailSchedulingJob from "./emailScheduler";
+import { setVapidKeys } from "./emailScheduler/push";
 // import syncCalendarsJob from "./calendars/calendarsSync";
 
 function startServer() {
@@ -16,5 +17,6 @@ function startJobs() {
 }
 
 initInfra();
+setVapidKeys();
 startJobs();
 startServer();

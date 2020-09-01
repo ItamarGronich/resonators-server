@@ -7,6 +7,7 @@ import sendResonatorEmail from './sendResonatorEmail';
 import cfg from '../cfg';
 import uuid from 'uuid/v4';
 import { emailSchedulerLogger as log } from '../infra/log';
+import { sendResonatorNotification } from "./push";
 
 export default async function scheduleEmails(getNow) {
     log.info('[emailScheduler] fetching pending resonators');
@@ -35,7 +36,7 @@ export default async function scheduleEmails(getNow) {
                 return Promise.resolve();
             }
 
-            return sendEmail({
+            return sendNewResonator({
                 resonator,
                 followerUser,
                 leaderUser
@@ -80,40 +81,41 @@ function getResonatorsData(resonatorIds) {
     return Promise.all(promises);
 }
 
-function sendEmail({resonator, followerUser, leaderUser}) {
-    return recordSentResonator({id: resonator.id })
-        .then(row => {
-            const sentResonatorId = row.get('id');
-
-            const html = renderResonatorEmail({
-                resonator,
-                host: cfg.host,
-                sentResonatorId,
-                recipientUser: followerUser
-            });
-
-            const msg = {
-                from: 'mindharmoniesinc app',
-                to: followerUser.email,
-                subject: resonator.title,
-                html
-            };
-
-            const sendCopyToLeader = !resonator.disable_copy_to_leader;
-
-            if (sendCopyToLeader)
-                msg.cc = leaderUser.email;
-
-            log.info(`sending email for resonator: ${resonator.id}, to: ${msg.to}, leader copy: ${sendCopyToLeader && msg.cc}`);
-
-            return sendResonatorEmail(msg);
+function sendNewResonator({ resonator, followerUser, leaderUser }) {
+    return recordSentResonator({ id: resonator.id })
+        .then((sentResonator) => {
+            sendMail(sentResonator.id, resonator, followerUser, leaderUser);
+            sendResonatorNotification(sentResonator, resonator, followerUser);
         })
         .then(() => setResonatorLastSentTime(resonator.id))
         .then(() => {
-            if (resonator.one_off)
-                return disableResonatorForSendOneOff(resonator.id);
+            if (resonator.one_off) return disableResonatorForSendOneOff(resonator.id);
             else return;
         });
+}
+
+function sendMail(sentResonatorId, resonator, follower, leader) {
+    const html = renderResonatorEmail({
+        resonator,
+        host: cfg.host,
+        sentResonatorId,
+        recipientUser: follower,
+    });
+
+    const msg = {
+        from: "mindharmoniesinc app",
+        to: follower.email,
+        subject: resonator.title,
+        html,
+    };
+
+    const sendCopyToLeader = !resonator.disable_copy_to_leader;
+
+    if (sendCopyToLeader) msg.cc = leader.email;
+
+    log.info(`sending email for resonator: ${resonator.id}, to: ${msg.to}, leader copy: ${sendCopyToLeader && msg.cc}`);
+
+    return sendResonatorEmail(msg);
 }
 
 function recordSentResonator({ id, ttl_policy }) {
