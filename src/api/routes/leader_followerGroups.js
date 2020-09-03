@@ -63,7 +63,7 @@ express.put('/api/leader_followerGroups/:followerGroupId/followers\.:ext?', rout
     const { followerGroupId } = request.params;
     const { memberIdList } = request.body;
     await updateGroupFollowers(followerGroupId, memberIdList);
-    response.status(202).json();
+    response.status(202).json({});
 }, {
     enforceLeaderFollowerGroup: true
 }));
