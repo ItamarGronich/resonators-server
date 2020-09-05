@@ -15,6 +15,9 @@ import * as R from 'ramda';
 export const getLeaderFollowerGroups = async (leader_id) => {
     const followerGroups = await followerGroupRepository.findByLeaderId(leader_id);
     const followerGroupsDto = followerGroups.map(dtoFactory.toFollowerGroup);
+    for (const group of followerGroupsDto) {
+        group.memberCount = (await followerGroupFollowerRepository.findFollowersByGroupId(group.id)).length;
+    }
     return followerGroupsDto;
 }
 
