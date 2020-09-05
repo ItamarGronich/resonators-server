@@ -40,6 +40,7 @@ export const fetchFollowerSentResonators = async (follower, pageNum) => ({
                         model: resonator_attachments,
                         where: { media_kind: "picture", visible: 1 },
                         order: [["created_at", "DESC"]],
+                        required: false
                     },
                 ],
             },
@@ -89,6 +90,7 @@ export const fetchSentResonator = async (follower, sentResonatorId) =>
                         model: resonator_attachments,
                         where: { media_kind: "picture", visible: 1 },
                         order: [["created_at", "DESC"]],
+                        required: false
                     },
                 ],
             },
