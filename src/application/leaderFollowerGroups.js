@@ -14,8 +14,16 @@ import * as R from 'ramda';
 
 export const getLeaderFollowerGroups = async (leader_id) => {
     const followerGroups = await followerGroupRepository.findByLeaderId(leader_id);
-    const followerGroupsDto = followerGroups.map(dtoFactory.toFollowerGroup);
-    return followerGroupsDto;
+    return followerGroups.reduce(async (acc, group) => {
+        const dto = dtoFactory.toFollowerGroup(group);
+        return [
+            ...acc,
+            {
+                ...dto,
+                memberCount: (await followerGroupFollowerRepository.findFollowersByGroupId(group.id)).length
+            }
+        ];
+    }, []);
 }
 
 export const getLeader = async (leader_id) => {
