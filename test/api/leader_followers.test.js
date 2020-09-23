@@ -60,11 +60,11 @@ describe('leader_followers', () => {
         assert.isOk(body.user.name);
         assert.isOk(body.user.email);
 
-        const dbUser = await users.findById(body.user_id);
+        const dbUser = await users.findByPk(body.user_id);
         const password = dbUser.get('pass');
         const salt = dbUser.get('salt');
         assert.equal(password, bcrypt.hashSync('1111', salt));
-        const dbFollower = await followers.findById(body.id);
+        const dbFollower = await followers.findByPk(body.id);
         assert.equal(dbFollower.get('user_id'),
                      body.user_id,
                      'inserted user_id doesn\'t match!');
@@ -93,7 +93,7 @@ describe('leader_followers', () => {
 
         assert.equal(status, 200);
 
-        const row = await users.findById(follower.user.id)
+        const row = await users.findByPk(follower.user.id)
         const dbUser = dbToDomain.toUser(row);
         assert.deepEqual(dbUser, {
             ...follower.user,

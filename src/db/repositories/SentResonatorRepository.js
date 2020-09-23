@@ -17,8 +17,8 @@ class SentResonatorRepository extends Repository {
         return await sent_resonators.create(sentResonator, {transaction});
     }
 
-    async findById(id) {
-        const row = await sent_resonators.findById(id);
+    async findByPk(id) {
+        const row = await sent_resonators.findByPk(id);
 
         if (!row)
             return null;

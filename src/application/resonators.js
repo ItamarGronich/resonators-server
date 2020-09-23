@@ -14,7 +14,7 @@ export async function getResonators(followerId) {
 }
 
 export async function getResonator(reminderId) {
-    const resonator = await resonatorRepository.findById(reminderId);
+    const resonator = await resonatorRepository.findByPk(reminderId);
     const dto = dtoFactory.toResonator(resonator);
     return dto;
 }
@@ -29,12 +29,12 @@ export async function createResonator(leader_id, resonatorRequest) {
     uow.trackEntity(resonator, { isNew: true });
     await uow.commit();
 
-    const savedResonator = dtoFactory.toResonator(await resonatorRepository.findById(resonator.id));
+    const savedResonator = dtoFactory.toResonator(await resonatorRepository.findByPk(resonator.id));
     return savedResonator;
 }
 
 export async function updateResonator(resonator_id, updatedFields) {
-    const resonator = await resonatorRepository.findById(resonator_id);
+    const resonator = await resonatorRepository.findByPk(resonator_id);
 
     if (!resonator)
         return null;
@@ -46,7 +46,7 @@ export async function updateResonator(resonator_id, updatedFields) {
 
     await getUow().commit();
 
-    const savedResonator = dtoFactory.toResonator(await resonatorRepository.findById(resonator_id));
+    const savedResonator = dtoFactory.toResonator(await resonatorRepository.findByPk(resonator_id));
     return savedResonator;
 }
 
@@ -57,8 +57,8 @@ export async function removeResonator(resonator_id) {
 
 export async function addQuestionToResonator(resonator_id, question_id) {
     const [resonator, question] = await Promise.all([
-        resonatorRepository.findById(resonator_id),
-        questionRepository.findById(question_id)
+        resonatorRepository.findByPk(resonator_id),
+        questionRepository.findByPk(question_id)
     ]);
 
     if (!resonator || !question)
@@ -71,8 +71,8 @@ export async function addBulkQuestionsToResonator(resonator_id, question_ids) {
 
     for (const question_id of question_ids) {
         const [resonator, question] = await Promise.all([
-            resonatorRepository.findById(resonator_id),
-            questionRepository.findById(question_id)
+            resonatorRepository.findByPk(resonator_id),
+            questionRepository.findByPk(question_id)
         ]);
         if (!resonator || !question)
             return null;
@@ -82,7 +82,7 @@ export async function addBulkQuestionsToResonator(resonator_id, question_ids) {
     return true;
 }
 export async function removeQuestionFromResonator(resonator_id, question_id) {
-    const resonator = await resonatorRepository.findById(resonator_id);
+    const resonator = await resonatorRepository.findByPk(resonator_id);
 
     if (!resonator)
         return null;
@@ -94,7 +94,7 @@ export async function removeQuestionFromResonator(resonator_id, question_id) {
     return true;
 }
 export async function addItemToResonator(resonator_id, item, stream) {
-    const resonator = await resonatorRepository.findById(resonator_id);
+    const resonator = await resonatorRepository.findByPk(resonator_id);
 
     if (!resonator)
         return null;
@@ -115,7 +115,7 @@ export async function addItemToResonator(resonator_id, item, stream) {
 }
 
 export async function removeResonatorItem(resonator_id, item_id) {
-    const resonator = await resonatorRepository.findById(resonator_id);
+    const resonator = await resonatorRepository.findByPk(resonator_id);
 
     if (!resonator)
         return null;
@@ -128,7 +128,7 @@ export async function removeResonatorItem(resonator_id, item_id) {
 }
 
 export async function removeResonatorImage(resonator_id, item_id) {
-    const resonator = await resonatorRepository.findById(resonator_id);
+    const resonator = await resonatorRepository.findByPk(resonator_id);
 
     if (!resonator)
         return null;

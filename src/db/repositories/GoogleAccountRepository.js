@@ -49,8 +49,8 @@ class GoogleAccountsRepository extends Repository {
         return null;
     }
 
-    async findById(id) {
-        const row = await google_accounts.findById(id);
+    async findByPk(id) {
+        const row = await google_accounts.findByPk(id);
         const entity = dbToDomain.toGoogleAccount(row);
         this.trackEntity(entity);
         return entity;

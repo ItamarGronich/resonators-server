@@ -2,7 +2,7 @@ import userRepository from '../db/repositories/UserRepository';
 import getUow from './getUow';
 
 export async function unsubscribe(user_id) {
-    const user = await userRepository.findById(user_id);
+    const user = await userRepository.findByPk(user_id);
 
     if (user) {
         user.unsubscribe();
@@ -14,7 +14,7 @@ export async function unsubscribe(user_id) {
 }
 
 export async function resubscribe(user_id) {
-    const user = await userRepository.findById(user_id);
+    const user = await userRepository.findByPk(user_id);
 
     if (user) {
         user.resubscribe();

@@ -15,7 +15,7 @@ export async function getLeaderFollowers(user_id) {
 }
 
 export async function getLeader(leader_id) {
-    const leader = await leaderRepository.findById(leader_id);
+    const leader = await leaderRepository.findByPk(leader_id);
     const dto = dtoFactory.toLeader(leader);
     return dto;
 }
@@ -36,7 +36,7 @@ export async function addLeaderFollower({leader_id, clinic_id, email, name, pass
 
     await uow.commit();
 
-    const newFollower = await followerRepository.findById(follower.id);
+    const newFollower = await followerRepository.findByPk(follower.id);
     const followerDto = dtoFactory.toFollower(newFollower);
     return {
         ...followerDto,
@@ -61,7 +61,7 @@ export async function updateFollowerUser(followerId, newUserDetails) {
 }
 
 export async function freezeFollower(followerId) {
-    const follower = await followerRepository.findById(followerId);
+    const follower = await followerRepository.findByPk(followerId);
 
     if (follower) {
         log.info('freezing follower', followerId);
@@ -72,7 +72,7 @@ export async function freezeFollower(followerId) {
 }
 
 export async function unfreezeFollower(followerId) {
-    const follower = await followerRepository.findById(followerId);
+    const follower = await followerRepository.findByPk(followerId);
 
     if (follower) {
         log.info('unfreezing follower', followerId);

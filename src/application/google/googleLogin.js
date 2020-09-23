@@ -30,7 +30,7 @@ export async function loginGoogleUser(googleAuthCode) {
         let loginResult;
 
         if (existingGoogleUserAccount) {
-            const user = await userRepository.findById(existingGoogleUserAccount.user_id);
+            const user = await userRepository.findByPk(existingGoogleUserAccount.user_id);
             loginResult = await loginByUserEntity(user);
             updateGoogleAccount(existingGoogleUserAccount, tokens);
             log.info('[loginGoogleUser] updating existing google account');

@@ -145,7 +145,7 @@ export async function addQuestionToClinic(clinic_id, leader_id, questionRequest)
 
     await uow.commit();
 
-    const savedQuestion = await questionsRepository.findById(question.id);
+    const savedQuestion = await questionsRepository.findByPk(question.id);
 
     return dtoFactory.toQuestion(savedQuestion);
 }
@@ -176,7 +176,7 @@ export async function addLeaderToClinic(leaderClinic) {
 export async function updateQuestion(questionRequest) {
     const uow = getUow();
 
-    const question = await questionsRepository.findById(questionRequest.id);
+    const question = await questionsRepository.findByPk(questionRequest.id);
 
     if (!question)
         return null;
@@ -192,6 +192,6 @@ export async function updateQuestion(questionRequest) {
 
     await uow.commit();
 
-    const savedQuestion = await questionsRepository.findById(question.id);
+    const savedQuestion = await questionsRepository.findByPk(question.id);
     return dtoFactory.toQuestion(savedQuestion);
 }

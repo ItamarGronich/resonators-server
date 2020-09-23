@@ -116,7 +116,7 @@ describe('email scheduler', () => {
 
         let row;
         await waitFor(() => {
-            resonators.findById(r1.id).then(r => {row = r;});
+            resonators.findByPk(r1.id).then(r => {row = r;});
             return row && row.get('last_pop_time');
         }, 5000);
 

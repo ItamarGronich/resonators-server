@@ -35,8 +35,8 @@ class FollowerGroupRepository extends Repository {
         return foundFollowerGroups;
     }
 
-    async findById(id) {
-        const row = await follower_groups.findById(id);
+    async findByPk(id) {
+        const row = await follower_groups.findByPk(id);
 
         if (!row)
             return null;

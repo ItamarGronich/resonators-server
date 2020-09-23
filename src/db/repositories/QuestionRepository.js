@@ -35,7 +35,7 @@ class QuestionRepository extends Repository {
         return Promise.all([questionPromise, ...addRemovedAnswersPromises]);
     }
 
-    async findById(id) {
+    async findByPk(id) {
         const dbQuestion = await questions.findOne({
             where: {id},
             include: [answers]

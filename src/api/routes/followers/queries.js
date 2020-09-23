@@ -68,7 +68,7 @@ export const fetchFollowerSentResonators = async (follower, pageNum) => ({
  * @param {String} sentResonatorId - the ID of the sent resonator to fetch
  */
 export const fetchSentResonator = async (follower, sentResonatorId) =>
-    await sent_resonators.findById(sentResonatorId, {
+    await sent_resonators.findByPk(sentResonatorId, {
         include: [
             resonator_answers,
             {
@@ -101,7 +101,7 @@ export const fetchSentResonator = async (follower, sentResonatorId) =>
  * Fetches a follower's leader from the DB.
  */
 export const fetchLeader = async (follower) =>
-    await leaders.findById(follower.leader_id, {
+    await leaders.findByPk(follower.leader_id, {
         include: [users],
     });
 
@@ -111,7 +111,7 @@ export const fetchLeader = async (follower) =>
  * @param {String} loginId - the ID of a user login
  */
 export const fetchClientData = async (loginId) =>
-    await user_logins.findById(loginId, {
+    await user_logins.findByPk(loginId, {
         include: [
             {
                 model: users,

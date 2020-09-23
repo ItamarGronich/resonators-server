@@ -44,8 +44,8 @@ class FollowerRepository extends Repository {
         return foundFollowers;
     }
 
-    async findById(id) {
-        const row = await followers.findById(id);
+    async findByPk(id) {
+        const row = await followers.findByPk(id);
 
         if (!row)
             return null;
