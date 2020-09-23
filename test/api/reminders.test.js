@@ -100,8 +100,8 @@ describe('reminders', () => {
             });
 
             assert.lengthOf(body.id, 36);
-            assert.isOk(body.created_at);
-            assert.isOk(body.updated_at);
+            assert.isOk(body.createdAt);
+            assert.isOk(body.updatedAt);
         }
     });
 
@@ -128,8 +128,8 @@ describe('reminders', () => {
 
         assert.equal(status, 200);
         assertResonator(body, {...resonator, ...updatedResonator});
-        assert.isOk(body.created_at);
-        assert.isOk(body.updated_at);
+        assert.isOk(body.createdAt);
+        assert.isOk(body.updatedAt);
     });
 
     it('remove resonator', async () => {
@@ -305,12 +305,12 @@ function assertResonator(actual, expected) {
     else
         repeat_days = expected.repeat_days.split(',').map(d => parseInt(d));
 
-    assert.deepEqual(_.omit(actual, 'created_at', 'updated_at', 'items', 'questions'), {
+    assert.deepEqual(_.omit(actual, 'createdAt', 'updatedAt', 'items', 'questions'), {
         ..._.omit(expected, 'items', 'questions', 'last_pop_time', 'pop_location_lat', 'pop_location_lng'),
         repeat_days
     });
 
-    assert.deepEqual(actual.items.map(ra => _.omit(ra, 'created_at', 'updated_at')),
+    assert.deepEqual(actual.items.map(ra => _.omit(ra, 'createdAt', 'updatedAt')),
                      expected.items || []);
 
     assertResonatorQuestions(actual.questions, expected.questions);
@@ -318,9 +318,9 @@ function assertResonator(actual, expected) {
 
 function assertResonatorQuestions(q1 = [], q2 = []) {
     assert.deepEqual(q1.map(
-        q => _.omit(q, 'created_at', 'updated_at')).map(q => ({
+        q => _.omit(q, 'createdAt', 'updatedAt')).map(q => ({
             ...q,
-            question: _.omit(q.question, 'created_at', 'updated_at')
+            question: _.omit(q.question, 'createdAt', 'updatedAt')
         })),
         q2.map(q => ({
             ...q,

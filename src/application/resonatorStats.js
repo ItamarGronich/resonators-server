@@ -32,7 +32,7 @@ export async function getResonatorStats(resonatorId) {
                 _.map(arr, a => ({
                     question_id,
                     rank: _.get(answersMap[a.answer_id], 'rank'),
-                    time: a.created_at,
+                    time: a.createdAt,
                     resonator: resonator.title,
                 }))
             )

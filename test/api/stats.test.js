@@ -41,7 +41,7 @@ describe('resonator stats', () => {
 
     function assertResonatorStatsResponse(result, resonator) {
         result.body.answers.forEach(a => delete a.time);
-        result.body.questions.forEach(q => {delete q.created_at; delete q.updated_at;});
+        result.body.questions.forEach(q => {delete q.createdAt; delete q.updatedAt;});
 
         assert.deepEqual(result.body, {
             questions: resonator.questions.map(q => _.omitDeep(q.question, ['question_id'])),

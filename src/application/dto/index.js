@@ -66,11 +66,11 @@ export function toResonator(resonator) {
                        'interaction_type',
                        'selected_questionnaire',
                        'questionnaire_details',
-                       'created_at',
-                       'updated_at'
+                       'createdAt',
+                       'updatedAt'
                       );
 
-    dto.items = _.orderBy(dto.items, i => i.created_at, 'desc');
+    dto.items = _.orderBy(dto.items, i => i.createdAt, 'desc');
     return dto;
 }
 

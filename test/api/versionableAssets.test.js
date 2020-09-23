@@ -16,7 +16,7 @@ describe('versionable assets', () => {
     };
 
     async function queryAsset(asset_id) {
-        const row = await versionable_assets.findOne({where: {asset_id}, order: [['created_at', 'DESC']]});
+        const row = await versionable_assets.findOne({where: {asset_id}, order: [['createdAt', 'DESC']]});
         return dbToDomain.toVersionableAsset(row);
     }
 
@@ -41,7 +41,7 @@ describe('versionable assets', () => {
 
         const entity = await queryAsset(asset_id);
 
-        assert.deepEqual(_.omit(entity, 'created_at', 'id'), {
+        assert.deepEqual(_.omit(entity, 'createdAt', 'id'), {
             asset_id,
             version: 1,
             link: '',
@@ -65,7 +65,7 @@ describe('versionable assets', () => {
 
         const entity = await queryAsset(asset.asset_id);
 
-        assert.deepEqual(_.omit(entity, 'created_at', 'id'), {
+        assert.deepEqual(_.omit(entity, 'createdAt', 'id'), {
             asset_id: asset.asset_id,
             version: 2,
             link: '',
@@ -123,7 +123,7 @@ describe('versionable assets', () => {
         });
 
         assert.equal(response.status, 200);
-        assert.deepEqual(_.omit(response.body, 'created_at'), {
+        assert.deepEqual(_.omit(response.body, 'createdAt'), {
             link: 'foo',
             tag: asset.tag
         });
@@ -162,7 +162,7 @@ describe('versionable assets', () => {
     //
     //     const entity = await queryAsset(asset.asset_id);
     //
-    //     assert.deepEqual(_.omit(entity, 'created_at', 'id'), {
+    //     assert.deepEqual(_.omit(entity, 'createdAt', 'id'), {
     //         asset_id: asset.asset_id,
     //         version: 1,
     //         link: null

@@ -3,13 +3,13 @@ export default class SentResonator {
         id,
         resonator_id,
         expiry_date,
-        created_at,
-        updated_at
+        createdAt,
+        updatedAt
     }) {
         this.id = id;
         this.resonator_id = resonator_id;
         this.expiry_date = expiry_date;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }

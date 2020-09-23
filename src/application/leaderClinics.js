@@ -22,8 +22,8 @@ export async function getLeaderClinics(user_id) {
         id: r.get('id'),
         user_id: r.get('user_id'),
         name: r.get('name'),
-        created_at: r.get('created_at'),
-        updated_at: r.get('updated_at'),
+        createdAt: r.get('createdAt'),
+        updatedAt: r.get('updatedAt'),
     }));
 
     return foundClinics;
@@ -111,8 +111,8 @@ export async function getLeaderClinicsIncludingSecondary(leader_id) {
         is_primary: r.get('is_primary'),
         is_leader_accepted: r.get('is_leader_accepted'),
         isCurrentClinic: r.get('clinic_id') == r.get('leader').get('current_clinic_id'),
-        created_at: r.get('created_at'),
-        updated_at: r.get('updated_at'),
+        createdAt: r.get('createdAt'),
+        updatedAt: r.get('updatedAt'),
     }));
 
     return foundClinics;
@@ -128,7 +128,7 @@ export async function getLeaderClinicsCriteria(leader_id, clinic_id) {
 
     return _(questions)
             .map(dtoFactory.toQuestion)
-            .orderBy(q => q.created_at, 'desc')
+            .orderBy(q => q.createdAt, 'desc')
             .value();
 }
 

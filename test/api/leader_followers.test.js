@@ -17,7 +17,7 @@ describe('leader_followers', () => {
 
         assert.equal(status, 200);
 
-        assert.deepEqual(body.map(f => _.omit(f, 'updated_at', 'created_at')), [{
+        assert.deepEqual(body.map(f => _.omit(f, 'updatedAt', 'createdAt')), [{
             id: follower.id,
             user_id: follower.user.id,
             clinic_id: clinic.id,
@@ -32,8 +32,8 @@ describe('leader_followers', () => {
             }
         }]);
 
-        assert.isOk(body[0].created_at);
-        assert.isOk(body[0].updated_at);
+        assert.isOk(body[0].createdAt);
+        assert.isOk(body[0].updatedAt);
     });
 
     it('add follower', async () => {

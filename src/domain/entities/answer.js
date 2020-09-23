@@ -5,14 +5,14 @@ export default class Answer {
         id,
         body,
         rank,
-        created_at,
-        updated_at
+        createdAt,
+        updatedAt
     }) {
         this.id = id || uuid();
         this.body = body;
         this.rank = rank;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }
 

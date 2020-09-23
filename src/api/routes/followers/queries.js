@@ -26,7 +26,7 @@ export const fetchFollowerSentResonators = async (follower, pageNum) => ({
     resonators: await sent_resonators.findAll({
         limit: PAGE_SIZE,
         offset: pageNum * PAGE_SIZE,
-        order: [["created_at", "DESC"]],
+        order: [["createdAt", "DESC"]],
         include: [
             resonator_answers,
             {
@@ -39,7 +39,7 @@ export const fetchFollowerSentResonators = async (follower, pageNum) => ({
                     {
                         model: resonator_attachments,
                         where: { media_kind: "picture", visible: 1 },
-                        order: [["created_at", "DESC"]],
+                        order: [["createdAt", "DESC"]],
                         required: false
                     },
                 ],
@@ -89,7 +89,7 @@ export const fetchSentResonator = async (follower, sentResonatorId) =>
                     {
                         model: resonator_attachments,
                         where: { media_kind: "picture", visible: 1 },
-                        order: [["created_at", "DESC"]],
+                        order: [["createdAt", "DESC"]],
                         required: false
                     },
                 ],
