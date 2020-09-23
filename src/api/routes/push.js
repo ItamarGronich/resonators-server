@@ -54,7 +54,7 @@ api.delete(
 async function saveSubscription(user, subscription) {
     return await push_subscriptions.create({
         ...subscription,
-        user_id: user.id,
+        userId: user.id,
     });
 }
 
@@ -70,7 +70,7 @@ async function getSubscription(endpoint, user) {
     return await push_subscriptions.findOne({
         where: {
             endpoint,
-            user_id: user.id,
+            userId: user.id,
         },
     });
 }

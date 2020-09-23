@@ -31,7 +31,7 @@ function dispatchNotification(payload) {
 async function getUserSubscriptions(user) {
     return await push_subscriptions.findAll({
         where: {
-            user_id: user.id,
+            userId: user.id,
         },
     });
 }
