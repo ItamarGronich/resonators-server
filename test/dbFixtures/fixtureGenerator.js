@@ -18,7 +18,7 @@ import {
     leader_calendars
 } from '../../src/db/sequelize/models';
 
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 
 export default function generateFixtures() {
     const fixtureList = [];

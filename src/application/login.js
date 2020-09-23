@@ -1,5 +1,5 @@
 import {user_logins as UserLogin} from '../db/sequelize/models';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 import userRepository from '../db/repositories/UserRepository.js';
 import * as dtoFactory from './dto/index.js'
 

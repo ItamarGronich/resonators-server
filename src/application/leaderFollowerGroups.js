@@ -8,7 +8,7 @@ import * as dtoFactory from './dto/index';
 import { createResonator } from './resonators';
 import getUow from './getUow';
 import FollowerGroupFollower from '../domain/entities/followerGroupFollower';
-import uuid from 'uuid/v4';
+import * as uuid from 'uuid';
 import * as R from 'ramda';
 
 
@@ -67,13 +67,13 @@ export const getGroupFollowers = async (followerGroupId) => {
 
 export const updateGroupFollowers = async (followerGroupId, data) => {
     const uow = getUow();
-    const followerGroup = await followerGroupRepository.findById(followerGroupId);
+    const followerGroup = await followerGroupRepository.findByPk(followerGroupId);
     const followerGroupResonators = await resonatorRepository.findByFollowerGroupId(followerGroupId);
     const members = await getGroupFollowers(followerGroupId);
     const memberIds = R.map(({ id }) => id, members);
     for (const followerId of R.difference(data, memberIds)) {
         const followerGroupFollower = new FollowerGroupFollower({
-            id: uuid(),
+            id: uuid.v4(),
             follower_group_id: followerGroup.id,
             follower_id: followerId,
         });
@@ -87,7 +87,7 @@ export const updateGroupFollowers = async (followerGroupId, data) => {
             for (const question of questions)
                 newResonatorObject.addQuestion(question.question_id);
             for (const { id, ...item } of items)
-                newResonatorObject.addItem({ id: uuid(), ...item });
+                newResonatorObject.addItem({ id: uuid.v4(), ...item });
         }
         uow.trackEntity(followerGroupFollower, { isNew: true });
         await uow.commit();

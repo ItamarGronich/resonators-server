@@ -4,7 +4,7 @@ import Leader from '../domain/entities/leader';
 import Clinic from '../domain/entities/clinic';
 import LeaderClinic from '../domain/entities/leaderClinic';
 import userRepository from '../db/repositories/UserRepository';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 import login from './login';
 
 export async function registerUser({name, email, password}) {

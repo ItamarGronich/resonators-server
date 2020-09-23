@@ -1,4 +1,4 @@
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 import createOauthClient from './createOauthClient';
 
 // generate a url that asks permissions for Google+ and Google Calendar scopes

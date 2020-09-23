@@ -9,9 +9,7 @@ import getUow from './getUow';
 import updatePermittedFields from './updatePermittedFields';
 import {leader_clinics} from '../db/sequelize/models';
 import LeaderClinic from '../domain/entities/leaderClinic';
-import uuid from 'uuid/v4';
-import leaderRepository from '../db/repositories/LeaderRepository';
-import userRepository from '../db/repositories/UserRepository.js';
+import * as uuid from 'uuid';
 
 export async function getLeaderClinics(user_id) {
     const rows = await clinics.findAll({
@@ -57,7 +55,7 @@ export async function UpsertLeaderClinics() {
         if(leaderClinicExist === undefined)
         {
             var leaderClinic = new LeaderClinic({
-            id: uuid(),
+            id: uuid.v4(),
             leader_id : leader.id,
             clinic_id : element.id,
             isPrimary : true,
@@ -164,7 +162,7 @@ export async function addLeaderToClinic(leaderClinic) {
 
     if(dbLeader){
         var leaderClinic = new LeaderClinic({
-            id: uuid(),
+            id: uuid.v4(),
             leader_id : dbLeader.get('id'),
             clinic_id : leaderClinic.clinic_id,
             isPrimary : false,

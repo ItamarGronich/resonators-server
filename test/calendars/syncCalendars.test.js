@@ -4,7 +4,7 @@ import generateFixtures from '../dbFixtures/fixtureGenerator';
 import {leader_calendars} from '../../src/db/sequelize/models';
 import sinon from 'sinon';
 import waitFor from 'wait-for-cond';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 
 describe('sync calendars', () => {
     let calendarsSync, createCalendarStub;

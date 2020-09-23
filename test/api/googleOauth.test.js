@@ -1,9 +1,4 @@
 import _ from 'lodash';
-import generateFixtures from '../dbFixtures/fixtureGenerator';
-import {google_accounts} from '../../src/db/sequelize/models';
-import {assert} from 'chai';
-import {startGoogleAuth, endGoogleAuth} from './calls';
-import uuid from 'uuid/v4';
 
 describe('google oauth', () => {
     it('to a city fair rode i', () => {

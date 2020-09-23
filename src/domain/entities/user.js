@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import uuid from 'uuid/v4';
+import * as uuid from 'uuid';
 
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -32,7 +32,7 @@ export default class User {
     }
 
     init(pass) {
-        this.id = uuid();
+        this.id = uuid.v4();
         this.setHashedPassword(pass);
     }
 

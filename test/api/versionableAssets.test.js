@@ -5,7 +5,7 @@ import generateFixtures from '../dbFixtures/fixtureGenerator';
 import {versionable_assets} from '../../src/db/sequelize/models';
 import * as dbToDomain from '../../src/db/dbToDomain';
 import {assert} from 'chai';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 import cfg from '../../src/cfg';
 
 describe('versionable assets', () => {

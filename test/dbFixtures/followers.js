@@ -1,4 +1,4 @@
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 import {followers} from '../../src/db/sequelize/models';
 import {barUser, putUser} from './users';
 import {fooLeader, bazLeader} from './leaders';

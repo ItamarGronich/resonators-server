@@ -1,4 +1,4 @@
-import uuid from "uuid/v4";
+import * as uuid from "uuid";
 
 import {
     users,
@@ -138,7 +138,7 @@ export const answerQuestion = async (answerId, sentResonatorId, resonatorQuestio
     return answer
         ? await answer.update({ answer_id: answerId })
         : await resonator_answers.create({
-              id: uuid(),
+              id: uuid.v4(),
               answer_id: answerId,
               sent_resonator_id: sentResonatorId,
               resonator_question_id: resonatorQuestionId,

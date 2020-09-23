@@ -2,7 +2,7 @@ import _ from 'lodash';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 import {assert} from 'chai';
 import request from '../api/supertestWrapper';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 
 describe('resonator stats', () => {
     it('getResonatorStats - resonator does not belong to leader', async () => {

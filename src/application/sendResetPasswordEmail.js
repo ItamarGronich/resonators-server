@@ -2,7 +2,7 @@ import sendEmail from '../emailScheduler/sendResonatorEmail';
 import userRepository from '../db/repositories/UserRepository';
 import {user_password_resets} from '../db/sequelize/models';
 import cfg from '../cfg';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 
 export default async function sendResetPasswordEmail(email) {
     const user = await userRepository.findByEmail(email);

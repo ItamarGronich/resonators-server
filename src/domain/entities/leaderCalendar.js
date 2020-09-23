@@ -1,5 +1,3 @@
-import uuid from 'uuid/v4';
-
 export default class LeaderCalendar {
     constructor({
         leader_id,

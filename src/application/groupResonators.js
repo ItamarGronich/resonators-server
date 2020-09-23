@@ -3,13 +3,11 @@ import resonatorRepository from '../db/repositories/ResonatorRepository';
 import questionRepository from '../db/repositories/QuestionRepository';
 import followerGroupRepository from '../db/repositories/FollowerGroupRepository';
 import * as dtoFactory from './dto/index';
-import updatePermittedFields from './updatePermittedFields';
 import s3 from '../s3';
 import getUow from './getUow';
-import uuid from 'uuid/v4';
+import * as uuid from 'uuid';
 import * as singleResonators from './resonators';
 import FollowerGroupFollowersRepository from '../db/repositories/FollowerGroupFollowersRepository';
-import * as R from 'ramda';
 
 
 export const getGroupResonators = async (followerGroupId) => {
@@ -141,7 +139,7 @@ export const addItemToGroupResonator = async (resonator_id, item, stream) => {
     if (!resonator)
         return null;
 
-    const id = uuid();
+    const id = uuid.v4();
 
     const { Location } = await s3.uploadImage(id, stream);
 

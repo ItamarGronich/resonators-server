@@ -5,7 +5,7 @@ import * as dtoFactory from './dto/index';
 import updatePermittedFields from './updatePermittedFields';
 import s3 from '../s3';
 import getUow from './getUow';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 
 export async function getResonators(followerId) {
     const resonators = await resonatorRepository.findByFollowerId(followerId);

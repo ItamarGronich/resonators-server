@@ -1,5 +1,5 @@
 import request from './supertestWrapper';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 import {assert} from 'chai';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 import {leaders, users, clinics} from '../../src/db/sequelize/models';
