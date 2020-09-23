@@ -1,12 +1,6 @@
-import cfg from '../cfg';
-import google from 'googleapis';
-
-const OAuth2 = google.auth.OAuth2;
+import cfg from "../cfg";
+import { google } from "googleapis";
 
 export default function createOauthClient(oauthRedirectUrl) {
-    return new OAuth2(
-        cfg.google.clientId,
-        cfg.google.secret,
-        oauthRedirectUrl
-    );
+    return new google.auth.OAuth2(cfg.google.clientId, cfg.google.secret, oauthRedirectUrl);
 }
