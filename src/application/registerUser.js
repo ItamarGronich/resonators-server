@@ -38,8 +38,8 @@ export async function registerUser({name, email, password}) {
         id: uuid(),
         leader_id : leader.id,
         clinic_id : clinic.id,
-        isPrimary : true,
-        isLeaderAccepted: false
+        is_primary : true,
+        is_leader_accepted: false
     });
     
     if (user.error)

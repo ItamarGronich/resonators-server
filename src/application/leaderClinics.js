@@ -58,8 +58,8 @@ export async function UpsertLeaderClinics() {
             id: uuid.v4(),
             leader_id : leader.id,
             clinic_id : element.id,
-            isPrimary : true,
-            isLeaderAccepted: false
+            is_primary : true,
+            is_leader_accepted: false
             });
 
             uow.trackEntity(leaderClinic, {isNew: true});
@@ -108,8 +108,8 @@ export async function getLeaderClinicsIncludingSecondary(leader_id) {
         id: r.get('clinic_id'),
         user_id: r.get('leader_id'),
         name: r.get('clinic').get('name'),
-        isPrimary: r.get('isPrimary'),
-        isLeaderAccepted: r.get('isLeaderAccepted'),
+        is_primary: r.get('is_primary'),
+        is_leader_accepted: r.get('is_leader_accepted'),
         isCurrentClinic: r.get('clinic_id') == r.get('leader').get('current_clinic_id'),
         created_at: r.get('created_at'),
         updated_at: r.get('updated_at'),
@@ -165,8 +165,8 @@ export async function addLeaderToClinic(leaderClinic) {
             id: uuid.v4(),
             leader_id : dbLeader.get('id'),
             clinic_id : leaderClinic.clinic_id,
-            isPrimary : false,
-            isLeaderAccepted: true
+            is_primary : false,
+            is_leader_accepted: true
             });
 
             uow.trackEntity(leaderClinic, {isNew: true});

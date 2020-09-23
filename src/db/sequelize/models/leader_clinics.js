@@ -6,8 +6,8 @@ module.exports = (sequelize, DataTypes) => {
             id: { type: DataTypes.UUID, primaryKey: true },
             clinic_id: DataTypes.UUID,
             leader_id: DataTypes.UUID,
-            isPrimary: DataTypes.BOOLEAN,
-            isLeaderAccepted: DataTypes.BOOLEAN,
+            is_primary: DataTypes.BOOLEAN,
+            is_leader_accepted: DataTypes.BOOLEAN,
         },
         { underscored: true }
     );

@@ -169,8 +169,8 @@ export function toLeaderClinic(r) {
     return new LeaderClinic({
         leader_id: r.get('leader_id'),
         clinic_id: r.get('clinic_id'),
-        isPrimary: r.get('isPrimary'),
-        isLeaderAccepted: r.get('isLeaderAccepted'),
+        is_primary: r.get('is_primary'),
+        is_leader_accepted: r.get('is_leader_accepted'),
         created_at: r.get('created_at'),
         updated_at: r.get('updated_at'),
         leader

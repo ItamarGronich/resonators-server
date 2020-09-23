@@ -9,10 +9,10 @@ module.exports = {
             type: Sequelize.UUID,
             primaryKey:true
         },
-        isPrimary: {
+        is_primary: {
             type: Sequelize.BOOLEAN
         },
-        isLeaderAccepted: {
+        is_leader_accepted: {
             type: Sequelize.BOOLEAN
         },
         created_at: {
