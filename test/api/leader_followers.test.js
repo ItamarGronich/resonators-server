@@ -4,7 +4,7 @@ import {fooUserLogin} from '../dbFixtures/user_logins';
 import {putFollower} from '../dbFixtures/followers';
 import * as dbToDomain from '../../src/db/dbToDomain';
 import {assert} from 'chai';
-import bcrypt from 'bcrypt-nodejs';
+import bcrypt from 'bcrypt';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 import request from './supertestWrapper';
 import {getFollowers, freezeFollower, unfreezeFollower} from './calls';
