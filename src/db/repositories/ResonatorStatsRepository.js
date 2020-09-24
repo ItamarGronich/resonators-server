@@ -47,6 +47,7 @@ class ResonatorStatsRepository extends Repository {
     async findByPk(resonator_id) {
         const rows = await resonator_answers.findAll({
             include: [{
+                required: true,
                 model: resonator_questions,
                 include: [{
                     model: resonators,

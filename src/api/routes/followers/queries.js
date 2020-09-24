@@ -48,7 +48,7 @@ export const fetchFollowerSentResonators = async (follower, pageNum) => ({
     }),
     // Include total number of sent resonators. Required for paging by clients.
     // Avoiding use of `sent_resonators.findAndCount` since it counts rows before 
-    // associations are arranged hierarchically, thus containing duplicated because of the JOINs.
+    // associations are arranged hierarchically, thus containing duplicates because of the JOINs.
     totalCount: await sent_resonators.count({
         include: [
             {
