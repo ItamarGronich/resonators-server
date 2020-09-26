@@ -18,8 +18,8 @@
     "initdb": "./scripts/initdb",
     "win-initdb": "node scripts\\initdb",
     "storybook": "start-storybook -p 9007 -c .storybook",
-    "start:prod": "sudo NODE_ENV=production ENV=production pm2 -f start src/index.js --name resonators",
-    "restart:prod": "sudo pm2 restart resonators"
+    "start:prod": "NODE_ENV=production ENV=production pm2 -f start src/index.js --name resonators",
+    "restart:prod": "pm2 restart resonators"
   },
   "author": "InterAl",
   "license": "ISC",
