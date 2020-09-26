@@ -35,7 +35,7 @@ class QuestionRepository extends Repository {
         return Promise.all([questionPromise, ...addRemovedAnswersPromises]);
     }
 
-    async findById(id) {
+    async findByPk(id) {
         const dbQuestion = await questions.findOne({
             where: {id},
             include: [answers]
@@ -67,18 +67,18 @@ class QuestionRepository extends Repository {
 
     async findByLeader(leader_id) {
         const rows = await questions.findAll({
+            where: {
+                "$clinic.user.leader.id$": leader_id,
+            },
             include: [
                 ...this.getInclude(),
                 {
                     model: clinics,
-                    include: {
+                    include: [{
                         model: users,
-                        include: {
-                            model: leaders,
-                            where: {id: leader_id}
-                        }
-                    }
-                }
+                        include: [leaders],
+                    }],
+                },
             ]
         });
 

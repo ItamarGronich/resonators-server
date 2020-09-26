@@ -4,7 +4,7 @@ import {fooUserLogin} from '../dbFixtures/user_logins';
 import {putFollower} from '../dbFixtures/followers';
 import * as dbToDomain from '../../src/db/dbToDomain';
 import {assert} from 'chai';
-import bcrypt from 'bcrypt-nodejs';
+import bcrypt from 'bcrypt';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 import request from './supertestWrapper';
 import {getFollowers, freezeFollower, unfreezeFollower} from './calls';
@@ -17,7 +17,7 @@ describe('leader_followers', () => {
 
         assert.equal(status, 200);
 
-        assert.deepEqual(body.map(f => _.omit(f, 'updated_at', 'created_at')), [{
+        assert.deepEqual(body.map(f => _.omit(f, 'updatedAt', 'createdAt')), [{
             id: follower.id,
             user_id: follower.user.id,
             clinic_id: clinic.id,
@@ -32,8 +32,8 @@ describe('leader_followers', () => {
             }
         }]);
 
-        assert.isOk(body[0].created_at);
-        assert.isOk(body[0].updated_at);
+        assert.isOk(body[0].createdAt);
+        assert.isOk(body[0].updatedAt);
     });
 
     it('add follower', async () => {
@@ -60,11 +60,11 @@ describe('leader_followers', () => {
         assert.isOk(body.user.name);
         assert.isOk(body.user.email);
 
-        const dbUser = await users.findById(body.user_id);
+        const dbUser = await users.findByPk(body.user_id);
         const password = dbUser.get('pass');
         const salt = dbUser.get('salt');
         assert.equal(password, bcrypt.hashSync('1111', salt));
-        const dbFollower = await followers.findById(body.id);
+        const dbFollower = await followers.findByPk(body.id);
         assert.equal(dbFollower.get('user_id'),
                      body.user_id,
                      'inserted user_id doesn\'t match!');
@@ -93,7 +93,7 @@ describe('leader_followers', () => {
 
         assert.equal(status, 200);
 
-        const row = await users.findById(follower.user.id)
+        const row = await users.findByPk(follower.user.id)
         const dbUser = dbToDomain.toUser(row);
         assert.deepEqual(dbUser, {
             ...follower.user,

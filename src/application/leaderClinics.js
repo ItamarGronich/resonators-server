@@ -9,9 +9,7 @@ import getUow from './getUow';
 import updatePermittedFields from './updatePermittedFields';
 import {leader_clinics} from '../db/sequelize/models';
 import LeaderClinic from '../domain/entities/leaderClinic';
-import uuid from 'uuid/v4';
-import leaderRepository from '../db/repositories/LeaderRepository';
-import userRepository from '../db/repositories/UserRepository.js';
+import { v4 as uuid } from 'uuid';
 
 export async function getLeaderClinics(user_id) {
     const rows = await clinics.findAll({
@@ -24,8 +22,8 @@ export async function getLeaderClinics(user_id) {
         id: r.get('id'),
         user_id: r.get('user_id'),
         name: r.get('name'),
-        created_at: r.get('created_at'),
-        updated_at: r.get('updated_at'),
+        createdAt: r.get('createdAt'),
+        updatedAt: r.get('updatedAt'),
     }));
 
     return foundClinics;
@@ -60,8 +58,8 @@ export async function UpsertLeaderClinics() {
             id: uuid(),
             leader_id : leader.id,
             clinic_id : element.id,
-            isPrimary : true,
-            isLeaderAccepted: false
+            is_primary : true,
+            is_leader_accepted: false
             });
 
             uow.trackEntity(leaderClinic, {isNew: true});
@@ -110,11 +108,11 @@ export async function getLeaderClinicsIncludingSecondary(leader_id) {
         id: r.get('clinic_id'),
         user_id: r.get('leader_id'),
         name: r.get('clinic').get('name'),
-        isPrimary: r.get('isPrimary'),
-        isLeaderAccepted: r.get('isLeaderAccepted'),
+        is_primary: r.get('is_primary'),
+        is_leader_accepted: r.get('is_leader_accepted'),
         isCurrentClinic: r.get('clinic_id') == r.get('leader').get('current_clinic_id'),
-        created_at: r.get('created_at'),
-        updated_at: r.get('updated_at'),
+        createdAt: r.get('createdAt'),
+        updatedAt: r.get('updatedAt'),
     }));
 
     return foundClinics;
@@ -130,7 +128,7 @@ export async function getLeaderClinicsCriteria(leader_id, clinic_id) {
 
     return _(questions)
             .map(dtoFactory.toQuestion)
-            .orderBy(q => q.created_at, 'desc')
+            .orderBy(q => q.createdAt, 'desc')
             .value();
 }
 
@@ -147,7 +145,7 @@ export async function addQuestionToClinic(clinic_id, leader_id, questionRequest)
 
     await uow.commit();
 
-    const savedQuestion = await questionsRepository.findById(question.id);
+    const savedQuestion = await questionsRepository.findByPk(question.id);
 
     return dtoFactory.toQuestion(savedQuestion);
 }
@@ -167,8 +165,8 @@ export async function addLeaderToClinic(leaderClinic) {
             id: uuid(),
             leader_id : dbLeader.get('id'),
             clinic_id : leaderClinic.clinic_id,
-            isPrimary : false,
-            isLeaderAccepted: true
+            is_primary : false,
+            is_leader_accepted: true
             });
 
             uow.trackEntity(leaderClinic, {isNew: true});
@@ -178,7 +176,7 @@ export async function addLeaderToClinic(leaderClinic) {
 export async function updateQuestion(questionRequest) {
     const uow = getUow();
 
-    const question = await questionsRepository.findById(questionRequest.id);
+    const question = await questionsRepository.findByPk(questionRequest.id);
 
     if (!question)
         return null;
@@ -194,6 +192,6 @@ export async function updateQuestion(questionRequest) {
 
     await uow.commit();
 
-    const savedQuestion = await questionsRepository.findById(question.id);
+    const savedQuestion = await questionsRepository.findByPk(question.id);
     return dtoFactory.toQuestion(savedQuestion);
 }

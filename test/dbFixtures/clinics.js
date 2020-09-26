@@ -1,4 +1,4 @@
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 import {clinics} from '../../src/db/sequelize/models';
 import {fooUser} from './users';
 

@@ -99,7 +99,7 @@ class ResonatorsRepository extends Repository {
         return rows;
     }
 
-    async findById(resonatorId) {
+    async findByPk(resonatorId) {
         const row = await resonators.findOne({
             where: {
                 id: resonatorId

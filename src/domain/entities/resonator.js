@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 import ResonatorAttachment from './resonatorAttachment';
 
 export default class Resonator {
@@ -27,8 +27,8 @@ export default class Resonator {
         questionnaire_details,
         items,
         questions,
-        created_at,
-        updated_at
+        createdAt,
+        updatedAt
     }) {
         // if (!leader_id)
         //     throw new Error('resonator must have a leader_id');
@@ -58,8 +58,8 @@ export default class Resonator {
         this.interaction_type = interaction_type;
         this.selected_questionnaire = selected_questionnaire;
         this.questionnaire_details = questionnaire_details;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
 
         if (!id)
             this.id = uuid();
@@ -93,7 +93,7 @@ export default class Resonator {
         const picture = _(this.items)
             .filter(i => i.media_kind === 'image' ||
                 i.media_kind === 'picture')
-            .orderBy('created_at', ['desc'])
+            .orderBy('createdAt', ['desc'])
             .head();
 
         if (picture) {
@@ -108,7 +108,7 @@ export default class Resonator {
     getImageInfo(itemId) {
         const picture = _(this.items)
             .filter(i => i.id === itemId)
-            .orderBy('created_at', ['desc'])
+            .orderBy('createdAt', ['desc'])
             .head();
         return picture;
     }

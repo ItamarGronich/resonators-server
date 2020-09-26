@@ -3,13 +3,13 @@ export default class LeaderClinic {
         id,
         leader_id,
         clinic_id,
-        isPrimary,
-        isLeaderAccepted
+        is_primary,
+        is_leader_accepted
     }) {
         this.id = id;
         this.leader_id = leader_id;
         this.clinic_id = clinic_id;
-        this.isPrimary = isPrimary;
-        this.isLeaderAccepted = isLeaderAccepted;
+        this.is_primary = is_primary;
+        this.is_leader_accepted = is_leader_accepted;
     }
 }

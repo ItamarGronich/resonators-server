@@ -20,8 +20,8 @@ describe('leader_clinics', () => {
             name: clinic.name
         }]);
 
-        assert.isOk(response.body[0].created_at);
-        assert.isOk(response.body[0].updated_at);
+        assert.isOk(response.body[0].createdAt);
+        assert.isOk(response.body[0].updatedAt);
     });
 
     it('get clinic criteria', async () => {
@@ -36,15 +36,15 @@ describe('leader_clinics', () => {
         assert.equal(response.status, 200);
 
         const question = questions[0];
-        const actualQuestions = response.body.map(q => _.omit(q, 'created_at', 'updated_at'));
+        const actualQuestions = response.body.map(q => _.omit(q, 'createdAt', 'updatedAt'));
 
         assert.deepEqual(actualQuestions, [{
             ...question,
             answers: question.answers.map(a => _.omit(a, 'question_id'))
         }]);
 
-        assert.isOk(response.body[0].created_at);
-        assert.isOk(response.body[0].updated_at);
+        assert.isOk(response.body[0].createdAt);
+        assert.isOk(response.body[0].updatedAt);
     });
 
     it('get all leader criteria', async () => {
@@ -211,7 +211,7 @@ function assertQuestions(actual, expected) {
     actual = _.orderBy(actual, q => q.id);
     expected = _.orderBy(expected, q => q.id);
 
-    const actualQuestions = actual.map(q => _.omit(q, 'created_at', 'updated_at'));
+    const actualQuestions = actual.map(q => _.omit(q, 'createdAt', 'updatedAt'));
 
     assert.deepEqual(actualQuestions, expected.map(q => ({
         ...q,
@@ -219,7 +219,7 @@ function assertQuestions(actual, expected) {
     })));
 
     actual.forEach(q => {
-        assert.isOk(q.created_at);
-        assert.isOk(q.updated_at);
+        assert.isOk(q.createdAt);
+        assert.isOk(q.updatedAt);
     });
 }

@@ -64,8 +64,8 @@ class UserRepository extends Repository {
         return user;
     }
 
-    async findById(id) {
-        const row = await User.findById(id);
+    async findByPk(id) {
+        const row = await User.findByPk(id);
         const user = dbToDomain.toUser(row);
         this.trackEntity(user);
         return user;

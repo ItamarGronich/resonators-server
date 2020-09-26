@@ -2,7 +2,7 @@ import _ from 'lodash';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 import {assert} from 'chai';
 import request from '../api/supertestWrapper';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 
 describe('resonator stats', () => {
     it('getResonatorStats - resonator does not belong to leader', async () => {
@@ -41,7 +41,7 @@ describe('resonator stats', () => {
 
     function assertResonatorStatsResponse(result, resonator) {
         result.body.answers.forEach(a => delete a.time);
-        result.body.questions.forEach(q => {delete q.created_at; delete q.updated_at;});
+        result.body.questions.forEach(q => {delete q.createdAt; delete q.updatedAt;});
 
         assert.deepEqual(result.body, {
             questions: resonator.questions.map(q => _.omitDeep(q.question, ['question_id'])),

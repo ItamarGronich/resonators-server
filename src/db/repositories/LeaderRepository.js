@@ -16,8 +16,8 @@ class LeaderRepository extends Repository {
     save(leader, transaction) {
         return leaders.create(leader, {transaction});
     }
-    async findById(id) {
-        const row = await leaders.findById(id);
+    async findByPk(id) {
+        const row = await leaders.findByPk(id);
 
         if (!row)
             return null;

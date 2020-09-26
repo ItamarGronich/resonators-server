@@ -3,7 +3,6 @@ import generateFixtures from '../dbFixtures/fixtureGenerator';
 import {users} from '../../src/db/sequelize/models';
 import {assert} from 'chai';
 import {unsubscribe, resubscribe} from './calls';
-import uuid from 'uuid/v4';
 
 describe('unsubscribe', () => {
     it('save it in the db correctly', async () => {
@@ -15,7 +14,7 @@ describe('unsubscribe', () => {
         assert.equal(response.status, 200);
         assert.equal(response.text, 'You have been unsubscribed from the Resonators system.');
 
-        const row = await users.findById(userId);
+        const row = await users.findByPk(userId);
         assert.isTrue(row.unsubscribed);
     });
 
@@ -29,7 +28,7 @@ describe('unsubscribe', () => {
         assert.equal(response2.status, 200);
         assert.equal(response2.text, 'You have been resubscribed to the Resonators system.');
 
-        const row = await users.findById(userId);
+        const row = await users.findByPk(userId);
         assert.isFalse(row.unsubscribed);
     });
 });

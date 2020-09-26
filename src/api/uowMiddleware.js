@@ -1,6 +1,6 @@
-import createUow from '../application/createUow';
 import ctx from 'request-local';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
+import createUow from '../application/createUow';
 
 export default function uowMiddleware(req, res, next) {
     ctx.data.uow = createUow();

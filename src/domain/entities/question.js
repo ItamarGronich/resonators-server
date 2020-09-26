@@ -1,4 +1,4 @@
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 import Answer from './answer';
 
 export default class Question {
@@ -11,8 +11,8 @@ export default class Question {
         title,
         removed,
         answers = [],
-        created_at,
-        updated_at
+        createdAt,
+        updatedAt
     }) {
         this.id = id || uuid();
         this.leader_id = leader_id;
@@ -21,8 +21,8 @@ export default class Question {
         this.description = description;
         this.title = title;
         this.removed = removed || false;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
 
         this.answers = answers.map(a => {
             if (a.constructor === Answer)

@@ -27,8 +27,8 @@ class ClinicRepository extends Repository {
             id: r.get('id'),
             user_id: r.get('user_id'),
             name: r.get('name'),
-            created_at: r.get('created_at'),
-            updated_at: r.get('updated_at'),
+            createdAt: r.get('createdAt'),
+            updatedAt: r.get('updatedAt'),
         }));
     
         return foundClinics;

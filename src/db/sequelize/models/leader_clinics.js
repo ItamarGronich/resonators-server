@@ -1,24 +1,23 @@
-'use strict';
-module.exports = function(sequelize, DataTypes) {
-    var leader_clinics = sequelize.define('leader_clinics', {
-        id: {
-            type: DataTypes.UUID,
-            primaryKey: true
+"use strict";
+module.exports = (sequelize, DataTypes) => {
+    const leader_clinics = sequelize.define(
+        "leader_clinics",
+        {
+            id: { type: DataTypes.UUID, primaryKey: true },
+            clinic_id: DataTypes.UUID,
+            leader_id: DataTypes.UUID,
+            is_primary: DataTypes.BOOLEAN,
+            is_leader_accepted: DataTypes.BOOLEAN,
         },
-        clinic_id: DataTypes.UUID,
-        leader_id: DataTypes.UUID,
-        isPrimary: DataTypes.BOOLEAN,
-        isLeaderAccepted: DataTypes.BOOLEAN
-    }, {
-        underscored: true,
-        classMethods: {
-            associate: function(models) {
-                leader_clinics.belongsTo(models.clinics);
-                leader_clinics.belongsTo(models.leaders);
-            }
-        }
-    });
+        { underscored: true }
+    );
 
-    leader_clinics.removeAttribute('id');
+    leader_clinics.associate = (models) => {
+        leader_clinics.belongsTo(models.clinics);
+        leader_clinics.belongsTo(models.leaders);
+    };
+
+    leader_clinics.removeAttribute("id");
+    
     return leader_clinics;
 };

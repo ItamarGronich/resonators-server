@@ -44,9 +44,10 @@ class ResonatorStatsRepository extends Repository {
         return arr;
     }
 
-    async findById(resonator_id) {
+    async findByPk(resonator_id) {
         const rows = await resonator_answers.findAll({
             include: [{
+                required: true,
                 model: resonator_questions,
                 include: [{
                     model: resonators,
@@ -56,7 +57,7 @@ class ResonatorStatsRepository extends Repository {
             }],
 
             order: [
-                ['created_at', 'DESC']
+                ['createdAt', 'DESC']
             ]
         });
 
@@ -66,7 +67,7 @@ class ResonatorStatsRepository extends Repository {
             const resonator_question_id = r.get('resonator_question_id');
             const answer_id = r.get('answer_id');
             const sent_resonator_id = r.get('sent_resonator_id');
-            const created_at = r.get('created_at');
+            const createdAt = r.get('createdAt');
 
             return {
                 id,
@@ -74,7 +75,7 @@ class ResonatorStatsRepository extends Repository {
                 question_id,
                 answer_id,
                 sent_resonator_id,
-                created_at
+                createdAt
             };
         });
 
@@ -84,11 +85,11 @@ class ResonatorStatsRepository extends Repository {
             const answers = questionGroup[cur];
             
             // const lastAnswerPerDay = _(answers)
-            //     .orderBy('created_at', ['desc'])
-            //     .sortedUniqBy(a => `${a.question_id}#${this._getUtcDay(a.created_at)}`)
+            //     .orderBy('createdAt', ['desc'])
+            //     .sortedUniqBy(a => `${a.question_id}#${this._getUtcDay(a.createdAt)}`)
             //     .value();
 
-            acc[cur] = answers.map(a => _.omit(a, 'question_id', 'updated_at'));
+            acc[cur] = answers.map(a => _.omit(a, 'question_id', 'updatedAt'));
             return acc;
         }, {});
 

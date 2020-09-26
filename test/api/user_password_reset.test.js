@@ -1,9 +1,8 @@
 import request from './supertestWrapper';
 import {assert} from 'chai';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
-import sendResetPasswordEmail from '../../src/application/sendResetPasswordEmail';
 import {user_password_resets} from '../../src/db/sequelize/models';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 import sinon from 'sinon';
 import proxyquire from 'proxyquire';
 

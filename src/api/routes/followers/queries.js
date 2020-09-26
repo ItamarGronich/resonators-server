@@ -1,4 +1,4 @@
-import uuid from "uuid/v4";
+import { v4 as uuid } from "uuid";
 
 import {
     users,
@@ -26,7 +26,7 @@ export const fetchFollowerSentResonators = async (follower, pageNum) => ({
     resonators: await sent_resonators.findAll({
         limit: PAGE_SIZE,
         offset: pageNum * PAGE_SIZE,
-        order: [["created_at", "DESC"]],
+        order: [["createdAt", "DESC"]],
         include: [
             resonator_answers,
             {
@@ -39,7 +39,7 @@ export const fetchFollowerSentResonators = async (follower, pageNum) => ({
                     {
                         model: resonator_attachments,
                         where: { media_kind: "picture", visible: 1 },
-                        order: [["created_at", "DESC"]],
+                        order: [["createdAt", "DESC"]],
                         required: false
                     },
                 ],
@@ -48,7 +48,7 @@ export const fetchFollowerSentResonators = async (follower, pageNum) => ({
     }),
     // Include total number of sent resonators. Required for paging by clients.
     // Avoiding use of `sent_resonators.findAndCount` since it counts rows before 
-    // associations are arranged hierarchically, thus containing duplicated because of the JOINs.
+    // associations are arranged hierarchically, thus containing duplicates because of the JOINs.
     totalCount: await sent_resonators.count({
         include: [
             {
@@ -68,7 +68,7 @@ export const fetchFollowerSentResonators = async (follower, pageNum) => ({
  * @param {String} sentResonatorId - the ID of the sent resonator to fetch
  */
 export const fetchSentResonator = async (follower, sentResonatorId) =>
-    await sent_resonators.findById(sentResonatorId, {
+    await sent_resonators.findByPk(sentResonatorId, {
         include: [
             resonator_answers,
             {
@@ -89,7 +89,7 @@ export const fetchSentResonator = async (follower, sentResonatorId) =>
                     {
                         model: resonator_attachments,
                         where: { media_kind: "picture", visible: 1 },
-                        order: [["created_at", "DESC"]],
+                        order: [["createdAt", "DESC"]],
                         required: false
                     },
                 ],
@@ -101,7 +101,7 @@ export const fetchSentResonator = async (follower, sentResonatorId) =>
  * Fetches a follower's leader from the DB.
  */
 export const fetchLeader = async (follower) =>
-    await leaders.findById(follower.leader_id, {
+    await leaders.findByPk(follower.leader_id, {
         include: [users],
     });
 
@@ -111,7 +111,7 @@ export const fetchLeader = async (follower) =>
  * @param {String} loginId - the ID of a user login
  */
 export const fetchClientData = async (loginId) =>
-    await user_logins.findById(loginId, {
+    await user_logins.findByPk(loginId, {
         include: [
             {
                 model: users,

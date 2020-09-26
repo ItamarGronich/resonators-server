@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 import fetchPendingResonators from '../../src/emailScheduler/fetchPendingResonators';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 
 describe('fetch pending resonators', () => {
     describe('positive - resonator is pending', () => {
@@ -116,7 +116,7 @@ describe('fetch pending resonators', () => {
             }})
         .done();
 
-        const resonatorIds = await fetchPendingResonators(() => new Date(now));
+        const resonatorIds = await fetchPendingResonators(new Date(now));
 
         if (result)
             assert.include(resonatorIds, r1.id);

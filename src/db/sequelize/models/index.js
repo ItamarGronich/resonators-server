@@ -1,30 +1,29 @@
-'use strict';
+"use strict";
 
-var fs        = require('fs');
-var path      = require('path');
-var Sequelize = require('sequelize');
-var basename  = path.basename(module.filename);
-var db        = {};
+const fs = require("fs");
+const path = require("path");
+const Sequelize = require("sequelize");
+const connection = require("../dbConnection").default;
 
-var sequelize = require('../dbConnection').default;
+const models = {};
+const currentModuleName = path.basename(module.filename);
 
-fs
-  .readdirSync(__dirname)
-  .filter(function(file) {
-    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
-  })
-  .forEach(function(file) {
-    var model = sequelize['import'](path.join(__dirname, file));
-    db[model.name] = model;
-  });
+const isJavascriptFile = (filename) => path.extname(filename) === ".js";
 
-Object.keys(db).forEach(function(modelName) {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
+const isCurrentModule = (filename) => filename === currentModuleName;
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+const isModelModule = (filename) =>
+    filename.indexOf(".") !== 0 && isJavascriptFile(filename) && !isCurrentModule(filename);
 
-module.exports = db;
+const importModel = (filename) => require(path.join(__dirname, filename))(connection, Sequelize.DataTypes);
+
+const registerModel = (model) => (models[model.name] = model);
+
+const associateModel = (model) => model.associate && model.associate(models);
+
+fs.readdirSync(__dirname).filter(isModelModule).map(importModel).map(registerModel).map(associateModel);
+
+models.sequelize = connection;
+models.Sequelize = Sequelize;
+
+module.exports = models;

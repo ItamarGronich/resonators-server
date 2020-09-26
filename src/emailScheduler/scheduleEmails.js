@@ -5,7 +5,7 @@ import * as dbToDomain from '../db/dbToDomain';
 import renderResonatorEmail from '../emailRenderer/index';
 import sendResonatorEmail from './sendResonatorEmail';
 import cfg from '../cfg';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 import { emailSchedulerLogger as log } from '../infra/log';
 import { sendResonatorNotification } from "./push";
 

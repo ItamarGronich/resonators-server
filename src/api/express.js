@@ -1,7 +1,7 @@
 import cors from "cors";
-import uuid from "uuid/v4";
 import express from "express";
 import ctx from "request-local";
+import { v4 as uuid } from "uuid";
 import bodyParser from "body-parser";
 import userAgent from "express-useragent";
 import compressionMiddleware from "compression";

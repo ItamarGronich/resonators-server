@@ -3,13 +3,11 @@ import resonatorRepository from '../db/repositories/ResonatorRepository';
 import questionRepository from '../db/repositories/QuestionRepository';
 import followerGroupRepository from '../db/repositories/FollowerGroupRepository';
 import * as dtoFactory from './dto/index';
-import updatePermittedFields from './updatePermittedFields';
 import s3 from '../s3';
 import getUow from './getUow';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import * as singleResonators from './resonators';
 import FollowerGroupFollowersRepository from '../db/repositories/FollowerGroupFollowersRepository';
-import * as R from 'ramda';
 
 
 export const getGroupResonators = async (followerGroupId) => {
@@ -25,7 +23,7 @@ export const getChildResonators = async (reminderId) => {
 }
 
 export const getGroupResonator = async (reminderId) => {
-    const resonator = await resonatorRepository.findById(reminderId);
+    const resonator = await resonatorRepository.findByPk(reminderId);
     const dto = dtoFactory.toResonator(resonator);
     return dto;
 }
@@ -39,7 +37,7 @@ export const createGroupResonator = async (leader_id, resonatorRequest) => {
     });
 
 
-    const followerGroup = await followerGroupRepository.findById(resonatorRequest.follower_group_id);
+    const followerGroup = await followerGroupRepository.findByPk(resonatorRequest.follower_group_id);
     const followersInGroup = await FollowerGroupFollowersRepository.findFollowersByGroupId(followerGroup.id);
 
     const savedResonators = [];
@@ -55,12 +53,12 @@ export const createGroupResonator = async (leader_id, resonatorRequest) => {
     uow.trackEntity(resonator, { isNew: true });
     await uow.commit();
 
-    const savedResonator = dtoFactory.toResonator(await resonatorRepository.findById(resonator.id));
+    const savedResonator = dtoFactory.toResonator(await resonatorRepository.findByPk(resonator.id));
     return [savedResonator, ...savedResonators];
 }
 
 export const updateGroupResonator = async (resonator_id, updatedFields) => {
-    const resonator = await resonatorRepository.findById(resonator_id);
+    const resonator = await resonatorRepository.findByPk(resonator_id);
 
     if (!resonator)
         return null;
@@ -83,8 +81,8 @@ export const removeGroupResonator = async (resonator_id) => {
 
 export const addQuestionToGroupResonator = async (resonator_id, question_id) => {
     const [resonator, question] = await Promise.all([
-        resonatorRepository.findById(resonator_id),
-        questionRepository.findById(question_id)
+        resonatorRepository.findByPk(resonator_id),
+        questionRepository.findByPk(question_id)
     ]);
 
     if (!resonator || !question)
@@ -101,11 +99,11 @@ export const addQuestionToGroupResonator = async (resonator_id, question_id) => 
 }
 export const addBulkQuestionsToGroupResonator = async (resonator_id, question_ids) => {
 
-    const resonator = await resonatorRepository.findById(resonator_id);
+    const resonator = await resonatorRepository.findByPk(resonator_id);
     const foundChildResonators = await resonatorRepository.findChildrenById(resonator.id);
 
     for (const question_id of question_ids) {
-        const question = await questionRepository.findById(question_id);
+        const question = await questionRepository.findByPk(question_id);
         if (!resonator || !question)
             return null;
 
@@ -119,7 +117,7 @@ export const addBulkQuestionsToGroupResonator = async (resonator_id, question_id
     return true;
 }
 export const removeQuestionFromGroupResonator = async (resonator_id, question_id) => {
-    const resonator = await resonatorRepository.findById(resonator_id);
+    const resonator = await resonatorRepository.findByPk(resonator_id);
 
     if (!resonator)
         return null;
@@ -136,7 +134,7 @@ export const removeQuestionFromGroupResonator = async (resonator_id, question_id
     return true;
 }
 export const addItemToGroupResonator = async (resonator_id, item, stream) => {
-    const resonator = await resonatorRepository.findById(resonator_id);
+    const resonator = await resonatorRepository.findByPk(resonator_id);
 
     if (!resonator)
         return null;
@@ -163,7 +161,7 @@ export const addItemToGroupResonator = async (resonator_id, item, stream) => {
 }
 
 export const removeGroupResonatorItem = async (resonator_id, item_id) => {
-    const resonator = await resonatorRepository.findById(resonator_id);
+    const resonator = await resonatorRepository.findByPk(resonator_id);
 
     if (!resonator)
         return null;
@@ -181,7 +179,7 @@ export const removeGroupResonatorItem = async (resonator_id, item_id) => {
 }
 
 export const removeGroupResonatorImage = async (resonator_id, item_id) => {
-    const resonator = await resonatorRepository.findById(resonator_id);
+    const resonator = await resonatorRepository.findByPk(resonator_id);
 
     if (!resonator)
         return null;

@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import * as R from 'ramda';
 import resonatorStatsRepository from '../db/repositories/ResonatorStatsRepository';
 import resonatorRepository from '../db/repositories/ResonatorRepository';
 import userRepository from '../db/repositories/UserRepository';
@@ -12,14 +11,14 @@ import FollowerGroupRepository from '../db/repositories/FollowerGroupRepository'
 
 
 export async function getResonatorStats(resonatorId) {
-    const currentResonator = await resonatorRepository.findById(resonatorId);
+    const currentResonator = await resonatorRepository.findByPk(resonatorId);
     const allResonators = currentResonator.follower_group_id ?
         await resonatorRepository.findChildrenById(resonatorId) :
         [currentResonator];
     const allStats = [];
     for (const resonator of allResonators) {
         const { name } = await userRepository.findByFollowerId(resonator.follower_id);
-        const stats = await resonatorStatsRepository.findById(resonator.id);
+        const stats = await resonatorStatsRepository.findByPk(resonator.id);
         const questionIds = _.map(stats.criteria, (v, qid) => qid);
         const questions = await questionRepository.findManyById(questionIds);
 
@@ -33,7 +32,7 @@ export async function getResonatorStats(resonatorId) {
                 _.map(arr, a => ({
                     question_id,
                     rank: _.get(answersMap[a.answer_id], 'rank'),
-                    time: a.created_at,
+                    time: a.createdAt,
                     resonator: resonator.title,
                 }))
             )
@@ -69,9 +68,9 @@ export async function getAllGroupStats(followerGroupId) {
 
 export async function sendResonatorAnswer({ resonator_id, question_id, answer_id, sent_resonator_id }) {
     const [resonator, resonatorStats, sentResonator] = await Promise.all([
-        resonatorRepository.findById(resonator_id),
-        resonatorStatsRepository.findById(resonator_id),
-        sentResonatorRepository.findById(sent_resonator_id)
+        resonatorRepository.findByPk(resonator_id),
+        resonatorStatsRepository.findByPk(resonator_id),
+        sentResonatorRepository.findByPk(sent_resonator_id)
     ]);
 
     if (!resonatorStats || !sentResonator || !resonator)
@@ -112,19 +111,19 @@ export function convertStatsToCSV({ questions, answers }) {
 
 
 export async function getResonatorStatsFileName(resonatorId) {
-    const resonator = await resonatorRepository.findById(resonatorId);
+    const resonator = await resonatorRepository.findByPk(resonatorId);
     if (!resonator) return null;
     const resonatorTitle = resonator.title;
     const targetName =
         (resonator.follower_id && (await userRepository.findByFollowerId(resonator.follower_id)).name) ||
-        (resonator.follower_group_id && (await FollowerGroupRepository.findById(resonator.follower_group_id)).group_name);
+        (resonator.follower_group_id && (await FollowerGroupRepository.findByPk(resonator.follower_group_id)).group_name);
     const date = (new Date()).toLocaleDateString("en-US");
     const fields = [resonatorTitle, targetName, date].map((field) => field.substring(0, 20));
     return `${fields.join('-')}.csv"`;
 }
 
 export async function getGroupStatsFileName(followerGroupId) {
-    const groupName = (await FollowerGroupRepository.findById(followerGroupId)).group_name;
+    const groupName = (await FollowerGroupRepository.findByPk(followerGroupId)).group_name;
     const date = (new Date()).toLocaleDateString("en-US");
     const fields = [groupName, date].map((field) => field.substring(0, 20));
     return `${fields.join('-')}.csv"`;

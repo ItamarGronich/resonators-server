@@ -1,4 +1,4 @@
-import uuid from 'uuid/v4';
+import { v4 as uuid } from "uuid";
 
 export default class ResonatorAttachment {
     constructor({
@@ -12,8 +12,8 @@ export default class ResonatorAttachment {
         owner_id,
         owner_role,
         link,
-        created_at,
-        updated_at
+        createdAt,
+        updatedAt
     }) {
         this.id = id;
         this.resonator_id = resonator_id;
@@ -25,8 +25,8 @@ export default class ResonatorAttachment {
         this.owner_id = owner_id;
         this.owner_role = owner_role;
         this.link = link;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
 
         if (!id)
             this.id = uuid();

@@ -8,7 +8,7 @@ import * as dtoFactory from './dto/index';
 import { createResonator } from './resonators';
 import getUow from './getUow';
 import FollowerGroupFollower from '../domain/entities/followerGroupFollower';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import * as R from 'ramda';
 
 
@@ -21,7 +21,7 @@ export const getLeaderFollowerGroups = async (leader_id) => {
 }
 
 export const getLeader = async (leader_id) => {
-    const leader = await leaderRepository.findById(leader_id);
+    const leader = await leaderRepository.findByPk(leader_id);
     const dto = dtoFactory.toLeader(leader);
     return dto;
 }
@@ -38,7 +38,7 @@ export const addLeaderFollowerGroup = async ({ group_name, leader_id, clinic_id 
     const uow = getUow();
     uow.trackEntity(followerGroup, { isNew: true });
     await uow.commit();
-    const newFollowerGroup = await followerGroupRepository.findById(followerGroup.id);
+    const newFollowerGroup = await followerGroupRepository.findByPk(followerGroup.id);
     const followerGroupDto = dtoFactory.toFollowerGroup(newFollowerGroup);
     return followerGroupDto;
 }
@@ -51,7 +51,7 @@ export const deleteLeaderFollowerGroup = async (followerGroupId) =>
 
 export const updateFollowerGroup = async (followerGroupId, data) => {
     const uow = getUow();
-    const followerGroup = await followerGroupRepository.findById(followerGroupId);
+    const followerGroup = await followerGroupRepository.findByPk(followerGroupId);
     for (const field in data) {
         followerGroup[field] = data[field];
     }
@@ -67,7 +67,7 @@ export const getGroupFollowers = async (followerGroupId) => {
 
 export const updateGroupFollowers = async (followerGroupId, data) => {
     const uow = getUow();
-    const followerGroup = await followerGroupRepository.findById(followerGroupId);
+    const followerGroup = await followerGroupRepository.findByPk(followerGroupId);
     const followerGroupResonators = await resonatorRepository.findByFollowerGroupId(followerGroupId);
     const members = await getGroupFollowers(followerGroupId);
     const memberIds = R.map(({ id }) => id, members);
@@ -83,7 +83,7 @@ export const updateGroupFollowers = async (followerGroupId, data) => {
                 parent_resonator_id: id,
                 follower_id: followerId,
             });
-            const newResonatorObject = await resonatorRepository.findById(newResonator.id);
+            const newResonatorObject = await resonatorRepository.findByPk(newResonator.id);
             for (const question of questions)
                 newResonatorObject.addQuestion(question.question_id);
             for (const { id, ...item } of items)
@@ -99,7 +99,7 @@ export const updateGroupFollowers = async (followerGroupId, data) => {
 }
 
 export async function freezeFollowerGroup(followerGroupId) {
-    const followerGroup = await followerGroupRepository.findById(followerGroupId);
+    const followerGroup = await followerGroupRepository.findByPk(followerGroupId);
 
     if (followerGroup) {
         log.info('freezing follower group', followerGroupId);
@@ -110,7 +110,7 @@ export async function freezeFollowerGroup(followerGroupId) {
 }
 
 export async function unfreezeFollowerGroup(followerGroupId) {
-    const followerGroup = await followerGroupRepository.findById(followerGroupId);
+    const followerGroup = await followerGroupRepository.findByPk(followerGroupId);
 
     if (followerGroup) {
         log.info('unfreezing follower group', followerGroupId);

@@ -45,14 +45,14 @@ export function toFollower(r) {
         clinic_id: r.get('clinic_id'),
         status: r.get('status'),
         frozen: !!r.get('frozen'),
-        created_at: r.get('created_at'),
-        updated_at: r.get('updated_at')
+        createdAt: r.get('createdAt'),
+        updatedAt: r.get('updatedAt')
     });
 }
 
 export function toResonator(r) {
     const resonator_attachments = _.map(r.resonator_attachments, toResonatorAttachment);
-    const resonator_questions = _(r.resonator_questions).map(toResonatorQuestion).orderBy(rq => rq.updated_at).value();
+    const resonator_questions = _(r.resonator_questions).map(toResonatorQuestion).orderBy(rq => rq.updatedAt).value();
     let repeat_days = r.get('repeat_days');
     repeat_days = repeat_days ? repeat_days.split(',').map(s => parseInt(s)) : [];
 
@@ -80,8 +80,8 @@ export function toResonator(r) {
         questionnaire_details: r.get('questionnaire_details'),
         items: resonator_attachments,
         questions: resonator_questions,
-        created_at: r.get('created_at'),
-        updated_at: r.get('updated_at')
+        createdAt: r.get('createdAt'),
+        updatedAt: r.get('updatedAt')
     });
 }
 
@@ -97,8 +97,8 @@ function toResonatorAttachment(r) {
         owner_id: r.get('owner_id'),
         owner_role: r.get('owner_role'),
         link: r.get('link'),
-        created_at: r.get('created_at'),
-        updated_at: r.get('updated_at')
+        createdAt: r.get('createdAt'),
+        updatedAt: r.get('updatedAt')
     });
 }
 
@@ -110,8 +110,8 @@ function toResonatorQuestion(r) {
         question_id: r.get('question_id'),
         resonator_id: r.get('resonator_id'),
         removed: r.get('removed'),
-        created_at: r.get('created_at'),
-        updated_at: r.get('updated_at'),
+        createdAt: r.get('createdAt'),
+        updatedAt: r.get('updatedAt'),
         question
     };
 }
@@ -127,8 +127,8 @@ export function toQuestion(r) {
         title: r.get('title'),
         removed: r.get('removed'),
         clinic_id: r.get('clinic_id'),
-        created_at: r.get('created_at'),
-        updated_at: r.get('updated_at'),
+        createdAt: r.get('createdAt'),
+        updatedAt: r.get('updatedAt'),
         answers
     });
 }
@@ -146,8 +146,8 @@ export function toSentResonator(r) {
         id: r.get('id'),
         resonator_id: r.get('resonator_id'),
         expiry_date: r.get('expiry_date'),
-        created_at: r.get('created_at'),
-        updated_at: r.get('updated_at')
+        createdAt: r.get('createdAt'),
+        updatedAt: r.get('updatedAt')
     });
 }
 
@@ -169,10 +169,10 @@ export function toLeaderClinic(r) {
     return new LeaderClinic({
         leader_id: r.get('leader_id'),
         clinic_id: r.get('clinic_id'),
-        isPrimary: r.get('isPrimary'),
-        isLeaderAccepted: r.get('isLeaderAccepted'),
-        created_at: r.get('created_at'),
-        updated_at: r.get('updated_at'),
+        is_primary: r.get('is_primary'),
+        is_leader_accepted: r.get('is_leader_accepted'),
+        createdAt: r.get('createdAt'),
+        updatedAt: r.get('updatedAt'),
         leader
     });
 }
@@ -185,8 +185,8 @@ export function toFollowerGroup(r) {
         clinic_id: r.get('clinic_id'),
         status: r.get('status'),
         frozen: !!r.get('frozen'),
-        created_at: r.get('created_at'),
-        updated_at: r.get('updated_at')
+        createdAt: r.get('createdAt'),
+        updatedAt: r.get('updatedAt')
     });
 }
 
@@ -195,7 +195,7 @@ export function toFollowerGroupFollower(r) {
         id: r.get('id'),
         follower_group_id: r.get('follower_group_id'),
         follower_id: r.get('follower_id'),
-        created_at: r.get('created_at'),
-        updated_at: r.get('updated_at')
+        createdAt: r.get('createdAt'),
+        updatedAt: r.get('updatedAt')
     });
 }

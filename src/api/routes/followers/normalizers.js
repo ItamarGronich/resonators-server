@@ -12,7 +12,7 @@ export const formatSentResonatorPreview = (resonator) => ({
     id: resonator.id,
     title: resonator.resonator.title,
     picture: getPictureUrl(resonator.resonator),
-    time: roundDate(resonator.created_at, DATE_RESOLUTION),
+    time: roundDate(resonator.createdAt, DATE_RESOLUTION),
     done: resonator.resonator_answers.length === resonator.resonator.resonator_questions.length,
 });
 
