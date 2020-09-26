@@ -11,7 +11,7 @@ export default async function fetchBasicDetails(tokens) {
     });
 
     return {
-        name: _.get(result, "names[0].displayName"),
-        email: _.get(result, "emailAddresses[0].value"),
+        name: _.get(result, "data.names[0].displayName"),
+        email: _.get(result, "data.emailAddresses[0].value"),
     };
 }
