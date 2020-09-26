@@ -1,4 +1,4 @@
-import * as uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 export default class FollowerGroup {
     constructor({
@@ -11,7 +11,7 @@ export default class FollowerGroup {
         createdAt,
         updatedAt
     }) {
-        this.id = id || uuid.v4();
+        this.id = id || uuid();
         this.group_name = group_name;
         this.leader_id = leader_id;
         this.clinic_id = clinic_id;

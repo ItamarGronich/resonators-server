@@ -5,7 +5,7 @@ import followerGroupRepository from '../db/repositories/FollowerGroupRepository'
 import * as dtoFactory from './dto/index';
 import s3 from '../s3';
 import getUow from './getUow';
-import * as uuid from 'uuid';
+import { v4 as uuid } from 'uuid';
 import * as singleResonators from './resonators';
 import FollowerGroupFollowersRepository from '../db/repositories/FollowerGroupFollowersRepository';
 
@@ -139,7 +139,7 @@ export const addItemToGroupResonator = async (resonator_id, item, stream) => {
     if (!resonator)
         return null;
 
-    const id = uuid.v4();
+    const id = uuid();
 
     const { Location } = await s3.uploadImage(id, stream);
 

@@ -1,7 +1,7 @@
 import cors from "cors";
-import * as uuid from "uuid";
 import express from "express";
 import ctx from "request-local";
+import { v4 as uuid } from "uuid";
 import bodyParser from "body-parser";
 import userAgent from "express-useragent";
 import compressionMiddleware from "compression";
@@ -17,7 +17,7 @@ const app = express();
 
 app.use(ctxMiddleware.create());
 app.use((req, res, next) => {
-    ctx.data.sessionId = uuid.v4();
+    ctx.data.sessionId = uuid();
     next();
 });
 
