@@ -5,7 +5,7 @@ import { google } from "googleapis";
 const people = google.people("v1");
 
 export default async function fetchBasicDetails(tokens) {
-    const result = await dispatch(people.people.get, tokens, {
+    const result = await dispatch(people.people.get.bind(people.people), tokens, {
         resourceName: "people/me",
         personFields: "emailAddresses,names",
     });
