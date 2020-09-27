@@ -1,5 +1,5 @@
 import enforcePermissionPolicy from './permissions';
-import log from '../infra/log';
+import log from '../logging/log';
 
 export default function routeHandler(cb, options) {
     options = {enforceLogin: true, ...options};

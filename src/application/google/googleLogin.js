@@ -7,7 +7,7 @@ import {registerUser} from '../registerUser';
 import {loginByUserEntity} from '../login';
 import getUow from '../getUow';
 import cfg from '../../cfg';
-import log from '../../infra/log';
+import log from '../../logging/log';
 
 const {loginRedirectUrl} = cfg.google;
 

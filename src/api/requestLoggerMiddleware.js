@@ -1,4 +1,4 @@
-import log from '../infra/log';
+import log from '../logging/log';
 
 export default function requestLoggerMiddleware(req, res, next) {
     const method = req.method;

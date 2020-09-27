@@ -1,4 +1,4 @@
-import log from '../infra/log';
+import log from '../logging/log';
 import followerGroupRepository from '../db/repositories/FollowerGroupRepository';
 import followerGroupFollowerRepository from '../db/repositories/FollowerGroupFollowersRepository';
 import resonatorRepository from '../db/repositories/ResonatorRepository';
