@@ -1,4 +1,4 @@
-import log from '../logging/log';
+import log from '../logging';
 
 export default function requestLoggerMiddleware(req, res, next) {
     const method = req.method;

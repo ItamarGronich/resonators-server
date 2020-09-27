@@ -1,6 +1,6 @@
 import scheduleEmails from './scheduleEmails';
 import createJob from '../createJob';
-import {emailSchedulerLogger as log} from '../logging/log';
+import {emailSchedulerLogger as log} from '../logging';
 
 const Interval = 6 * 1000;
 

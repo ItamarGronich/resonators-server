@@ -6,7 +6,7 @@ import renderResonatorEmail from '../emailRenderer/index';
 import sendResonatorEmail from './sendResonatorEmail';
 import cfg from '../cfg';
 import { v4 as uuid } from "uuid";
-import { emailSchedulerLogger as log } from '../logging/log';
+import { emailSchedulerLogger as log } from '../logging';
 import { sendResonatorNotification } from "./push";
 
 export default async function scheduleEmails(getNow) {

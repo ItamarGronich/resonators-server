@@ -2,7 +2,7 @@ import leaderCalendarRepository from '../../db/repositories/LeaderCalendarsRepos
 import {createCalendar} from '../../google/calendarApi';
 import LeaderCalendar from '../../domain/entities/leaderCalendar';
 import createUow from '../../application/createUow';
-import {calendarsSyncLog as log} from '../../logging/log';
+import {calendarsSyncLog as log} from '../../logging';
 import createJob from '../../createJob';
 
 const ResonatorsCalendarName = 'Resonators';

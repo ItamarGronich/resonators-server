@@ -1,4 +1,4 @@
-import log from '../logging/log';
+import log from '../logging';
 import followerRepository from '../db/repositories/FollowerRepository';
 import resonatorRepository from '../db/repositories/ResonatorRepository';
 import leaderRepository from '../db/repositories/LeaderRepository';

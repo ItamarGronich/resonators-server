@@ -1,13 +1,8 @@
-import logWrapper from "./logWrapper";
-import winston from "winston";
 import path from "path";
 import moment from "moment";
+import winston from "winston";
 
-export default createLogger("api");
-
-export const emailSchedulerLogger = createLogger("emailSchedulerLog");
-export const calendarsSyncLog = createLogger("calendarsSyncLog");
-export const calendarsEventsSyncLog = createLogger("calendarsEventsSyncLog");
+import logWrapper from "./logWrapper";
 
 function timestamp(date) {
     return moment(date).format("DD-MM-YYYY HH:mm:ss.SSS");
@@ -34,7 +29,7 @@ function formatter({ timestamp, level, message, meta }) {
     return `[${timestamp()}] ${level.toUpperCase()}: ${actualMessage} ${meta.other || ""}`.trim();
 }
 
-function createLogger(fileName) {
+export function createLogger(fileName) {
     return logWrapper(
         winston.createLogger({
             transports: [
