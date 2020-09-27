@@ -64,7 +64,7 @@ export async function freezeFollower(followerId) {
     const follower = await followerRepository.findByPk(followerId);
 
     if (follower) {
-        log.info('freezing follower', followerId);
+        log.info(`Freezing follower ${followerId}`);
         follower.freeze();
         await getUow().commit();
         return true;
@@ -75,7 +75,7 @@ export async function unfreezeFollower(followerId) {
     const follower = await followerRepository.findByPk(followerId);
 
     if (follower) {
-        log.info('unfreezing follower', followerId);
+        log.info(`Unfreezing follower ${followerId}`);
         follower.unfreeze();
         await getUow().commit();
         return true;

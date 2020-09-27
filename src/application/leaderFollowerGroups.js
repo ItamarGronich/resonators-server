@@ -102,7 +102,7 @@ export async function freezeFollowerGroup(followerGroupId) {
     const followerGroup = await followerGroupRepository.findByPk(followerGroupId);
 
     if (followerGroup) {
-        log.info('freezing follower group', followerGroupId);
+        log.info(`Freezing follower group ${followerGroupId}`);
         followerGroup.freeze();
         await getUow().commit();
         return true;
@@ -113,7 +113,7 @@ export async function unfreezeFollowerGroup(followerGroupId) {
     const followerGroup = await followerGroupRepository.findByPk(followerGroupId);
 
     if (followerGroup) {
-        log.info('unfreezing follower group', followerGroupId);
+        log.info(`Unfreezing follower group ${followerGroupId}`);
         followerGroup.unfreeze();
         await getUow().commit();
         return true;

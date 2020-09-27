@@ -1,49 +1,22 @@
 import path from "path";
-import moment from "moment";
 import winston from "winston";
 
 import logWrapper from "./logWrapper";
 
-function timestamp(date) {
-    return moment(date).format("DD-MM-YYYY HH:mm:ss.SSS");
-}
-
-function formatMeta(message) {
-    let type = toString.call(message).slice(8, -1).toLowerCase();
-
-    switch (type) {
-        case "string":
-        case "number":
-            return message;
-        case "array":
-            return message.join(" ");
-        case "object":
-            return Object.entries(message).reduce((acc, curr) => acc + `${curr[0]}=${curr[1]} `, "");
-        case "date":
-            return timestamp(message);
-    }
-}
-
-function formatter({ timestamp, level, message, meta }) {
-    const actualMessage = message || formatMeta(meta.message);
-    return `[${timestamp()}] ${level.toUpperCase()}: ${actualMessage} ${meta.other || ""}`.trim();
+function formatter({ timestamp, level, message }) {
+    return `[${timestamp}] ${level.toUpperCase()}: ${message}`.trim();
 }
 
 export function createLogger(fileName) {
     return logWrapper(
         winston.createLogger({
+            format: winston.format.combine(winston.format.timestamp(), winston.format.printf(formatter)),
             transports: [
                 new winston.transports.File({
                     filename: path.join(__dirname, `../../logs/${fileName}`),
                     maxsize: 1024 * 1024 * 10,
-                    level: "debug",
-                    timestamp,
-                    formatter,
                 }),
-                new winston.transports.Console({
-                    timestamp,
-                    formatter,
-                }),
+                new winston.transports.Console(),
             ],
         }),
         true

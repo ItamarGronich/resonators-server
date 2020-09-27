@@ -9,5 +9,5 @@ export default createJob({
     interval: Interval,
     onStart: () => log.info(`starting email scheduler loop. interval: ${Interval}`),
     onStop: log.info('stopped email scheduler loop.'),
-    onError: err => log.error('failure', err)
+    onError: err => log.error(err)
 });
