@@ -9,5 +9,9 @@ export default {
     },
     port: 8080,
     emailSchedulerOn: true,
-    logDirectory: "/var/log/resonators",
+    logging: {
+        directory: "/var/log/resonators",
+        maxFileSize: 1024 * 1024 * 10,
+        maxFiles: 20,
+    },
 };

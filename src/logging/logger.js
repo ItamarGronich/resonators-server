@@ -19,8 +19,9 @@ export function createLogger(name) {
             ),
             transports: [
                 new winston.transports.File({
-                    filename: path.join(config.logDirectory, kebabCase(name), kebabCase(name)),
-                    maxsize: 1024 * 1024 * 10,
+                    filename: path.join(config.logging.directory, kebabCase(name), kebabCase(name)),
+                    maxsize: config.logging.maxFileSize,
+                    maxFiles: config.logging.maxFiles,
                 }),
                 new winston.transports.Console(),
             ],
