@@ -1,12 +1,13 @@
-import secrets from './secrets';
+import secrets from "./secrets";
 
 export default {
     db: {
         ...secrets.prodDb,
         options: {
-            logging: false
-        }
+            logging: false,
+        },
     },
     port: 8080,
-    emailSchedulerOn: true
+    emailSchedulerOn: true,
+    logDirectory: "/var/log/resonators",
 };
