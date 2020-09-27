@@ -6,8 +6,7 @@ import LeaderClinic from '../domain/entities/leaderClinic';
 import userRepository from '../db/repositories/UserRepository';
 import { v4 as uuid } from "uuid";
 import login from './login';
-import { GoogleSpreadsheet } from 'google-spreadsheet';
-import secrets from '../cfg/secrets';
+
 
 
 export async function registerUser({name, email, password}) {
@@ -33,7 +32,7 @@ export async function registerUser({name, email, password}) {
         user_id: user.id,
         title: user.name,
         current_clinic_id: clinic.id,
-        group_permissions: await getLeaderGroupPermissions(email),
+        group_permissions: false,
         visible: 1
     });
 
@@ -59,17 +58,4 @@ export async function registerUser({name, email, password}) {
     const loginResult = await login(email, password);
 
     return {...loginResult, user_id: user.id};
-}
-
-async function getLeaderGroupPermissions(leaderEmail) {
-    const doc = new GoogleSpreadsheet('1tzrGmIQbxTtB7rgLCNziNATsfBsZ5rJIuX-2hSmNRKo');
-
-    await doc.useServiceAccountAuth(secrets.serviceAccount);
-
-    await doc.loadInfo();
-    const sheet = doc.sheetsByIndex[0];
-    const rows = await sheet.getRows();
-
-    const leader = rows.find(({Email}) => Email === leaderEmail)
-    return Boolean(leader) && leader.Groups.toLowerCase() === 'true';
 }
