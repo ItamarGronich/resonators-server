@@ -1,5 +1,6 @@
 import path from "path";
 import winston from "winston";
+import { kebabCase } from "lodash";
 
 import config from "../cfg";
 import logWrapper from "./logWrapper";
@@ -18,7 +19,7 @@ export function createLogger(name) {
             ),
             transports: [
                 new winston.transports.File({
-                    filename: path.join(config.logDirectory, kebabCase(name)),
+                    filename: path.join(config.logDirectory, kebabCase(name), kebabCase(name)),
                     maxsize: 1024 * 1024 * 10,
                 }),
                 new winston.transports.Console(),
