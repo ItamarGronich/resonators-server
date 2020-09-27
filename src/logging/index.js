@@ -1,8 +1,8 @@
 import { createLogger } from "./logger";
 
-export const apiLogger = createLogger("api");
-export const emailSchedulerLogger = createLogger("emailSchedulerLog");
-export const calendarsSyncLog = createLogger("calendarsSyncLog");
-export const calendarsEventsSyncLog = createLogger("calendarsEventsSyncLog");
+export const apiLogger = createLogger("API");
+export const emailSchedulerLogger = createLogger("Email Scheduler");
+export const calendarsSyncLog = createLogger("Calendar Sync");
+export const calendarsEventsSyncLog = createLogger("Calendar Event Sync");
 
 export default apiLogger;
