@@ -10,7 +10,7 @@ import { emailSchedulerLogger as log } from '../logging';
 import { sendResonatorNotification } from "./push";
 
 export default async function scheduleEmails(getNow) {
-    log.info('[emailScheduler] fetching pending resonators');
+    log.info('Fetching pending resonators');
     const resonatorIds = await fetchPendingResonators(getNow);
 
     if (resonatorIds.length > 0) {
@@ -113,7 +113,7 @@ function sendMail(sentResonatorId, resonator, follower, leader) {
 
     if (sendCopyToLeader) msg.cc = leader.email;
 
-    log.info(`sending email for resonator: ${resonator.id}, to: ${msg.to}, leader copy: ${sendCopyToLeader && msg.cc}`);
+    log.info(`Sending email for resonator: ${resonator.id}, to: ${msg.to}, leader copy: ${sendCopyToLeader && msg.cc}`);
 
     return sendResonatorEmail(msg);
 }

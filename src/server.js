@@ -7,7 +7,7 @@ import { setVapidKeys } from "./emailScheduler/push";
 
 function startServer() {
     api.listen(cfg.port, "0.0.0.0", () => {
-        logger.info(`API running on port ${cfg.port} with ${process.env.ENV.toUpperCase()} environment`);
+        logger.info(`Running on port ${cfg.port} with ${process.env.ENV.toUpperCase()} environment`);
     });
 }
 
