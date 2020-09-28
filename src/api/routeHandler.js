@@ -11,7 +11,7 @@ export default function routeHandler(cb, options) {
 
             return await cb(req, res, ...rest);
         } catch (err) {
-            log.error(`Failed: ${JSON.stringify(err.stack, null, 2)}`);
+            log.error(err);
             res.status(500).send('Internal error');
         }
     }

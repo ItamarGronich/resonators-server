@@ -1,18 +1,28 @@
 import path from "path";
 import winston from "winston";
-import { kebabCase } from "lodash";
+import { kebabCase, isEmpty } from "lodash";
 
 import config from "../cfg";
 import logWrapper from "./logWrapper";
 
-function formatter({ timestamp, level, label, message }) {
-    return `${timestamp} [${label}] ${level.toUpperCase()}: ${message}`.trim();
+function formatMetadata(metadata) {
+    return isEmpty(metadata)
+        ? ""
+        : Object.entries(metadata)
+              .map(([key, value]) => `${key}: ${value}`)
+              .join("\n");
+}
+
+function formatter({ timestamp, level, label, message, metadata }) {
+    return `${timestamp} [${label}] ${level.toUpperCase()}: ${message}\n${formatMetadata(metadata)}`.trim();
 }
 
 export function createLogger(name) {
     return logWrapper(
         winston.createLogger({
             format: winston.format.combine(
+                winston.format.errors({ stack: true }),
+                winston.format.metadata(),
                 winston.format.timestamp(),
                 winston.format.label({ label: name }),
                 winston.format.printf(formatter)
