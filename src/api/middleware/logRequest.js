@@ -9,6 +9,7 @@ export default function (req, res, next) {
 function logRequest(request) {
     const logInfo = {
         type: "REQ",
+        id: request.id,
         url: request.path,
         method: request.method,
         ip: getClientIp(request),
@@ -25,6 +26,7 @@ function logRequest(request) {
 function logResponse(request, response) {
     const logInfo = {
         type: "RES",
+        id: request.id,
         url: request.path,
         method: request.method,
         ip: getClientIp(request),
