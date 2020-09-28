@@ -1,8 +1,6 @@
+import { apiLogger as logger } from "../../logging";
 
-
-import { apiLogger as logger } from "../logging";
-
-export default function requestLoggerMiddleware(req, res, next) {
+export default function (req, res, next) {
     logRequest(req);
     res.on("finish", () => logResponse(req, res));
     next();

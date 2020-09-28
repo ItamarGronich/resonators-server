@@ -9,9 +9,7 @@ import cookieParserMiddleware from "cookie-parser";
 import ctxMiddleware from "request-local/middleware";
 import requestIdMiddleware from "express-request-id";
 
-import uowMiddleware from "./uowMiddleware";
-import appSession from "./appSessionMiddleware";
-import requestLogger from "./requestLoggerMiddleware";
+import { uow, appSession, logRequest } from "./middleware";
 
 const app = express();
 
@@ -23,12 +21,12 @@ app.use((req, res, next) => {
 
 app.use(cors());
 app.use(userAgent.express());
-app.use(requestLogger);
+app.use(logRequest);
 app.use(compressionMiddleware());
 app.use(cookieParserMiddleware());
 app.use(requestIdMiddleware());
 app.use(appSession);
-app.use(uowMiddleware);
+app.use(uow);
 app.use(bodyParser.json());
 
 export default app;
