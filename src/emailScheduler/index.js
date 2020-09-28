@@ -1,13 +1,13 @@
-import scheduleEmails from './scheduleEmails';
-import createJob from '../createJob';
-import {emailSchedulerLogger as log} from '../logging';
+import createJob from "../createJob";
+import scheduleEmails from "./scheduleEmails";
+import { emailSchedulerLogger as log } from "../logging";
 
-const Interval = 6 * 1000;
+const interval = 6 * 1000;
 
 export default createJob({
+    interval,
     runner: scheduleEmails,
-    interval: Interval,
-    onStart: () => log.info(`starting email scheduler loop. interval: ${Interval}`),
-    onStop: log.info('stopped email scheduler loop.'),
-    onError: err => log.error(err)
+    onStart: () => log.info(`Starting scheduler with interval of ${interval} ms`),
+    onStop: () => log.info("Stopped scheduler"),
+    onError: log.error,
 });
