@@ -1,15 +1,21 @@
 import path from "path";
 import winston from "winston";
+import indent from "indent-string";
 import { kebabCase, isEmpty } from "lodash";
 
 import config from "../cfg";
 
+const INDENTATION = 2;
+
 function formatMetadata(metadata) {
     return isEmpty(metadata)
         ? ""
-        : Object.entries(metadata)
-              .map(([key, value]) => `${key}: ${JSON.stringify(value, null, 2)}`)
-              .join("\n");
+        : indent(
+              Object.entries(metadata)
+                  .map(([key, value]) => `${key}: ${JSON.stringify(value, null, INDENTATION)}`)
+                  .join("\n"),
+              INDENTATION
+          );
 }
 
 function formatter({ timestamp, level, label, message, metadata }) {
