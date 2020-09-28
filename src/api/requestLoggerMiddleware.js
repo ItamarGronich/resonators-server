@@ -1,36 +1,42 @@
-import log from '../logging';
+
+
+import { apiLogger as logger } from "../logging";
 
 export default function requestLoggerMiddleware(req, res, next) {
-    const method = req.method;
-    const path = req.path;
-    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    const ua = req.useragent.source;
+    logRequest(req);
+    res.on("finish", () => logResponse(req, res));
+    next();
+}
 
-    const reqMsg = {
-        ip: ip,
-        method: method,
-        type: 'REQ',
-        url: path,
-        userAgent: ua
+function logRequest(request) {
+    const logInfo = {
+        type: "REQ",
+        url: request.path,
+        method: request.method,
+        ip: getClientIp(request),
+        userAgent: request.useragent.source,
     };
 
-    if (req.method === 'post')
-        reqMsg.body = req.body;
+    if (request.method === "post") {
+        logInfo.body = request.body;
+    }
 
-    log.info(reqMsg);
+    logger.info(logInfo);
+}
 
-    res.on('finish', () => {
-        const resMsg = {
-            ip: ip,
-            method: method,
-            type: 'RES',
-            url: path,
-            statusCode: res.statusCode,
-            userAgent: ua
-        };
+function logResponse(request, response) {
+    const logInfo = {
+        type: "RES",
+        url: request.path,
+        method: request.method,
+        ip: getClientIp(request),
+        statusCode: response.statusCode,
+        userAgent: request.useragent.source,
+    };
 
-        log.info(resMsg);
-    });
+    logger.info(logInfo);
+}
 
-    next();
+function getClientIp(request) {
+    return request.headers["x-forwarded-for"] || request.connection.remoteAddress;
 }
