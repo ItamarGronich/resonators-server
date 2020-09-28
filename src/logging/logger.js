@@ -6,6 +6,7 @@ import { kebabCase, isEmpty } from "lodash";
 import config from "../cfg";
 
 const INDENTATION = 2;
+const TIMESTAMP_FORMAT = "YYYY-MM-DD HH:mm:ss.SSS";
 
 function formatMetadata(metadata) {
     return isEmpty(metadata)
@@ -28,8 +29,8 @@ export function createLogger(name) {
         format: winston.format.combine(
             winston.format.errors({ stack: true }),
             winston.format.metadata(),
-            winston.format.timestamp(),
             winston.format.label({ label: name }),
+            winston.format.timestamp({ format: TIMESTAMP_FORMAT }),
             winston.format.printf(formatter)
         ),
         transports: [
