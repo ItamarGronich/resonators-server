@@ -18,6 +18,7 @@ function formatter({ timestamp, level, label, message, metadata }) {
 
 export function createLogger(name) {
     return winston.createLogger({
+        level: "http",
         format: winston.format.combine(
             winston.format.errors({ stack: true }),
             winston.format.metadata(),
