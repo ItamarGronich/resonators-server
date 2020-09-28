@@ -11,15 +11,15 @@ import { uow, appSession, logRequest } from "./middleware";
 
 const app = express();
 
-app.use(ctxMiddleware.create());
 app.use(cors());
+app.use(requestIdMiddleware());
+app.use(ctxMiddleware.create());
 app.use(userAgent.express());
-app.use(logRequest);
 app.use(compressionMiddleware());
 app.use(cookieParserMiddleware());
-app.use(requestIdMiddleware());
+app.use(bodyParser.json());
 app.use(appSession);
 app.use(uow);
-app.use(bodyParser.json());
+app.use(logRequest);
 
 export default app;
