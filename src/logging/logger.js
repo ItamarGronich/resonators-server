@@ -25,7 +25,7 @@ function formatter({ timestamp, level, label, message, metadata }) {
 
 export function createLogger(name) {
     const logger = winston.createLogger({
-        level: "http",
+        level: "debug",
         format: winston.format.combine(
             winston.format.errors({ stack: true }),
             winston.format.metadata(),
