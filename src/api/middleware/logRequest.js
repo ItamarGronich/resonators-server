@@ -19,7 +19,7 @@ function logRequest(request) {
         logInfo.body = request.body;
     }
 
-    logger.info(logInfo);
+    logger.http(logInfo);
 }
 
 function logResponse(request, response) {
@@ -32,7 +32,7 @@ function logResponse(request, response) {
         userAgent: request.useragent.source,
     };
 
-    logger.info(logInfo);
+    logger.http(logInfo);
 }
 
 function getClientIp(request) {
