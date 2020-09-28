@@ -7,36 +7,21 @@ export default function (req, res, next) {
 }
 
 function logRequest(request) {
-    const logInfo = {
-        type: "REQ",
+    logger.http(`${request.method} ${request.path}`, {
         id: request.id,
-        url: request.path,
-        method: request.method,
-        ip: getClientIp(request),
-        userAgent: request.useragent.source,
-    };
-
-    if (request.method === "post") {
-        logInfo.body = request.body;
-    }
-
-    logger.http(logInfo);
+        client: getClient(request),
+        ...(request.body && { body: request.body }),
+    });
 }
 
 function logResponse(request, response) {
-    const logInfo = {
-        type: "RES",
-        id: request.id,
-        url: request.path,
-        method: request.method,
-        ip: getClientIp(request),
-        statusCode: response.statusCode,
-        userAgent: request.useragent.source,
-    };
-
-    logger.http(logInfo);
+    logger.http(`${response.statusCode} ${request.path}`, {
+        request: request.id,
+    });
 }
 
-function getClientIp(request) {
-    return request.headers["x-forwarded-for"] || request.connection.remoteAddress;
+function getClient(request) {
+    const ip = request.headers["x-forwarded-for"] || request.connection.remoteAddress;
+    const userAgent = request.useragent.source;
+    return `${ip} ${userAgent}`;
 }
