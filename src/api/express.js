@@ -1,7 +1,5 @@
 import cors from "cors";
 import express from "express";
-import ctx from "request-local";
-import { v4 as uuid } from "uuid";
 import bodyParser from "body-parser";
 import userAgent from "express-useragent";
 import compressionMiddleware from "compression";
@@ -14,11 +12,6 @@ import { uow, appSession, logRequest } from "./middleware";
 const app = express();
 
 app.use(ctxMiddleware.create());
-app.use((req, res, next) => {
-    ctx.data.sessionId = uuid();
-    next();
-});
-
 app.use(cors());
 app.use(userAgent.express());
 app.use(logRequest);
