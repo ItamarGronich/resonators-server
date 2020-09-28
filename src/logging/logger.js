@@ -1,3 +1,4 @@
+import { EOL } from "os";
 import path from "path";
 import winston from "winston";
 import indent from "indent-string";
@@ -14,21 +15,22 @@ function formatMetadata(metadata) {
         : indent(
               Object.entries(metadata)
                   .map(([key, value]) => `${key}: ${JSON.stringify(value, null, INDENTATION)}`)
-                  .join("\n"),
+                  .join(EOL),
               INDENTATION
           );
 }
 
-function formatter({ timestamp, level, label, message, metadata }) {
-    return `${timestamp} [${label}] ${level.toUpperCase()}: ${message}\n${formatMetadata(metadata)}`.trim();
+function formatter({ timestamp, level, label, message, stack, metadata }) {
+    const logMessage = `${timestamp} [${label}] ${level.toUpperCase()}: ${message}`;
+    return [logMessage, stack, formatMetadata(metadata)].filter(Boolean).join(EOL).trim();
 }
 
 export function createLogger(name) {
     const logger = winston.createLogger({
         level: "debug",
         format: winston.format.combine(
-            winston.format.errors({ stack: true }),
             winston.format.metadata(),
+            winston.format.errors({ stack: true }),
             winston.format.label({ label: name }),
             winston.format.timestamp({ format: TIMESTAMP_FORMAT }),
             winston.format.printf(formatter)
