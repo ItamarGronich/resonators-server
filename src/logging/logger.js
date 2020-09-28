@@ -8,7 +8,7 @@ function formatMetadata(metadata) {
     return isEmpty(metadata)
         ? ""
         : Object.entries(metadata)
-              .map(([key, value]) => `${key}: ${value}`)
+              .map(([key, value]) => `${key}: ${JSON.stringify(value, null, 2)}`)
               .join("\n");
 }
 
