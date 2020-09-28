@@ -17,7 +17,7 @@ export default class ResonatorStats {
             answers = this.criteria[question_id] = [];
 
         if (answers.find(a => a.sent_resonator_id === sent_resonator_id)) {
-            log.info(`trying to add an answer with an existing sent_resonator_id: ${sent_resonator_id}`);
+            log.warn(`Trying to add an answer to an existing sent resonator: ${sent_resonator_id}`);
             return;
         }
 

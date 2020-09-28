@@ -11,16 +11,16 @@ const CreateCalendarsInteval = 30 * 1000;
 export default createJob({
     runner: createCalendarsForGoogleUsers,
     interval: CreateCalendarsInteval,
-    onStart: () => log.info('starting loop'),
-    onStop: () => log.info('stopping loop'),
-    onError: err => log.error('failed syncing calendars', err)
+    onStart: () => log.info(`Starting with interval of ${CreateCalendarsInteval} ms`),
+    onStop: () => log.info('Stopping calendar sync'),
+    onError: log.error,
 });
 
 async function createCalendarsForGoogleUsers() {
     const accountsWithoutCalendars = await
         leaderCalendarRepository.getGoogleAccountsWithoutCalendars();
 
-    log.info(`[CalendarSync] fetched ${accountsWithoutCalendars.length} pending accounts`);
+    log.info(`Fetched ${accountsWithoutCalendars.length} pending accounts`);
 
     const uow = createUow();
 
@@ -28,7 +28,7 @@ async function createCalendarsForGoogleUsers() {
         try {
             const {leader, googleAccount} = account;
 
-            log.info(`creating a Resonators calendar for googleAccountId: ${googleAccount.id}`);
+            log.info(`Creating a Resonators calendar for Google account ${googleAccount.id}`);
 
             const calendar = await createCalendar(googleAccount.getTokens(), {
                 resource: {
@@ -41,7 +41,7 @@ async function createCalendarsForGoogleUsers() {
                 uow.trackEntity(new LeaderCalendar({ leader_id: leader.id, calendar_id }), {isNew: true});
             }
         } catch (err) {
-            log.error('failed syncing calendar for google account', err);
+            log.error(`Failed syncing calendar for ${account.googleAccount.id}`, err);
         }
     }
 
