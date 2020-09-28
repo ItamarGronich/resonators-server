@@ -1,3 +1,5 @@
+import { isEmpty } from "lodash";
+
 import { apiLogger as logger } from "../../logging";
 
 export default function (req, res, next) {
@@ -10,7 +12,7 @@ function logRequest(request) {
     logger.http(`${request.method} ${request.path}`, {
         id: request.id,
         client: getClient(request),
-        ...(request.body && { body: request.body }),
+        ...(isEmpty(request.body) || { body: request.body }),
     });
 }
 
