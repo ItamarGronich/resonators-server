@@ -23,7 +23,7 @@ function formatter({ timestamp, level, label, message, metadata }) {
 }
 
 export function createLogger(name) {
-    return winston.createLogger({
+    const logger = winston.createLogger({
         level: "http",
         format: winston.format.combine(
             winston.format.errors({ stack: true }),
@@ -39,7 +39,12 @@ export function createLogger(name) {
                 maxFiles: config.logging.maxFiles,
                 tailable: true,
             }),
-            new winston.transports.Console(),
         ],
     });
+
+    if (process.env.ENV !== "production") {
+        logger.add(new winston.transports.Console());
+    }
+
+    return logger;
 }
