@@ -10,6 +10,8 @@ import getUow from './getUow';
 import FollowerGroupFollower from '../domain/entities/followerGroupFollower';
 import { v4 as uuid } from 'uuid';
 import * as R from 'ramda';
+import { GoogleSpreadsheet } from 'google-spreadsheet';
+import secrets from '../cfg/secrets';
 
 
 export const getLeaderFollowerGroups = async (leader_id) => {
@@ -118,6 +120,27 @@ export async function unfreezeFollowerGroup(followerGroupId) {
         await getUow().commit();
         return true;
     }
+}
+
+export async function checkLeaderGroupPermissions(user) {
+    const uow = getUow();
+
+    const leader = await leaderRepository.findByUserId(user.id)
+    if (!leader)
+        return;
+
+    const doc = new GoogleSpreadsheet(secrets.permissionsSheet.sheetId);
+
+    await doc.useServiceAccountAuth(secrets.serviceAccount);
+
+    await doc.loadInfo();
+    const sheet = doc.sheetsByIndex[0];
+    const rows = await sheet.getRows();
+
+    const sheetLeader = rows.find(({Email}) => Email && Email.toLowerCase() === user.email.toLowerCase())
+    const permission = Boolean(sheetLeader) && sheetLeader.Groups.toLowerCase() === 'true';
+    leader.group_permissions = permission;
+    await uow.commit();
 }
 
 const removeFollowerFromGroup = async (followerGroupId, followerId) =>
