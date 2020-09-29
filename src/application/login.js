@@ -2,11 +2,18 @@ import {user_logins as UserLogin} from '../db/sequelize/models';
 import { v4 as uuid } from "uuid";
 import userRepository from '../db/repositories/UserRepository.js';
 import * as dtoFactory from './dto/index.js'
+import log from '../infra/log';
+import { checkLeaderGroupPermissions } from "./leaderFollowerGroups";
 
 export default async function login(email, pass) {
     const user = await userRepository.findByEmail(email);
 
     if (user) {
+        try {
+            await checkLeaderGroupPermissions(user);
+        } catch (e) {
+            log.error(`Could not verify leader's permissions`, e);
+        }
         return await authenticate(user, pass);
     } else {
         return {

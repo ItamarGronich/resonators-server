@@ -7,6 +7,8 @@ import userRepository from '../db/repositories/UserRepository';
 import { v4 as uuid } from "uuid";
 import login from './login';
 
+
+
 export async function registerUser({name, email, password}) {
     const existingUser = await userRepository.findByEmail(email);
 
