@@ -8,6 +8,7 @@ import { loginByUserEntity } from "../login";
 import getUow from "../getUow";
 import cfg from "../../cfg";
 import log from "../../logging";
+import { checkLeaderGroupPermissions } from "../leaderFollowerGroups";
 
 const { loginRedirectUrl } = cfg.google;
 
@@ -31,12 +32,17 @@ export async function loginGoogleUser(googleAuthCode) {
 
         if (existingGoogleUserAccount) {
             const user = await userRepository.findByPk(existingGoogleUserAccount.user_id);
+            try {
+                await checkLeaderGroupPermissions(user);
+            } catch (e) {
+                log.error(`Could not verify leader's permissions`, e);
+            }
             loginResult = await loginByUserEntity(user);
             log.info("Updating existing Google account");
             updateGoogleAccount(existingGoogleUserAccount, tokens);
             await getUow().commit();
         } else {
-            log.info("Registering new Google account")
+            log.info("Registering new Google account");
             loginResult = await registerGoogleUser(tokens, googleDetails);
         }
 
