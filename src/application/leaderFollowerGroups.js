@@ -11,7 +11,7 @@ import FollowerGroupFollower from '../domain/entities/followerGroupFollower';
 import { v4 as uuid } from 'uuid';
 import * as R from 'ramda';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
-import secrets from '../cfg/secrets';
+import cfg from '../cfg';
 
 
 export const getLeaderFollowerGroups = async (leader_id) => {
@@ -129,9 +129,9 @@ export async function checkLeaderGroupPermissions(user) {
     if (!leader)
         return;
 
-    const doc = new GoogleSpreadsheet(secrets.permissionsSheet.sheetId);
+    const doc = new GoogleSpreadsheet(cfg.permissionsSheet.sheetId);
 
-    await doc.useServiceAccountAuth(secrets.serviceAccount);
+    await doc.useServiceAccountAuth(cfg.serviceAccount);
 
     await doc.loadInfo();
     const sheet = doc.sheetsByIndex[0];
