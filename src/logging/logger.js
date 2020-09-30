@@ -3,7 +3,7 @@ import winston from "winston";
 import { kebabCase } from "lodash";
 
 import config from "../cfg";
-import formatLog from "./format";
+import formatLog from "./formatting";
 
 const TIMESTAMP_FORMAT = "YYYY-MM-DD HH:mm:ss.SSS";
 
