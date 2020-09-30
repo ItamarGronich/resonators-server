@@ -5,8 +5,6 @@ import { kebabCase } from "lodash";
 import config from "../cfg";
 import formatLog from "./formatting";
 
-const TIMESTAMP_FORMAT = "YYYY-MM-DD HH:mm:ss.SSS";
-
 /**
  * Creates a new logger instance to be used by a component of the system.
  *
@@ -20,7 +18,7 @@ export function createLogger(name) {
             winston.format.errors({ stack: true }), // extract error stacks from error objects
             winston.format.metadata(), // support extra details appended to logs (useful for debugging)
             winston.format.label({ label: name }), // label log messages by their name
-            winston.format.timestamp({ format: TIMESTAMP_FORMAT }), // add log timestamps
+            winston.format.timestamp({ format: config.logging.timestampFormat }), // add log timestamps
             winston.format.printf(formatLog) // finalize and format into a string
         ),
         transports: [

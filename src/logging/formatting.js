@@ -2,6 +2,8 @@ import { EOL } from "os";
 import { isEmpty } from "lodash";
 import indent from "indent-string";
 
+import config from "../cfg";
+
 /**
  * Formats the core part of a log message.
  */
@@ -13,7 +15,7 @@ function formatMessage({ timestamp, level, label, message }) {
  * Serializes any metadata value in a readable fashion.
  */
 function serialize(value) {
-    return JSON.stringify(value, null, 4);
+    return JSON.stringify(value, null, config.logging.metadataIndentation);
 }
 
 /**
@@ -27,7 +29,7 @@ function formatExtraDetails(details) {
 
 /**
  * Formats any metadata attached to the log message.
- * 
+ *
  * Error stacks are separated and printed as-is before other details.
  */
 function formatMetadata({ stack, ...extra }) {
@@ -41,5 +43,5 @@ function formatMetadata({ stack, ...extra }) {
 export default function formatLog(info) {
     const message = formatMessage(info);
     const metadata = formatMetadata(info.metadata);
-    return metadata ? [message, indent(metadata, 4)].join(EOL) : message;
+    return metadata ? [message, indent(metadata, config.logging.metadataIndentation)].join(EOL) : message;
 }

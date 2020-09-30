@@ -16,5 +16,7 @@ export default {
         directory: path.join(__dirname, "../../logs"),
         maxFileSize: 1024 * 1024,
         maxFiles: 10,
+        timestampFormat: "YYYY-MM-DD HH:mm:ss.SSS",
+        metadataIndentation: 4,
     },
 };
