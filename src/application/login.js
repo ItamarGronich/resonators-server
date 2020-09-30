@@ -1,8 +1,9 @@
-import {user_logins as UserLogin} from '../db/sequelize/models';
 import { v4 as uuid } from "uuid";
-import userRepository from '../db/repositories/UserRepository.js';
-import * as dtoFactory from './dto/index.js'
-import log from '../infra/log';
+
+import log from "../logging";
+import * as dtoFactory from "./dto/index.js";
+import userRepository from "../db/repositories/UserRepository.js";
+import { user_logins as UserLogin } from "../db/sequelize/models";
 import { checkLeaderGroupPermissions } from "./leaderFollowerGroups";
 
 export default async function login(email, pass) {
@@ -18,7 +19,7 @@ export default async function login(email, pass) {
     } else {
         return {
             isValid: false,
-            user: null
+            user: null,
         };
     }
 }
@@ -28,22 +29,24 @@ export async function loginByUserEntity(userEntity) {
 
     await UserLogin.create({
         id: loginId,
-        user_id: userEntity.id
+        user_id: userEntity.id,
     });
 
     const user = dtoFactory.toUser(userEntity);
 
-    return {user, isValid: true, loginId};
+    return { user, isValid: true, loginId };
 }
 
 async function authenticate(userEntity, pass) {
-    let user = null, isValid = false, loginId;
+    let user = null,
+        isValid = false,
+        loginId;
 
     isValid = userEntity.passwordsMatch(pass);
 
     if (isValid) {
-        ({user, isValid, loginId} = await loginByUserEntity(userEntity));
+        ({ user, isValid, loginId } = await loginByUserEntity(userEntity));
     }
 
-    return {user, isValid, loginId};
+    return { user, isValid, loginId };
 }

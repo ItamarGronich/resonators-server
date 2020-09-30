@@ -1,4 +1,4 @@
-import log from '../infra/log';
+import log from '../logging';
 import followerGroupRepository from '../db/repositories/FollowerGroupRepository';
 import followerGroupFollowerRepository from '../db/repositories/FollowerGroupFollowersRepository';
 import resonatorRepository from '../db/repositories/ResonatorRepository';
@@ -104,7 +104,7 @@ export async function freezeFollowerGroup(followerGroupId) {
     const followerGroup = await followerGroupRepository.findByPk(followerGroupId);
 
     if (followerGroup) {
-        log.info('freezing follower group', followerGroupId);
+        log.info(`Freezing follower group ${followerGroupId}`);
         followerGroup.freeze();
         await getUow().commit();
         return true;
@@ -115,7 +115,7 @@ export async function unfreezeFollowerGroup(followerGroupId) {
     const followerGroup = await followerGroupRepository.findByPk(followerGroupId);
 
     if (followerGroup) {
-        log.info('unfreezing follower group', followerGroupId);
+        log.info(`Unfreezing follower group ${followerGroupId}`);
         followerGroup.unfreeze();
         await getUow().commit();
         return true;

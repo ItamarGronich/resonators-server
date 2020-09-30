@@ -6,13 +6,14 @@ import renderResonatorEmail from '../emailRenderer/index';
 import sendResonatorEmail from './sendResonatorEmail';
 import cfg from '../cfg';
 import { v4 as uuid } from "uuid";
-import { emailSchedulerLogger as log } from '../infra/log';
+import { emailSchedulerLogger as log } from '../logging';
 import { sendResonatorNotification } from "./push";
 
 export default async function scheduleEmails(getNow) {
-    log.info('[emailScheduler] fetching pending resonators');
+    log.info('Fetching pending resonators');
     const resonatorIds = await fetchPendingResonators(getNow);
-
+    log.info(`Found ${resonatorIds.length} resonators to be sent`);
+    
     if (resonatorIds.length > 0) {
         const resonatorData = await getResonatorsData(resonatorIds);
 
@@ -113,7 +114,10 @@ function sendMail(sentResonatorId, resonator, follower, leader) {
 
     if (sendCopyToLeader) msg.cc = leader.email;
 
-    log.info(`sending email for resonator: ${resonator.id}, to: ${msg.to}, leader copy: ${sendCopyToLeader && msg.cc}`);
+    log.info(`Sending email for resonator ${resonator.id} to ${msg.to}`, {
+        leader: `${leader.name} | ${leader.email}`,
+        "leader copy": sendCopyToLeader
+    });
 
     return sendResonatorEmail(msg);
 }
