@@ -25,6 +25,7 @@ export default class Resonator {
         interaction_type,
         selected_questionnaire,
         questionnaire_details,
+        interval,
         items,
         questions,
         createdAt,
@@ -58,6 +59,7 @@ export default class Resonator {
         this.interaction_type = interaction_type;
         this.selected_questionnaire = selected_questionnaire;
         this.questionnaire_details = questionnaire_details;
+        this.interval = interval;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
 

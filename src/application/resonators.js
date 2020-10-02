@@ -41,7 +41,7 @@ export async function updateResonator(resonator_id, updatedFields) {
 
     updatePermittedFields(resonator, updatedFields, [
         'title', 'link', 'description', 'content', 'repeat_days', 'disable_copy_to_leader', 'pop_email', 'pop_time',
-        'one_off', 'ttl_policy', 'interaction_type', 'selected_questionnaire', 'questionnaire_details'
+        'one_off', 'ttl_policy', 'interaction_type', 'selected_questionnaire', 'questionnaire_details', 'interval'
     ]);
 
     await getUow().commit();

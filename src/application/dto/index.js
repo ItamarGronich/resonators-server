@@ -66,6 +66,7 @@ export function toResonator(resonator) {
                        'interaction_type',
                        'selected_questionnaire',
                        'questionnaire_details',
+                       'interval',
                        'createdAt',
                        'updatedAt'
                       );
