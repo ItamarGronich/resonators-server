@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
             interaction_type: DataTypes.INTEGER,
             selected_questionnaire: DataTypes.STRING,
             questionnaire_details: DataTypes.STRING,
+            interval: DataTypes.INTEGER,
         },
         { underscored: true }
     );
