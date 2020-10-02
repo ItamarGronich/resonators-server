@@ -12,6 +12,7 @@ function buildQuery(timestamp) {
                AND (last_pop_time IS NULL OR date(${timestamp}) > date(coalesce(last_pop_time, '1970-01-01')))
                AND ${timestamp}::timestamp::time >= pop_time::time
                AND position(extract(dow from ${timestamp}::timestamp)::char IN repeat_days) > 0
+               AND (extract(week from ${timestamp}::timestamp) - extract(week from last_pop_time::timestamp))::int % interval = 0
                AND pop_email = TRUE
                AND fu.id IS NOT NULL
                AND lu.id IS NOT NULL
