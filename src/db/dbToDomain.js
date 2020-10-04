@@ -78,6 +78,7 @@ export function toResonator(r) {
         interaction_type: r.get('interaction_type'),
         selected_questionnaire: r.get('selected_questionnaire'),
         questionnaire_details: r.get('questionnaire_details'),
+        interval: r.get('interval'),
         items: resonator_attachments,
         questions: resonator_questions,
         createdAt: r.get('createdAt'),
