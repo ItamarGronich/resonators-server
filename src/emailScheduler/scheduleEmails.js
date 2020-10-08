@@ -64,6 +64,7 @@ function getResonatorData(resonatorId) {
 function sendNewResonator({ resonator, followerUser, leaderUser }) {
     return recordSentResonator({ id: resonator.id })
         .then((sentResonator) => {
+            log.info(`Sending new resonator ${sentResonator.id} for template resonator ${resonator.id}`);
             sendMail(sentResonator.id, resonator, followerUser, leaderUser);
             sendResonatorNotification(sentResonator, resonator, followerUser);
         })
