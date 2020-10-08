@@ -2,7 +2,7 @@ import createJob from "../createJob";
 import scheduleEmails from "./scheduleEmails";
 import { emailSchedulerLogger as log } from "../logging";
 
-const interval = 6 * 1000;
+const interval = 60 * 1000;
 
 export default createJob({
     interval,
