@@ -1,18 +1,29 @@
-import fetchPendingResonators from './fetchPendingResonators';
-import { resonators, resonator_attachments, followers, leaders, users, resonator_questions, questions, answers, sent_resonators } from '../db/sequelize/models';
-import * as dbToDomain from '../db/dbToDomain';
-import renderResonatorEmail from '../emailRenderer/index';
-import sendResonatorEmail from './sendResonatorEmail';
-import cfg from '../cfg';
 import { v4 as uuid } from "uuid";
-import { emailSchedulerLogger as log } from '../logging';
+
+import cfg from "../cfg";
+import * as dbToDomain from "../db/dbToDomain";
+import renderResonatorEmail from "../emailRenderer";
+import sendResonatorEmail from "./sendResonatorEmail";
+import fetchPendingResonators from "./fetchPendingResonators";
+import { emailSchedulerLogger as log } from "../logging";
 import { sendResonatorNotification } from "./push";
+import {
+    resonators,
+    resonator_attachments,
+    followers,
+    leaders,
+    users,
+    resonator_questions,
+    questions,
+    answers,
+    sent_resonators,
+} from "../db/sequelize/models";
 
 export default async function scheduleEmails(getNow) {
-    log.info('Fetching pending resonators');
+    log.info("Fetching pending resonators");
     const resonatorIds = await fetchPendingResonators(getNow);
     log.info(`Found ${resonatorIds.length} resonators to be sent`);
-    
+
     if (resonatorIds.length > 0) {
         const resonatorData = await getResonatorsData(resonatorIds);
         const emailPromises = resonatorData.map(sendNewResonator);
@@ -23,31 +34,39 @@ export default async function scheduleEmails(getNow) {
 }
 
 function getResonatorsData(resonatorIds) {
-    const promises = resonatorIds.map(id => {
-        return resonators.findOne({
-            where: {
-                id
-            },
-            include: [
-                resonator_attachments, {
-                model: followers,
-                include: [users]
-            }, {
-                model: leaders,
-                include: [users]
-            }, {
-                model: resonator_questions,
-                include: [{
-                    model: questions,
-                    include: [answers]
-                }]
-            }]
-        }).then(row => {
-            const resonator = dbToDomain.toResonator(row);
-            const followerUser = dbToDomain.toUser(row.follower.user);
-            const leaderUser = dbToDomain.toUser(row.leader.user);
-            return {resonator, followerUser, leaderUser};
-        });
+    const promises = resonatorIds.map((id) => {
+        return resonators
+            .findOne({
+                where: {
+                    id,
+                },
+                include: [
+                    resonator_attachments,
+                    {
+                        model: followers,
+                        include: [users],
+                    },
+                    {
+                        model: leaders,
+                        include: [users],
+                    },
+                    {
+                        model: resonator_questions,
+                        include: [
+                            {
+                                model: questions,
+                                include: [answers],
+                            },
+                        ],
+                    },
+                ],
+            })
+            .then((row) => {
+                const resonator = dbToDomain.toResonator(row);
+                const followerUser = dbToDomain.toUser(row.follower.user);
+                const leaderUser = dbToDomain.toUser(row.leader.user);
+                return { resonator, followerUser, leaderUser };
+            });
     });
 
     return Promise.all(promises);
@@ -91,7 +110,7 @@ function sendMail(sentResonatorId, resonator, follower, leader) {
 
     log.info(`Sending email for resonator ${resonator.id} to ${msg.to}`, {
         leader: `${leader.name} | ${leader.email}`,
-        "leader copy": sendCopyToLeader
+        "leader copy": sendCopyToLeader,
     });
 
     return sendResonatorEmail(msg);
@@ -104,26 +123,32 @@ function recordSentResonator({ id, ttl_policy }) {
         id: uuid(),
         resonator_id: id,
         // expiry_date: expiryDate,
-        failed: false
+        failed: false,
     });
 }
 
 function setResonatorLastSentTime(resonatorId) {
-    return resonators.update({
-        last_pop_time: new Date()
-    }, {
-        where: {
-            id: resonatorId
+    return resonators.update(
+        {
+            last_pop_time: new Date(),
+        },
+        {
+            where: {
+                id: resonatorId,
+            },
         }
-    });
+    );
 }
 
 function disableResonatorForSendOneOff(resonatorId) {
-    return resonators.update({
-        pop_email: false
-    }, {
-        where: {
-            id: resonatorId
+    return resonators.update(
+        {
+            pop_email: false,
+        },
+        {
+            where: {
+                id: resonatorId,
+            },
         }
-    });
+    );
 }
