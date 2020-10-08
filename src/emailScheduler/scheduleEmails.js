@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import fetchPendingResonators from './fetchPendingResonators';
-import { resonators, resonator_attachments, followers, follower_groups, leaders, users, resonator_questions, questions, answers, sent_resonators } from '../db/sequelize/models';
+import { resonators, resonator_attachments, followers, leaders, users, resonator_questions, questions, answers, sent_resonators } from '../db/sequelize/models';
 import * as dbToDomain from '../db/dbToDomain';
 import renderResonatorEmail from '../emailRenderer/index';
 import sendResonatorEmail from './sendResonatorEmail';
@@ -20,7 +20,6 @@ export default async function scheduleEmails(getNow) {
         const emailPromises = _(resonatorData).map(async ({
             resonator,
             followerUser,
-            follower,
             leaderUser
         }) => {
             if (followerUser.unsubscribed) {
@@ -62,10 +61,9 @@ function getResonatorsData(resonatorIds) {
             }]
         }).then(row => {
             const resonator = dbToDomain.toResonator(row);
-            const follower = dbToDomain.toFollower(row.follower);
             const followerUser = dbToDomain.toUser(row.follower.user);
             const leaderUser = dbToDomain.toUser(row.leader.user);
-            return {resonator, follower, followerUser, leaderUser};
+            return {resonator, followerUser, leaderUser};
         });
     });
 
