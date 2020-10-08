@@ -65,7 +65,7 @@ function sendNewResonator({ resonator, followerUser, leaderUser }) {
     return recordSentResonator({ id: resonator.id })
         .then((sentResonator) => {
             log.info(`Sending new resonator ${sentResonator.id} for template resonator ${resonator.id}`);
-            sendMail(sentResonator.id, resonator, followerUser, leaderUser);
+            sendMail(sentResonator, resonator, followerUser, leaderUser);
             sendResonatorNotification(sentResonator, resonator, followerUser);
         })
         .then(() => setResonatorLastSentTime(resonator.id))
@@ -75,7 +75,7 @@ function sendNewResonator({ resonator, followerUser, leaderUser }) {
         });
 }
 
-function sendMail(sentResonatorId, resonator, follower, leader) {
+function sendMail(sentResonator, resonator, follower, leader) {
     if (follower.unsubscribed) {
         return Promise.resolve();
     }
@@ -83,8 +83,8 @@ function sendMail(sentResonatorId, resonator, follower, leader) {
     const html = renderResonatorEmail({
         resonator,
         host: cfg.host,
-        sentResonatorId,
         recipientUser: follower,
+        sentResonatorId: sentResonator.id,
     });
 
     const msg = {
