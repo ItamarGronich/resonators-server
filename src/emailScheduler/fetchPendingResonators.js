@@ -14,6 +14,7 @@ function buildQuery(timestamp) {
                AND position(extract(dow from ${timestamp}::timestamp)::char IN repeat_days) > 0
                AND (last_pop_time IS NULL OR ((extract(week from ${timestamp}::timestamp) - extract(week from last_pop_time::timestamp))::int % interval = 0))
                AND pop_email = TRUE
+               AND NOT f.frozen
                AND fu.id IS NOT NULL
                AND lu.id IS NOT NULL
                AND r.follower_group_id IS NULL`;

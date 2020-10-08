@@ -33,10 +33,6 @@ export default async function scheduleEmails(getNow) {
                 return Promise.resolve();
             }
 
-            if (follower.frozen) {
-                return Promise.resolve();
-            }
-
             return sendNewResonator({
                 resonator,
                 followerUser,
