@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import fetchPendingResonators from './fetchPendingResonators';
 import { resonators, resonator_attachments, followers, leaders, users, resonator_questions, questions, answers, sent_resonators } from '../db/sequelize/models';
 import * as dbToDomain from '../db/dbToDomain';
@@ -16,19 +15,7 @@ export default async function scheduleEmails(getNow) {
     
     if (resonatorIds.length > 0) {
         const resonatorData = await getResonatorsData(resonatorIds);
-
-        const emailPromises = _(resonatorData).map(async ({
-            resonator,
-            followerUser,
-            leaderUser
-        }) => {
-            return sendNewResonator({
-                resonator,
-                followerUser,
-                leaderUser
-            });
-        }).value();
-
+        const emailPromises = resonatorData.map(sendNewResonator);
         return Promise.all(emailPromises);
     } else {
         return Promise.resolve();
