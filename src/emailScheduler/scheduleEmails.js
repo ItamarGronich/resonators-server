@@ -23,53 +23,42 @@ export default async function scheduleEmails(getNow) {
     log.info("Fetching pending resonators");
     const resonatorIds = await fetchPendingResonators(getNow);
     log.info(`Found ${resonatorIds.length} resonators to be sent`);
-
-    if (resonatorIds.length > 0) {
-        const resonatorData = await getResonatorsData(resonatorIds);
-        const emailPromises = resonatorData.map(sendNewResonator);
-        return Promise.all(emailPromises);
-    } else {
-        return Promise.resolve();
-    }
+    return Promise.all(resonatorIds.map((id) => getResonatorData(id).then(sendNewResonator)));
 }
 
-function getResonatorsData(resonatorIds) {
-    const promises = resonatorIds.map((id) => {
-        return resonators
-            .findOne({
-                where: {
-                    id,
+function getResonatorData(resonatorId) {
+    return resonators
+        .findOne({
+            where: {
+                id: resonatorId,
+            },
+            include: [
+                resonator_attachments,
+                {
+                    model: followers,
+                    include: [users],
                 },
-                include: [
-                    resonator_attachments,
-                    {
-                        model: followers,
-                        include: [users],
-                    },
-                    {
-                        model: leaders,
-                        include: [users],
-                    },
-                    {
-                        model: resonator_questions,
-                        include: [
-                            {
-                                model: questions,
-                                include: [answers],
-                            },
-                        ],
-                    },
-                ],
-            })
-            .then((row) => {
-                const resonator = dbToDomain.toResonator(row);
-                const followerUser = dbToDomain.toUser(row.follower.user);
-                const leaderUser = dbToDomain.toUser(row.leader.user);
-                return { resonator, followerUser, leaderUser };
-            });
-    });
-
-    return Promise.all(promises);
+                {
+                    model: leaders,
+                    include: [users],
+                },
+                {
+                    model: resonator_questions,
+                    include: [
+                        {
+                            model: questions,
+                            include: [answers],
+                        },
+                    ],
+                },
+            ],
+        })
+        .then((row) => {
+            const resonator = dbToDomain.toResonator(row);
+            const followerUser = dbToDomain.toUser(row.follower.user);
+            const leaderUser = dbToDomain.toUser(row.leader.user);
+            return { resonator, followerUser, leaderUser };
+        });
 }
 
 function sendNewResonator({ resonator, followerUser, leaderUser }) {
