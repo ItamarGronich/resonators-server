@@ -22,10 +22,6 @@ export default async function scheduleEmails(getNow) {
             followerUser,
             leaderUser
         }) => {
-            if (followerUser.unsubscribed) {
-                return Promise.resolve();
-            }
-
             return sendNewResonator({
                 resonator,
                 followerUser,
@@ -84,6 +80,10 @@ function sendNewResonator({ resonator, followerUser, leaderUser }) {
 }
 
 function sendMail(sentResonatorId, resonator, follower, leader) {
+    if (follower.unsubscribed) {
+        return Promise.resolve();
+    }
+
     const html = renderResonatorEmail({
         resonator,
         host: cfg.host,
