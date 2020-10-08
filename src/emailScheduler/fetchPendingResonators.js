@@ -9,7 +9,7 @@ function buildQuery(timestamp) {
          LEFT JOIN leaders l ON l.id = r.leader_id
          LEFT JOIN users lu ON lu.id = l.user_id
              WHERE (last_pop_time IS NOT NULL OR ${timestamp}::timestamp > pop_time::timestamp)
-               AND (last_pop_time IS NULL OR date(${timestamp}) > date(coalesce(last_pop_time, '1970-01-01')))
+               AND (last_pop_time IS NULL OR date(${timestamp}) >= date(coalesce(last_pop_time, '1970-01-01')))
                AND ${timestamp}::timestamp::time >= pop_time::time
                AND position(extract(dow from ${timestamp}::timestamp)::char IN repeat_days) > 0
                AND (last_pop_time IS NULL OR ((extract(week from ${timestamp}::timestamp) - extract(week from last_pop_time::timestamp))::int % interval = 0))
