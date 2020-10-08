@@ -12,7 +12,7 @@ function startServer() {
 }
 
 function startJobs() {
-    if (cfg.emailSchedulerOn) emailSchedulingJob.start();
+    if (cfg.scheduler.on) emailSchedulingJob.start();
     // syncCalendarsJob.start();
 }
 
