@@ -23,12 +23,6 @@ export default async function scheduleEmails(getNow) {
             follower,
             leaderUser
         }) => {
-            if (resonator.parent_resonator_id) {
-                const followerGroup = await getParentFollowerGroup(resonator.parent_resonator_id);
-                if ((followerGroup && followerGroup.frozen)) {
-                    return Promise.resolve();
-                }
-            }
             if (followerUser.unsubscribed) {
                 return Promise.resolve();
             }
@@ -147,19 +141,4 @@ function disableResonatorForSendOneOff(resonatorId) {
             id: resonatorId
         }
     });
-}
-
-function getParentFollowerGroup(parentResonatorId) {
-    return resonators.findOne({
-        where: {
-            id: parentResonatorId
-        },
-        include: [
-            {
-                model: follower_groups,
-            }
-        ]
-    }).then((row) =>
-        row.follower_group && dbToDomain.toFollowerGroup(row.follower_group)
-    );
 }
