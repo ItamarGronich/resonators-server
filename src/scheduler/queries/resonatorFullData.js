@@ -1,4 +1,4 @@
-import * as dbToDomain from "../db/dbToDomain";
+import * as dbToDomain from "../../db/dbToDomain";
 import {
     users,
     answers,
@@ -8,7 +8,7 @@ import {
     resonators,
     resonator_questions,
     resonator_attachments,
-} from "../db/sequelize/models";
+} from "../../db/sequelize/models";
 
 export default function fetchResonatorData(resonatorId) {
     return resonators
