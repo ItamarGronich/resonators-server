@@ -59,52 +59,59 @@ function getResonatorData(resonatorId) {
 }
 
 function sendNewResonator({ resonator, followerUser, leaderUser }) {
-    return recordSentResonator({ id: resonator.id })
-        .then((sentResonator) => {
-            log.info(`Sending new resonator ${sentResonator.id} for template resonator ${resonator.id}`);
-            sendResonatorMail(sentResonator, resonator, followerUser, leaderUser);
-            sendResonatorNotification(sentResonator, resonator, followerUser);
-        })
-        .then(() => setResonatorLastSentTime(resonator.id))
-        .then(() => {
-            if (resonator.one_off) return disableResonatorForSendOneOff(resonator.id);
-            else return;
-        });
+    return createSentResonator(resonator)
+        .then((sentResonator) => notifyFollower({ sentResonator, resonator, followerUser, leaderUser }))
+        .then(() => setResonatorLastSentTime(resonator))
+        .then(() => disableResonatorForSendOneOff(resonator));
 }
 
-function recordSentResonator({ id, ttl_policy }) {
-    // const expiryDate = new Date();
-    // expiryDate.setTime(expiryDate.getTime() + (ttl_policy * 60 * 60 * 1000));
+function notifyFollower({ resonator, sentResonator, followerUser, leaderUser }) {
+    log.info(`Sending new resonator ${sentResonator.id} for template resonator ${resonator.id}`);
+    return Promise.all([
+        sendResonatorMail(sentResonator, resonator, followerUser, leaderUser),
+        sendResonatorNotification(sentResonator, resonator, followerUser),
+    ]);
+}
+
+function createSentResonator(resonator) {
     return sent_resonators.create({
         id: uuid(),
-        resonator_id: id,
-        // expiry_date: expiryDate,
         failed: false,
+        resonator_id: resonator.id,
+        // expiry_date: computeExpiry(resonator.ttl_policy),
     });
 }
 
-function setResonatorLastSentTime(resonatorId) {
+function setResonatorLastSentTime(resonator) {
     return resonators.update(
         {
             last_pop_time: new Date(),
         },
         {
             where: {
-                id: resonatorId,
+                id: resonator.id,
             },
         }
     );
 }
 
-function disableResonatorForSendOneOff(resonatorId) {
-    return resonators.update(
-        {
-            pop_email: false,
-        },
-        {
-            where: {
-                id: resonatorId,
+function disableResonatorForSendOneOff(resonator) {
+    if (resonator.one_off) {
+        return resonators.update(
+            {
+                pop_email: false,
             },
-        }
-    );
+            {
+                where: {
+                    id: resonator.id,
+                },
+            }
+        );
+    }
+}
+
+function computeExpiry(ttl) {
+    const expiryDate = new Date();
+    expiryDate.setTime(expiryDate.getTime() + ttl * 60 * 60 * 1000);
+    return expiryDate;
 }
