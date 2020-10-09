@@ -1,12 +1,9 @@
 import { v4 as uuid } from "uuid";
 
-import cfg from "../cfg";
-import sendEmail from "../mailing";
 import * as dbToDomain from "../db/dbToDomain";
-import renderResonatorEmail from "../emailRenderer";
-import fetchPendingResonators from "./fetchPendingResonators";
 import { schedulerLogger as log } from "../logging";
-import { sendResonatorNotification } from "./push";
+import fetchPendingResonators from "./fetchPendingResonators";
+import { sendResonatorMail, sendResonatorNotification } from "./channels";
 import {
     resonators,
     resonator_attachments,
@@ -65,7 +62,7 @@ function sendNewResonator({ resonator, followerUser, leaderUser }) {
     return recordSentResonator({ id: resonator.id })
         .then((sentResonator) => {
             log.info(`Sending new resonator ${sentResonator.id} for template resonator ${resonator.id}`);
-            sendMail(sentResonator, resonator, followerUser, leaderUser);
+            sendResonatorMail(sentResonator, resonator, followerUser, leaderUser);
             sendResonatorNotification(sentResonator, resonator, followerUser);
         })
         .then(() => setResonatorLastSentTime(resonator.id))
@@ -73,37 +70,6 @@ function sendNewResonator({ resonator, followerUser, leaderUser }) {
             if (resonator.one_off) return disableResonatorForSendOneOff(resonator.id);
             else return;
         });
-}
-
-function sendMail(sentResonator, resonator, follower, leader) {
-    if (follower.unsubscribed) {
-        return Promise.resolve();
-    }
-
-    const html = renderResonatorEmail({
-        resonator,
-        host: cfg.host,
-        recipientUser: follower,
-        sentResonatorId: sentResonator.id,
-    });
-
-    const msg = {
-        from: "mindharmoniesinc app",
-        to: follower.email,
-        subject: resonator.title,
-        html,
-    };
-
-    const sendCopyToLeader = !resonator.disable_copy_to_leader;
-
-    if (sendCopyToLeader) msg.cc = leader.email;
-
-    log.info(`Sending email for resonator ${resonator.id} to ${msg.to}`, {
-        leader: `${leader.name} | ${leader.email}`,
-        "leader copy": sendCopyToLeader,
-    });
-
-    return sendEmail(msg);
 }
 
 function recordSentResonator({ id, ttl_policy }) {

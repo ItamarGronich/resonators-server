@@ -1,7 +1,7 @@
 import webpush from "web-push";
 
-import cfg from "../cfg";
-import { push_subscriptions } from "../db/sequelize/models";
+import cfg from "../../cfg";
+import { push_subscriptions } from "../../db/sequelize/models";
 
 export function sendResonatorNotification(sentResonator, resonator, user) {
     return sendPushNotification(user, {
