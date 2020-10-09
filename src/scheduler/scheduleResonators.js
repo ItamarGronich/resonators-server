@@ -1,61 +1,15 @@
 import { v4 as uuid } from "uuid";
 
-import * as dbToDomain from "../db/dbToDomain";
 import { schedulerLogger as log } from "../logging";
-import fetchPendingResonators from "./fetchPendingResonators";
+import { resonators, sent_resonators } from "../db/sequelize/models";
+import { fetchPendingResonators, fetchResonatorData } from "./queries";
 import { sendResonatorMail, sendResonatorNotification } from "./channels";
-import {
-    resonators,
-    resonator_attachments,
-    followers,
-    leaders,
-    users,
-    resonator_questions,
-    questions,
-    answers,
-    sent_resonators,
-} from "../db/sequelize/models";
 
 export default async function scheduleResonators(getNow) {
     log.info("Fetching pending resonators");
     const resonatorIds = await fetchPendingResonators(getNow);
     log.info(`Found ${resonatorIds.length} resonators to be sent`);
-    return Promise.all(resonatorIds.map((id) => getResonatorData(id).then(sendNewResonator)));
-}
-
-function getResonatorData(resonatorId) {
-    return resonators
-        .findOne({
-            where: {
-                id: resonatorId,
-            },
-            include: [
-                resonator_attachments,
-                {
-                    model: followers,
-                    include: [users],
-                },
-                {
-                    model: leaders,
-                    include: [users],
-                },
-                {
-                    model: resonator_questions,
-                    include: [
-                        {
-                            model: questions,
-                            include: [answers],
-                        },
-                    ],
-                },
-            ],
-        })
-        .then((row) => {
-            const resonator = dbToDomain.toResonator(row);
-            const followerUser = dbToDomain.toUser(row.follower.user);
-            const leaderUser = dbToDomain.toUser(row.leader.user);
-            return { resonator, followerUser, leaderUser };
-        });
+    return Promise.all(resonatorIds.map((id) => fetchResonatorData(id).then(sendNewResonator)));
 }
 
 function sendNewResonator({ resonator, followerUser, leaderUser }) {
@@ -65,14 +19,6 @@ function sendNewResonator({ resonator, followerUser, leaderUser }) {
         .then(() => disableResonatorForSendOneOff(resonator));
 }
 
-function notifyFollower({ resonator, sentResonator, followerUser, leaderUser }) {
-    log.info(`Sending new resonator ${sentResonator.id} for template resonator ${resonator.id}`);
-    return Promise.all([
-        sendResonatorMail(sentResonator, resonator, followerUser, leaderUser),
-        sendResonatorNotification(sentResonator, resonator, followerUser),
-    ]);
-}
-
 function createSentResonator(resonator) {
     return sent_resonators.create({
         id: uuid(),
@@ -80,6 +26,14 @@ function createSentResonator(resonator) {
         resonator_id: resonator.id,
         // expiry_date: computeExpiry(resonator.ttl_policy),
     });
+}
+
+function notifyFollower({ resonator, sentResonator, followerUser, leaderUser }) {
+    log.info(`Sending new resonator ${sentResonator.id} for template resonator ${resonator.id}`);
+    return Promise.all([
+        sendResonatorMail(sentResonator, resonator, followerUser, leaderUser),
+        sendResonatorNotification(sentResonator, resonator, followerUser),
+    ]);
 }
 
 function setResonatorLastSentTime(resonator) {

@@ -1,6 +1,6 @@
 import { QueryTypes } from "sequelize";
 
-import db from "../db/sequelize/dbConnection";
+import db from "../../db/sequelize/dbConnection";
 
 function buildQuery(timestamp) {
     return `SELECT r.id FROM resonators r
