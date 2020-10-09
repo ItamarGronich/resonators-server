@@ -15,12 +15,11 @@ function buildQuery(timestamp) {
                AND ${timestamp}::timestamp::time >= r.pop_time::time
                AND position(extract(dow from ${timestamp}::timestamp)::char IN r.repeat_days) > 0
                AND (r.last_pop_time IS NULL OR ((extract(week from ${timestamp}::timestamp) - extract(week from r.last_pop_time::timestamp))::int % r.interval = 0))
-               AND r.pop_email
-               AND pr.pop_email IS NULL OR pr.pop_email
-               AND NOT f.frozen
-               AND NOT fg.frozen
                AND fu.id IS NOT NULL
                AND lu.id IS NOT NULL
+               AND r.pop_email
+               AND NOT f.frozen
+               AND (r.parent_resonator_id IS NULL OR (pr.pop_email AND NOT fg.frozen))
                AND r.follower_group_id IS NULL`;
 }
 
