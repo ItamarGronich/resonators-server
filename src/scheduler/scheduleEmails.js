@@ -5,7 +5,7 @@ import * as dbToDomain from "../db/dbToDomain";
 import renderResonatorEmail from "../emailRenderer";
 import sendResonatorEmail from "./sendResonatorEmail";
 import fetchPendingResonators from "./fetchPendingResonators";
-import { emailSchedulerLogger as log } from "../logging";
+import { schedulerLogger as log } from "../logging";
 import { sendResonatorNotification } from "./push";
 import {
     resonators,

@@ -1,4 +1,4 @@
-import scheduleEmails from '../../src/emailScheduler/scheduleEmails';
+import scheduleEmails from '../../src/scheduler/scheduleEmails';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 
 describe.skip('schedule emails FOR REAL', function() {

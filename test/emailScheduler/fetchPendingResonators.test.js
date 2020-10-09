@@ -1,5 +1,5 @@
 import {assert} from 'chai';
-import fetchPendingResonators from '../../src/emailScheduler/fetchPendingResonators';
+import fetchPendingResonators from '../../src/scheduler/fetchPendingResonators';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 import { v4 as uuid } from "uuid";
 

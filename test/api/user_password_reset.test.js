@@ -40,7 +40,7 @@ describe('password reset', () => {
         stub.returns(Promise.resolve());
 
         const sendEmail = proxyquire('../../src/application/sendResetPasswordEmail', {
-            '../emailScheduler/sendResonatorEmail': {
+            '../scheduler/sendResonatorEmail': {
                 default: stub
             },
             '../../application/getUow': {

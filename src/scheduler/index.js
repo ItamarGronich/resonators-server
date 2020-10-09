@@ -1,7 +1,7 @@
 import cfg from "../cfg";
 import createJob from "../createJob";
 import scheduleEmails from "./scheduleEmails";
-import { emailSchedulerLogger as log } from "../logging";
+import { schedulerLogger as log } from "../logging";
 
 export default createJob({
     runner: scheduleEmails,

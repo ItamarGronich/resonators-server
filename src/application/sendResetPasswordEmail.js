@@ -1,4 +1,4 @@
-import sendEmail from '../emailScheduler/sendResonatorEmail';
+import sendEmail from '../scheduler/sendResonatorEmail';
 import userRepository from '../db/repositories/UserRepository';
 import {user_password_resets} from '../db/sequelize/models';
 import cfg from '../cfg';

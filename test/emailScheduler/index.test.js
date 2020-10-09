@@ -22,7 +22,7 @@ describe('email scheduler', () => {
             }
         };
 
-        const scheduleEmailsJob = proxyquire('../../src/emailScheduler/index', stubs).default;
+        const scheduleEmailsJob = proxyquire('../../src/scheduler/index', stubs).default;
         startEmailSchedulingJob = scheduleEmailsJob.start;
         stopEmailSchedulingJob = scheduleEmailsJob.stop;
     });
