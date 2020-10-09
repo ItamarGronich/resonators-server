@@ -1,7 +1,8 @@
 import _ from 'lodash';
-import React from 'react';
-import ResonatorEmail from './ResonatorEmail';
 import Oy from 'oy-vey';
+import React from 'react';
+
+import ResonatorEmail from './ResonatorEmail';
 
 export default function renderResonatorEmail({resonator, recipientUser, sentResonatorId, host, preview = false}) {
     const dir = getBodyDir(resonator);

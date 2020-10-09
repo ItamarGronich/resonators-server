@@ -1,7 +1,7 @@
-import cfg from "../../cfg";
-import sendEmail from "../../mailing";
-import renderResonatorEmail from "../../emailRenderer";
-import { schedulerLogger as log } from "../../logging";
+import cfg from "../../../cfg";
+import sendEmail from "../../../mailing";
+import renderResonatorEmail from "./renderer";
+import { schedulerLogger as log } from "../../../logging";
 
 export default function sendResonatorMail(sentResonator, resonator, follower, leader) {
     if (follower.unsubscribed) {
