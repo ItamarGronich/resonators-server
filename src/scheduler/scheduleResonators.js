@@ -16,7 +16,7 @@ import {
     sent_resonators,
 } from "../db/sequelize/models";
 
-export default async function scheduleEmails(getNow) {
+export default async function scheduleResonators(getNow) {
     log.info("Fetching pending resonators");
     const resonatorIds = await fetchPendingResonators(getNow);
     log.info(`Found ${resonatorIds.length} resonators to be sent`);
