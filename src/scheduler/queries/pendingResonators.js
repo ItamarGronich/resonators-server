@@ -12,6 +12,7 @@ function buildQuery(timestamp) {
          LEFT JOIN follower_groups fg ON pr.follower_group_id = fg.id
              WHERE (r.last_pop_time IS NOT NULL OR ${timestamp}::timestamp > r.pop_time::timestamp)
                AND (r.last_pop_time IS NULL OR date(${timestamp}) >= date(coalesce(r.last_pop_time, '1970-01-01')))
+               AND (r.last_pop_time IS NULL OR r.last_pop_time::timestamp::time < r.pop_time::timestamp::time)
                AND ${timestamp}::timestamp::time >= r.pop_time::time
                AND position(extract(dow from ${timestamp}::timestamp)::char IN r.repeat_days) > 0
                AND (r.last_pop_time IS NULL OR ((extract(week from ${timestamp}::timestamp) - extract(week from r.last_pop_time::timestamp))::int % r.interval = 0))
