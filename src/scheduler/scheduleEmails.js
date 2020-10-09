@@ -1,9 +1,9 @@
 import { v4 as uuid } from "uuid";
 
 import cfg from "../cfg";
+import sendEmail from "../mailing";
 import * as dbToDomain from "../db/dbToDomain";
 import renderResonatorEmail from "../emailRenderer";
-import sendResonatorEmail from "./sendResonatorEmail";
 import fetchPendingResonators from "./fetchPendingResonators";
 import { schedulerLogger as log } from "../logging";
 import { sendResonatorNotification } from "./push";
@@ -103,7 +103,7 @@ function sendMail(sentResonator, resonator, follower, leader) {
         "leader copy": sendCopyToLeader,
     });
 
-    return sendResonatorEmail(msg);
+    return sendEmail(msg);
 }
 
 function recordSentResonator({ id, ttl_policy }) {
