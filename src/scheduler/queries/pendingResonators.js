@@ -5,9 +5,6 @@ import db from "../../db/sequelize/dbConnection";
 function buildQuery(timestamp) {
     return `SELECT r.id FROM resonators r
          LEFT JOIN followers f ON f.id = r.follower_id
-         LEFT JOIN users fu ON fu.id = f.user_id
-         LEFT JOIN leaders l ON l.id = r.leader_id
-         LEFT JOIN users lu ON lu.id = l.user_id
          LEFT JOIN resonators pr ON r.parent_resonator_id = pr.id
          LEFT JOIN follower_groups fg ON pr.follower_group_id = fg.id
              WHERE (r.last_pop_time IS NOT NULL OR ${timestamp}::timestamp > r.pop_time::timestamp)
@@ -16,8 +13,6 @@ function buildQuery(timestamp) {
                AND ${timestamp}::timestamp::time >= r.pop_time::time
                AND position(extract(dow from ${timestamp}::timestamp)::char IN r.repeat_days) > 0
                AND (r.last_pop_time IS NULL OR ((extract(week from ${timestamp}::timestamp) - extract(week from r.last_pop_time::timestamp))::int % r.interval = 0))
-               AND fu.id IS NOT NULL
-               AND lu.id IS NOT NULL
                AND r.pop_email
                AND NOT f.frozen
                AND (r.parent_resonator_id IS NULL OR (pr.pop_email AND NOT fg.frozen))
@@ -39,3 +34,18 @@ function extractIds(queryResults) {
 export default function fetchPendingResonators() {
     return executeRawSql(buildQuery(getTimestamp())).then(extractIds);
 }
+
+const Q = `  SELECT r.id, r.title, r.pop_time, r.last_pop_time FROM resonators r
+LEFT JOIN followers f ON f.id = r.follower_id
+LEFT JOIN resonators pr ON r.parent_resonator_id = pr.id
+LEFT JOIN follower_groups fg ON pr.follower_group_id = fg.id
+    WHERE (r.last_pop_time IS NOT NULL OR now()::timestamp > r.pop_time::timestamp)
+      AND (r.last_pop_time IS NULL OR date(now()) >= date(coalesce(r.last_pop_time, '1970-01-01')))
+      AND (r.last_pop_time IS NULL OR NOT (date(r.last_pop_time) = date(now()) AND r.last_pop_time::timestamp::time > r.pop_time::timestamp::time))
+      AND now()::timestamp::time >= r.pop_time::time
+      AND position(extract(dow from now()::timestamp)::char IN r.repeat_days) > 0
+      AND (r.last_pop_time IS NULL OR ((extract(week from now()::timestamp) - extract(week from r.last_pop_time::timestamp))::int % r.interval = 0))
+      AND r.pop_email
+      AND NOT f.frozen
+      AND (r.parent_resonator_id IS NULL OR (pr.pop_email AND NOT fg.frozen))
+      AND r.follower_group_id IS NULL;`;
