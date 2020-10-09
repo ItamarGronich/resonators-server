@@ -5,9 +5,9 @@ import { resonators, sent_resonators } from "../db/sequelize/models";
 import { fetchPendingResonators, fetchResonatorData } from "./queries";
 import { sendResonatorMail, sendResonatorNotification } from "./channels";
 
-export default async function scheduleResonators(getNow) {
+export default async function scheduleResonators() {
     log.info("Fetching pending resonators");
-    const resonatorIds = await fetchPendingResonators(getNow);
+    const resonatorIds = await fetchPendingResonators();
     log.info(`Found ${resonatorIds.length} resonators to be sent`);
     return Promise.all(resonatorIds.map((id) => fetchResonatorData(id).then(sendNewResonator)));
 }

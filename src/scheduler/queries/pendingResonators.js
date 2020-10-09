@@ -24,8 +24,8 @@ function buildQuery(timestamp) {
                AND r.follower_group_id IS NULL`;
 }
 
-function formatTimestamp(datetime) {
-    return `'${datetime.toJSON()}'`;
+function getTimestamp() {
+    return `'${new Date().toISOString()}'`;
 }
 
 function executeRawSql(sql) {
@@ -36,6 +36,6 @@ function extractIds(queryResults) {
     return queryResults.map((result) => result.id);
 }
 
-export default function fetchPendingResonators(asOf) {
-    return executeRawSql(buildQuery(formatTimestamp(asOf || new Date()))).then(extractIds);
+export default function fetchPendingResonators() {
+    return executeRawSql(buildQuery(getTimestamp())).then(extractIds);
 }
