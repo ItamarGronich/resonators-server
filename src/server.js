@@ -1,7 +1,6 @@
 import api from "./api";
 import cfg from "./cfg";
 import scheduler from "./scheduler";
-import { setVapidKeys } from "./scheduler/push";
 import { apiLogger as logger } from "./logging";
 // import syncCalendarsJob from "./calendars/calendarsSync";
 
@@ -16,6 +15,5 @@ function startJobs() {
     // syncCalendarsJob.start();
 }
 
-setVapidKeys();
 startJobs();
 startServer();

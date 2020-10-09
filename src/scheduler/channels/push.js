@@ -3,7 +3,10 @@ import webpush from "web-push";
 import cfg from "../../cfg";
 import { push_subscriptions } from "../../db/sequelize/models";
 
+let vapid_keys_set = false;
+
 export function sendResonatorNotification(sentResonator, resonator, user) {
+    ensureVapidKeys();
     return sendPushNotification(user, {
         type: "resonator",
         title: "New Resonator",
@@ -51,6 +54,13 @@ function deleteExpired(subscription) {
     };
 }
 
-export function setVapidKeys() {
+function ensureVapidKeys() {
+    if (!vapid_keys_set) {
+        setVapidKeys();
+        vapid_keys_set = true;
+    }
+}
+
+function setVapidKeys() {
     webpush.setVapidDetails(`mailto:${cfg.supportMail}`, cfg.vapid.publicKey, cfg.vapid.privateKey);
 }
