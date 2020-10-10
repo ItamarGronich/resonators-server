@@ -1,5 +1,5 @@
 import resonatorRepository from '../db/repositories/ResonatorRepository';
-import resonatorRenderer from '../emailRenderer';
+import resonatorRenderer from '../scheduler/channels/mail/renderer';
 import cfg from '../cfg';
 
 export async function renderResonator(resonatorId) {

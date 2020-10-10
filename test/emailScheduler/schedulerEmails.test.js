@@ -1,4 +1,4 @@
-import scheduleEmails from '../../src/emailScheduler/scheduleEmails';
+import scheduleResonators from '../../src/scheduler/scheduleResonators';
 import generateFixtures from '../dbFixtures/fixtureGenerator';
 
 describe.skip('schedule emails FOR REAL', function() {
@@ -19,6 +19,6 @@ describe.skip('schedule emails FOR REAL', function() {
                         })
                         .done();
 
-        await scheduleEmails();
+        await scheduleResonators();
     });
 });

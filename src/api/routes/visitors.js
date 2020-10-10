@@ -1,6 +1,6 @@
 import express from "../express"
+import sendEmail from "../../mailing"
 import routeHandler from "../routeHandler"
-import sendEmail from "../../emailScheduler/sendResonatorEmail"
 
 express.post('/api/contactForm', routeHandler(async (request, response) => {
 

@@ -11,7 +11,10 @@ export default {
     },
     host: "http://localhost:8080/",
     port: 8080,
-    emailSchedulerOn: true,
+    scheduler: {
+        on: true,
+        interval: 10 * 1000,
+    },
     logging: {
         directory: path.join(__dirname, "../../logs"),
         maxFileSize: 1024 * 1024,

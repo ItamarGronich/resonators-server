@@ -1,8 +1,7 @@
 import api from "./api";
 import cfg from "./cfg";
+import scheduler from "./scheduler";
 import { apiLogger as logger } from "./logging";
-import emailSchedulingJob from "./emailScheduler";
-import { setVapidKeys } from "./emailScheduler/push";
 // import syncCalendarsJob from "./calendars/calendarsSync";
 
 function startServer() {
@@ -12,10 +11,9 @@ function startServer() {
 }
 
 function startJobs() {
-    if (cfg.emailSchedulerOn) emailSchedulingJob.start();
+    if (cfg.scheduler.on) scheduler.start();
     // syncCalendarsJob.start();
 }
 
-setVapidKeys();
 startJobs();
 startServer();
