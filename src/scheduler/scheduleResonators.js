@@ -1,14 +1,14 @@
 import { v4 as uuid } from "uuid";
 
-import { schedulerLogger as log } from "../logging";
+import { schedulerLogger as logger } from "../logging";
 import { resonators, sent_resonators } from "../db/sequelize/models";
 import { fetchPendingResonators, fetchResonatorData } from "./queries";
 import { sendResonatorMail, sendResonatorNotification } from "./channels";
 
 export default async function scheduleResonators() {
-    log.info("Fetching pending resonators");
+    logger.info("Fetching pending resonators");
     const resonatorIds = await fetchPendingResonators();
-    log.info(`Found ${resonatorIds.length} resonators to be sent`);
+    logger.info(`Found ${resonatorIds.length} resonators to be sent`);
     return Promise.all(resonatorIds.map((id) => fetchResonatorData(id).then(sendNewResonator)));
 }
 
@@ -29,7 +29,7 @@ function createSentResonator(resonator) {
 }
 
 function notifyFollower({ resonator, sentResonator, followerUser, leaderUser }) {
-    log.info(`Sending new resonator ${sentResonator.id} for template resonator ${resonator.id}`);
+    logger.info(`Sending new resonator ${sentResonator.id} for template resonator ${resonator.id}`);
     return Promise.all([
         sendResonatorMail(sentResonator, resonator, followerUser, leaderUser),
         sendResonatorNotification(sentResonator, resonator, followerUser),
@@ -51,6 +51,7 @@ function setResonatorLastSentTime(resonator) {
 
 function disableResonatorForSendOneOff(resonator) {
     if (resonator.one_off) {
+        logger.info(`Deactivating one-off resonator ${resonator.id}`)
         return resonators.update(
             {
                 pop_email: false,
