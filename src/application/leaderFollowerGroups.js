@@ -12,6 +12,7 @@ import { v4 as uuid } from 'uuid';
 import * as R from 'ramda';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import cfg from '../cfg';
+import FollowerGroupFollowersRepository from '../db/repositories/FollowerGroupFollowersRepository';
 
 
 export const getLeaderFollowerGroups = async (leader_id) => {
@@ -45,11 +46,15 @@ export const addLeaderFollowerGroup = async ({ group_name, leader_id, clinic_id 
     return followerGroupDto;
 }
 
-export const deleteLeaderFollowerGroup = async (followerGroupId) =>
-    await Promise.all([
+export const deleteLeaderFollowerGroup = async (followerGroupId) => {
+    const followers = await FollowerGroupFollowersRepository.findFollowersByGroupId(followerGroupId);
+
+    return await Promise.all([
+        ...(followers.map(async (f) => await FollowerGroupFollowersRepository.delete(f.id, followerGroupId))),
         await followerGroupRepository.deleteById(followerGroupId),
         await resonatorRepository.deleteByFollowerGroupId(followerGroupId),
     ]);
+}
 
 export const updateFollowerGroup = async (followerGroupId, data) => {
     const uow = getUow();
@@ -137,7 +142,7 @@ export async function checkLeaderGroupPermissions(user) {
     const sheet = doc.sheetsByIndex[0];
     const rows = await sheet.getRows();
 
-    const sheetLeader = rows.find(({Email}) => Email && Email.toLowerCase() === user.email.toLowerCase())
+    const sheetLeader = rows.find(({ Email }) => Email && Email.toLowerCase() === user.email.toLowerCase())
     const permission = Boolean(sheetLeader) && sheetLeader.Groups.toLowerCase() === 'true';
     leader.group_permissions = permission;
     await uow.commit();

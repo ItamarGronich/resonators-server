@@ -1,7 +1,6 @@
 import Repository from './Repository';
-import {follower_group_followers, follower_groups, followers} from '../sequelize/models';
+import { follower_group_followers, follower_groups, followers } from '../sequelize/models';
 import * as dbToDomain from '../dbToDomain';
-import * as R from 'ramda';
 
 
 class FollowerGroupFollowersRepository extends Repository {
@@ -16,7 +15,7 @@ class FollowerGroupFollowersRepository extends Repository {
     }
 
     save(followerGroupFollower, transaction) {
-        return follower_group_followers.create(followerGroupFollower, {transaction});
+        return follower_group_followers.create(followerGroupFollower, { transaction });
     }
 
     async findFollowersByGroupId(followerGroupId) {
@@ -26,7 +25,7 @@ class FollowerGroupFollowersRepository extends Repository {
             },
         });
 
-        const foundFollowers = await Promise.all(rows.map( async (followerGroupFollower) =>
+        const foundFollowers = await Promise.all(rows.map(async (followerGroupFollower) =>
             await followers.findOne({
                 where: {
                     id: followerGroupFollower.follower_id
@@ -49,12 +48,12 @@ class FollowerGroupFollowersRepository extends Repository {
             },
         });
 
-        const foundGroups = await Promise.all(R.map( async (followerGroupFollower) =>
+        const foundGroups = await Promise.all(rows.map(async (followerGroupFollower) =>
             await follower_groups.findOne({
                 where: {
-                    follower_group_id: followerGroupFollower.follower_group_id
+                    id: followerGroupFollower.follower_group_id
                 },
-            })), rows);
+            })));
 
         if (!foundGroups) {
             return [];
