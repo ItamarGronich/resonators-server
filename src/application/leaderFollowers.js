@@ -26,7 +26,8 @@ export async function addLeaderFollower({leader_id, clinic_id, email, name, pass
         user_id: user.id,
         leader_id,
         clinic_id,
-        status: 2
+        status: 2,
+        frozen: false,
     });
 
     const uow = getUow();
