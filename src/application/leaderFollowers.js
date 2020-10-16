@@ -7,6 +7,7 @@ import User from '../domain/entities/user';
 import Follower from '../domain/entities/follower';
 import * as dtoFactory from './dto/index';
 import getUow from './getUow';
+import FollowerGroupFollowersRepository from '../db/repositories/FollowerGroupFollowersRepository';
 
 export async function getLeaderFollowers(user_id) {
     const followers = await followerRepository.findByLeaderUserId(user_id);
@@ -19,8 +20,8 @@ export async function getLeader(leader_id) {
     const dto = dtoFactory.toLeader(leader);
     return dto;
 }
-export async function addLeaderFollower({leader_id, clinic_id, email, name, password}) {
-    const user = new User({name, email, pass: password});
+export async function addLeaderFollower({ leader_id, clinic_id, email, name, password }) {
+    const user = new User({ name, email, pass: password });
 
     const follower = new Follower({
         user_id: user.id,
@@ -32,8 +33,8 @@ export async function addLeaderFollower({leader_id, clinic_id, email, name, pass
 
     const uow = getUow();
 
-    uow.trackEntity(user, {isNew: true});
-    uow.trackEntity(follower, {isNew: true});
+    uow.trackEntity(user, { isNew: true });
+    uow.trackEntity(follower, { isNew: true });
 
     await uow.commit();
 
@@ -48,7 +49,9 @@ export async function addLeaderFollower({leader_id, clinic_id, email, name, pass
 }
 
 export async function deleteLeaderFollower(followerId) {
+    const followerGroups = await FollowerGroupFollowersRepository.findGroupsByFollowerId(followerId);
     return await Promise.all([
+        ...(followerGroups.map(async (fg) => await FollowerGroupFollowersRepository.delete(fg.id, followerId))),
         followerRepository.deleteById(followerId),
         resonatorRepository.deleteByFollowerId(followerId)
     ]);
