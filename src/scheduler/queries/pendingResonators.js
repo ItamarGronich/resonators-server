@@ -10,7 +10,7 @@ LEFT JOIN follower_groups fg ON fg.id = pr.follower_group_id
     WHERE r.pop_email  -- resonator is enabled (activated)
       AND NOT f.frozen  -- follower is enabled (not suspended)
       AND r.follower_group_id IS NULL  -- not a group parent resonator
-      AND (r.parent_resonator_id IS NULL OR (pr.pop_email AND NOT fg.frozen))  -- parent resonator and follower group enabled, if they exist
+      AND (r.parent_resonator_id IS NULL OR NOT fg.frozen)  -- follower group enabled, if it exists
       AND position(extract(dow from CURRENT_TIMESTAMP)::char IN r.repeat_days) > 0  -- on one of configured days of the week
       AND CASE WHEN r.last_pop_time IS NULL THEN CURRENT_TIMESTAMP > r.pop_time::timestamp  -- don't send new resonaor today if created after its pop time
                ELSE CURRENT_TIME > r.pop_time::time  -- after configured time of day
