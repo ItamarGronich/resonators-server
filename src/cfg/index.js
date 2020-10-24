@@ -5,7 +5,7 @@ import test from './test';
 import prod from './prod';
 import defaultCfg from './default';
 
-const env = process.env.ENV || 'dev';
+const env = process.env.ENV;
 
 let cfg;
 
