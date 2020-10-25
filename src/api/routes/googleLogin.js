@@ -3,8 +3,9 @@ import routeHandler from '../routeHandler';
 import {getLoginUrl, loginGoogleUser} from '../../application/google/googleLogin';
 import setLoginCookie from './setLoginCookie';
 
-express.get('/api/startGoogleLogin', routeHandler(async (request, response) => {
-    const url = await getLoginUrl();
+express.post('/api/startGoogleLogin', routeHandler(async (request, response) => {
+    const {isLeader} = request.body;
+    const url = await getLoginUrl(isLeader);
 
     response.status(200);
 
@@ -16,14 +17,19 @@ express.get('/api/startGoogleLogin', routeHandler(async (request, response) => {
 }));
 
 express.get('/api/completeGoogleLogin', routeHandler(async (request, response) => {
-    const {code} = request.query;
+    const {code, state} = request.query;
+    const stateObject = JSON.parse(state);
+    const result = await loginGoogleUser(code, stateObject);
+    let redirectUrl = (stateObject.isLeader === true) ? '/loginLeader' : '/login'; // Redirect to login by default based on Login Mode selected
 
-    const result = await loginGoogleUser(code);
+    if (result && typeof result.loginId !== "undefined") {
+        setLoginCookie({response, loginId: result.loginId});
+        redirectUrl = (stateObject.isLeader === true) ? '/followers' : '/follower/resonators' // If logged in, redirect to the appropriate page
+    } else if (result && typeof result.error !== "undefined" && result.error) {
+        redirectUrl += '?error=' + result.error; // Display error if applicable
+    }
 
-    setLoginCookie({response, loginId: result.loginId});
-
-    // Redirecting to login lets the client figure the proper route itself based on user type
-    response.redirect(301, '/login');
+    response.redirect(301, redirectUrl);
 }, {
     enforceLogin: false
 }));

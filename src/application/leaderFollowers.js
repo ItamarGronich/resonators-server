@@ -21,7 +21,14 @@ export async function getLeader(leader_id) {
     return dto;
 }
 export async function addLeaderFollower({ leader_id, clinic_id, email, name, password }) {
-    const user = new User({ name, email, pass: password });
+    let user = new User({ name, email, pass: password });
+    let isNewUser = true;
+    const existingUser = await userRepository.findByEmail(email);
+
+    if (existingUser) {
+        user = existingUser;
+        isNewUser = false;
+    }
 
     const follower = new Follower({
         user_id: user.id,
@@ -33,7 +40,7 @@ export async function addLeaderFollower({ leader_id, clinic_id, email, name, pas
 
     const uow = getUow();
 
-    uow.trackEntity(user, { isNew: true });
+    uow.trackEntity(user, { isNew: isNewUser });
     uow.trackEntity(follower, { isNew: true });
 
     await uow.commit();
