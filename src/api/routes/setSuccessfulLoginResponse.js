@@ -1,5 +1,6 @@
 import setLoginCookie from "./setLoginCookie";
 import { followers, leaders } from "../../db/sequelize/models";
+import { hasRelation } from '../../application/utils';
 
 export default async function setSuccessfulLoginResponse({ response, loginId, user }) {
     const { expires_at } = setLoginCookie({ response, loginId });
@@ -14,8 +15,6 @@ export default async function setSuccessfulLoginResponse({ response, loginId, us
 
 const addUserTypes = async (user) => ({
     ...user,
-    isLeader: await isOfType(leaders, user),
-    isFollower: await isOfType(followers, user),
+    isLeader: await hasRelation(leaders, user, 'user_id'),
+    isFollower: await hasRelation(followers, user, 'user_id'),
 });
-
-const isOfType = async (model, user) => (await model.count({ where: { user_id: user.id } })) === 1;

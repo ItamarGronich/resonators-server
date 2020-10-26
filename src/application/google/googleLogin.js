@@ -9,16 +9,19 @@ import getUow from "../getUow";
 import cfg from "../../cfg";
 import log from "../../logging";
 import { checkLeaderGroupPermissions } from "../leaderFollowerGroups";
+import {followers, leaders} from "../../db/sequelize/models";
+import { hasRelation } from '../../application/utils';
 
 const { loginRedirectUrl } = cfg.google;
 
-export async function getLoginUrl() {
-    let url = generateAuthUrl(loginRedirectUrl);
+export async function getLoginUrl(isLeader) {
+    const state = {isLeader: isLeader};
+    let url = generateAuthUrl(loginRedirectUrl, state);
     url += "&prompt=consent";
     return url;
 }
 
-export async function loginGoogleUser(googleAuthCode) {
+export async function loginGoogleUser(googleAuthCode, state) {
     try {
         log.info("Fetching access tokens for Google account");
         const tokens = await requestAccessToken(loginRedirectUrl, googleAuthCode);
@@ -32,16 +35,34 @@ export async function loginGoogleUser(googleAuthCode) {
 
         if (existingGoogleUserAccount) {
             const user = await userRepository.findByPk(existingGoogleUserAccount.user_id);
+
             try {
                 await checkLeaderGroupPermissions(user);
             } catch (e) {
                 log.error(`Could not verify leader's permissions`, e);
             }
+
+            if (state.isLeader) {
+                if (!await hasRelation(leaders, user, 'user_id')) {
+                    log.error("User is not a leader");
+                    return {error: 'not_leader'};
+                }
+            } else {
+                if (!await hasRelation(followers, user, 'user_id')) {
+                    log.error("User is not a follower");
+                    return {error: 'not_follower'};
+                }
+            }
+
             loginResult = await loginByUserEntity(user);
             log.info("Updating existing Google account");
             updateGoogleAccount(existingGoogleUserAccount, tokens);
             await getUow().commit();
         } else {
+            if (state.isLeader === false) {
+                log.error("Can't register as a follower. Follower needs to be assigned to a leader");
+                return {error: 'follower_registration_not_allowed'};
+            }
             log.info("Registering new Google account");
             loginResult = await registerGoogleUser(tokens, googleDetails);
         }
@@ -49,7 +70,7 @@ export async function loginGoogleUser(googleAuthCode) {
         return loginResult;
     } catch (err) {
         log.error("Google login failed! redirecting back to homepage", err);
-        return {};
+        return {error: 'unknown'};
     }
 }
 

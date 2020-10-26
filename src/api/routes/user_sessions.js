@@ -7,9 +7,9 @@ import * as dtoFactory from '../../application/dto';
 import setSuccessfulLoginResponse from './setSuccessfulLoginResponse';
 
 express.post('/api/user_sessions\.:ext?', routeHandler(async (request, response) => {
-    const {email, password} = request.body;
+    const {email, password, isLeader} = request.body;
 
-    const {user, isValid, loginId} = await login(email, password);
+    const {user, isValid, loginId} = await login(email, password, isLeader);
 
     response.status(200);
 
@@ -30,7 +30,6 @@ express.get('/api/user_sessions', routeHandler(async (request, response) => {
     response.status(200);
     const loginId = request.cookies.loginId || request.headers.authorization;
     const {user} = await relogin(loginId);
-
     if (user) {
         const userDto = dtoFactory.toUser(user);
 

@@ -55,7 +55,7 @@ export async function registerUser({name, email, password}) {
     uow.trackEntity(leaderClinic, {isNew: true});
     await uow.commit();
 
-    const loginResult = await login(email, password);
+    const loginResult = await login(email, password, true);
 
     return {...loginResult, user_id: user.id};
 }

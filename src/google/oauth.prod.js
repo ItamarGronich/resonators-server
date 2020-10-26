@@ -7,7 +7,7 @@ const scopes = [
 //    'https://www.googleapis.com/auth/calendar'
 ];
 
-export function generateAuthUrl(redirectUrl, state = {}) {
+export function generateAuthUrl(redirectUrl, state = {isLeader: false}) {
     const oauth2Client = createOauthClient(redirectUrl);
 
     return oauth2Client.generateAuthUrl({
