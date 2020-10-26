@@ -10,6 +10,7 @@ import cfg from "../../cfg";
 import log from "../../logging";
 import { checkLeaderGroupPermissions } from "../leaderFollowerGroups";
 import {followers, leaders} from "../../db/sequelize/models";
+import { hasRelation } from '../../application/utils';
 
 const { loginRedirectUrl } = cfg.google;
 
@@ -42,12 +43,12 @@ export async function loginGoogleUser(googleAuthCode, state) {
             }
 
             if (state.isLeader) {
-                if (!await isOfType(leaders, user)) {
+                if (!await hasRelation(leaders, user, 'user_id')) {
                     log.error("User is not a leader");
                     return {error: 'not_leader'};
                 }
             } else {
-                if (!await isOfType(followers, user)) {
+                if (!await hasRelation(followers, user, 'user_id')) {
                     log.error("User is not a follower");
                     return {error: 'not_follower'};
                 }
@@ -103,5 +104,3 @@ function updateGoogleAccount(account, { access_token, refresh_token, expiry_date
     account.refresh_token = refresh_token;
     account.access_token_expiry_date = expiry_date;
 }
-
-const isOfType = async (model, user) => (await model.count({ where: { user_id: user.id } })) === 1;

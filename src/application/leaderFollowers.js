@@ -21,14 +21,9 @@ export async function getLeader(leader_id) {
     return dto;
 }
 export async function addLeaderFollower({ leader_id, clinic_id, email, name, password }) {
-    let user = new User({ name, email, pass: password });
-    let isNewUser = true;
     const existingUser = await userRepository.findByEmail(email);
-
-    if (existingUser) {
-        user = existingUser;
-        isNewUser = false;
-    }
+    const user = existingUser || new User({ name, email, pass: password });
+    const isNewUser = !existingUser;
 
     const follower = new Follower({
         user_id: user.id,

@@ -5,20 +5,21 @@ import * as dtoFactory from "./dto/index.js";
 import userRepository from "../db/repositories/UserRepository.js";
 import { user_logins as UserLogin, followers, leaders } from "../db/sequelize/models";
 import { checkLeaderGroupPermissions } from "./leaderFollowerGroups";
+import { hasRelation } from './utils';
 
 export default async function login(email, pass, isLeader) {
     const user = await userRepository.findByEmail(email);
 
     if (user) {
         if (isLeader) {
-            if (!await isOfType(leaders, user)) {
+            if (!await hasRelation(leaders, user, 'user_id')) {
                 return {
                     isValid: false,
                     user: null
                 }
             }
         } else {
-            if (!await isOfType(followers, user)) {
+            if (!await hasRelation(followers, user, 'user_id')) {
                 return {
                     isValid: false,
                     user: null
@@ -65,5 +66,3 @@ async function authenticate(userEntity, pass) {
 
     return { user, isValid, loginId };
 }
-
-const isOfType = async (model, user) => (await model.count({ where: { user_id: user.id } })) === 1;
