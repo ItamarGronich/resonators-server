@@ -13,4 +13,4 @@ export const toCSV = (objArray) =>
 export const uniqFlatten = (arr) =>
     _.uniqWith(_.flattenDeep(arr), _.isEqual);
 
-export const hasRelation = async (foreignModel, model, foreignKey) => (await foreignModel.count({ where: { [foreignKey]: model.id } })) === 1;
+export const hasRelation = async (foreignModel, model, foreignKey) => (await foreignModel.count({ where: { [foreignKey]: model.id } })) >= 1;
