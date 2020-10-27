@@ -59,12 +59,22 @@ export async function loginGoogleUser(googleAuthCode, state) {
             updateGoogleAccount(existingGoogleUserAccount, tokens);
             await getUow().commit();
         } else {
-            if (state.isLeader === false) {
+            const user = await userRepository.findByEmail(googleDetails.email);
+            if (user) { // User exists but doesn't have a Google User record yet
+                await addGoogleAccount({
+                    ...tokens,
+                    user_id: user.id,
+                    google_email: googleDetails.email,
+                });
+                loginResult = await loginByUserEntity(user);
+                await getUow().commit();
+            } else if (state.isLeader === false) { // User doesn't exist and tries to register as a follower
                 log.error("Can't register as a follower. Follower needs to be assigned to a leader");
                 return {error: 'follower_registration_not_allowed'};
+            } else {
+                log.info("Registering new Google account");
+                loginResult = await registerGoogleUser(tokens, googleDetails);
             }
-            log.info("Registering new Google account");
-            loginResult = await registerGoogleUser(tokens, googleDetails);
         }
 
         return loginResult;

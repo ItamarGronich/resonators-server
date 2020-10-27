@@ -29,7 +29,7 @@ express.post('/api/user_sessions\.:ext?', routeHandler(async (request, response)
 express.get('/api/user_sessions', routeHandler(async (request, response) => {
     response.status(200);
     const loginId = request.cookies.loginId || request.headers.authorization;
-    const {user} = await relogin(loginId);
+    const {user} = loginId ? await relogin(loginId) : false; // prevent lockout on cookies reset
     if (user) {
         const userDto = dtoFactory.toUser(user);
 
