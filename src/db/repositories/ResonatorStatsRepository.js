@@ -63,6 +63,7 @@ class ResonatorStatsRepository extends Repository {
 
         const questionAnswerPair = rows.map(r => {
             const question_id = r.resonator_question.question_id;
+            const order = r.resonator_question.order;
             const id = r.get('id');
             const resonator_question_id = r.get('resonator_question_id');
             const answer_id = r.get('answer_id');
@@ -75,7 +76,8 @@ class ResonatorStatsRepository extends Repository {
                 question_id,
                 answer_id,
                 sent_resonator_id,
-                createdAt
+                createdAt,
+                order
             };
         });
 

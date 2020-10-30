@@ -67,11 +67,12 @@ export default class Resonator {
             this.id = uuid();
     }
 
-    addQuestion(question_id) {
+    addQuestion(question_id, order = null) {
         this.questions.push({
             id: uuid(),
             question_id,
-            resonator_id: this.id
+            resonator_id: this.id,
+            order: order
         });
     }
 
@@ -81,6 +82,12 @@ export default class Resonator {
         attachment.visible = 1;
         this.items.push(attachment);
         return attachment;
+    }
+
+    reorderQuestion(question_id, order) {
+        const question = this.questions.find(q => q.id === question_id);
+        question.order = order;
+        question.id = uuid();
     }
 
     removeQuestion(question_id) {

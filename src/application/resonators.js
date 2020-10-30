@@ -67,7 +67,7 @@ export async function addQuestionToResonator(resonator_id, question_id) {
     await getUow().commit();
     return true;
 }
-export async function addBulkQuestionsToResonator(resonator_id, question_ids) {
+export async function addBulkQuestionsToResonator(resonator_id, question_ids, questionsOrder = []) {
 
     for (const question_id of question_ids) {
         const [resonator, question] = await Promise.all([
@@ -76,9 +76,22 @@ export async function addBulkQuestionsToResonator(resonator_id, question_ids) {
         ]);
         if (!resonator || !question)
             return null;
-        resonator.addQuestion(question_id);
+        const questionOrder = questionsOrder.findIndex(x => x === question_id);
+        resonator.addQuestion(question_id, questionOrder >= 0 ? questionOrder : null);
     }
     await getUow().commit();
+    return true;
+}
+export async function reorderQuestionsForResonator(resonator_id, question_id, order) {
+    const resonator = await resonatorRepository.findByPk(resonator_id);
+
+    if (!resonator)
+        return null;
+
+    resonator.reorderQuestion(question_id, order);
+
+    await getUow().commit();
+
     return true;
 }
 export async function removeQuestionFromResonator(resonator_id, question_id) {
