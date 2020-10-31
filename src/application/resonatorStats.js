@@ -39,7 +39,9 @@ export async function getResonatorStats(resonatorId) {
             .reduce((acc, cur) => acc.concat(cur), []);
 
         const sortedAnswers = _.orderBy(answers, a => a.time, ['desc']);
-        sortedAnswers.forEach((a) => { questions.find(q => q.id === a.question_id).order = a.order });
+        sortedAnswers.forEach((a) => {
+            questions.find(q => q.id === a.question_id).order = a.order;
+        });
         allStats.push({
             questions,
             answers: sortedAnswers.map((answer) => ({

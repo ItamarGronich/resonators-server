@@ -48,18 +48,19 @@ export const formatLeader = (leader) => ({
  * @returns {Array<Object>} - the formatted data
  */
 const aggregateResonatorQuestions = (sentResonator) => {
-    sentResonator.resonator.resonator_questions.sort((a, b) => a.order - b.order);
-    return sentResonator.resonator.resonator_questions.map((question) => ({
-        id: question.id,
-        body: question.question.description,
-        type: question.question.question_kind,
-        options: question.question.answers.map((answer) => ({
-            id: answer.id,
-            label: answer.body,
-            value: answer.rank,
-        })),
-        answer: getChosenAnswer(sentResonator, question),
-    }));
+    return sentResonator.resonator.resonator_questions
+        .sort((a, b) => a.order - b.order)
+        .map((question) => ({
+            id: question.id,
+            body: question.question.description,
+            type: question.question.question_kind,
+            options: question.question.answers.map((answer) => ({
+                id: answer.id,
+                label: answer.body,
+                value: answer.rank,
+            })),
+            answer: getChosenAnswer(sentResonator, question),
+        }));
 };
 
 /**
