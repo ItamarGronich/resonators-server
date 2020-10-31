@@ -88,7 +88,7 @@ export async function reorderQuestionsForResonator(resonator_id, criteria_order)
     if (!resonator)
         return null;
 
-    for (const [order, question_id] of criteria_order) {
+    for (const [order, question_id] of criteria_order.entries()) {
         resonator.reorderQuestion(question_id, order);
     }
 
