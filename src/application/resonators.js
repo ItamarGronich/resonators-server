@@ -82,13 +82,15 @@ export async function addBulkQuestionsToResonator(resonator_id, question_ids, qu
     await getUow().commit();
     return true;
 }
-export async function reorderQuestionsForResonator(resonator_id, question_id, order) {
+export async function reorderQuestionsForResonator(resonator_id, criteria_order) {
     const resonator = await resonatorRepository.findByPk(resonator_id);
 
     if (!resonator)
         return null;
 
-    resonator.reorderQuestion(question_id, order);
+    for (const [order, question_id] of criteria_order) {
+        resonator.reorderQuestion(question_id, order);
+    }
 
     await getUow().commit();
 

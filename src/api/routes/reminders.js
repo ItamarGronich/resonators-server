@@ -54,8 +54,8 @@ express.post('/api/leader_followers/:followerId/reminders/:reminderId/criteria\.
     }));
 
 express.post('/api/leader_followers/:followerId/reminders/:reminderId/criteria/reorder\.:ext?', routeHandler(async (request, response) => {
-    const { reminder_id, question_id, order } = request.body;
-    const result = await service.reorderQuestionsForResonator(reminder_id, question_id, order);
+    const { reminder_id, criteria_order } = request.body;
+    const result = await service.reorderQuestionsForResonator(reminder_id, criteria_order);
     if (!result) {
         response.status(422);
     } else
