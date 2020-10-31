@@ -41,8 +41,8 @@ express.put('/api/leader_followers/:followerId/reminders/:reminderId\.:ext?', ro
     }));
 
 express.post('/api/leader_followers/:followerId/reminders/:reminderId/criteria\.:ext?', routeHandler(async (request, response) => {
-    const { reminder_id, question_id } = request.body;
-    const result = await service.addBulkQuestionsToResonator(reminder_id, question_id);
+    const { reminder_id, question_id, questions_order } = request.body;
+    const result = await service.addBulkQuestionsToResonator(reminder_id, question_id, questions_order);
     if (!result) {
         response.status(422);
     } else
@@ -52,6 +52,19 @@ express.post('/api/leader_followers/:followerId/reminders/:reminderId/criteria\.
 }, {
         enforceLeaderFollower: true
     }));
+
+express.post('/api/leader_followers/:followerId/reminders/:reminderId/criteria/reorder\.:ext?', routeHandler(async (request, response) => {
+    const { reminder_id, criteria_order } = request.body;
+    const result = await service.reorderQuestionsForResonator(reminder_id, criteria_order);
+    if (!result) {
+        response.status(422);
+    } else
+        response.status(200);
+
+    response.json(result);
+}, {
+    enforceLeaderFollower: true
+}));
 
 express.delete('/api/leader_followers/:followerId/reminders/:reminderId/criteria/:criterionId\.:ext?', routeHandler(async (request, response) => {
     const { reminderId, criterionId } = request.params;

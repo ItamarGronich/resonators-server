@@ -47,18 +47,21 @@ export const formatLeader = (leader) => ({
  * @param {sent_resonators} sentResonator - the sent resonator for which to aggregate the questions
  * @returns {Array<Object>} - the formatted data
  */
-const aggregateResonatorQuestions = (sentResonator) =>
-    sentResonator.resonator.resonator_questions.map((question) => ({
-        id: question.id,
-        body: question.question.description,
-        type: question.question.question_kind,
-        options: question.question.answers.map((answer) => ({
-            id: answer.id,
-            label: answer.body,
-            value: answer.rank,
-        })),
-        answer: getChosenAnswer(sentResonator, question),
-    }));
+const aggregateResonatorQuestions = (sentResonator) => {
+    return sentResonator.resonator.resonator_questions
+        .sort((a, b) => a.order - b.order)
+        .map((question) => ({
+            id: question.id,
+            body: question.question.description,
+            type: question.question.question_kind,
+            options: question.question.answers.map((answer) => ({
+                id: answer.id,
+                label: answer.body,
+                value: answer.rank,
+            })),
+            answer: getChosenAnswer(sentResonator, question),
+        }));
+};
 
 /**
  * Finds the ID of the answer chosen for a given sent resonators question.

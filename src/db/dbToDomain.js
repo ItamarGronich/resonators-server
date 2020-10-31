@@ -52,7 +52,7 @@ export function toFollower(r) {
 
 export function toResonator(r) {
     const resonator_attachments = _.map(r.resonator_attachments, toResonatorAttachment);
-    const resonator_questions = _(r.resonator_questions).map(toResonatorQuestion).orderBy(rq => rq.updatedAt).value();
+    const resonator_questions = _(r.resonator_questions).map(toResonatorQuestion).orderBy(rq => [rq.order, rq.updatedAt], ['ASC', 'DESC']).value();
     let repeat_days = r.get('repeat_days');
     repeat_days = repeat_days ? repeat_days.split(',').map(s => parseInt(s)) : [];
 
@@ -111,6 +111,7 @@ function toResonatorQuestion(r) {
         question_id: r.get('question_id'),
         resonator_id: r.get('resonator_id'),
         removed: r.get('removed'),
+        order: r.get('order'),
         createdAt: r.get('createdAt'),
         updatedAt: r.get('updatedAt'),
         question

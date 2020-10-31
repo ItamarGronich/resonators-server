@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
             question_id: DataTypes.UUID,
             resonator_id: DataTypes.UUID,
             removed: DataTypes.BOOLEAN,
+            order: DataTypes.INTEGER
         },
         { underscored: true }
     );
