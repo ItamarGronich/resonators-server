@@ -85,7 +85,7 @@ export default class Resonator {
     }
 
     reorderQuestion(question_id, order) {
-        const question = this.questions.find(q => q.id === question_id);
+        const question = this.questions.find(q => q.question_id === question_id);
         if (!question) return null;
         question.order = order;
         question.id = uuid();
