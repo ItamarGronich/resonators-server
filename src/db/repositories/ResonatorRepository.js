@@ -44,6 +44,22 @@ class ResonatorsRepository extends Repository {
         });
     }
 
+    async updateQuestionOrder(resonatorId, questionId, order) {
+        const resonator_question = await resonator_questions.findOne({
+            where: {
+                resonator_id: resonatorId,
+                question_id: questionId
+            }
+        });
+
+        if (resonator_question) {
+            resonator_question.order = order;
+            resonator_question.save();
+        }
+
+        return resonator_question;
+    }
+
     saveItems(resonator, lastResonator, transaction) {
         return addRemoveChangedEntities({
             currentGroup: resonator.items,
