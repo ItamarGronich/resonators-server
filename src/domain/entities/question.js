@@ -1,5 +1,6 @@
 import { v4 as uuid } from "uuid";
 import Answer from './answer';
+import {answers} from "../../db/sequelize/models";
 
 export default class Question {
     constructor({
@@ -32,9 +33,21 @@ export default class Question {
         });
     }
 
-    updateAnswers(answers = []) {
-        this.answers = answers.map(a => ({
-            id: uuid(),
+    async updateAnswers(newAnswers = []) {
+        await newAnswers.forEach(async (newAnswer) => {
+            const answer = await answers.findOne({
+                where: {
+                    id: this.answers.find(old => old.rank === newAnswer.rank).id
+                }
+            });
+
+            if (answer) {
+                answer.body = newAnswer.body;
+                answer.save();
+            }
+        });
+        this.answers =newAnswers.map(a => ({
+            id: this.answers.find(old => old.rank === a.rank).id,
             ...a
         }));
     }
