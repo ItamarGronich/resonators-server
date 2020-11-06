@@ -188,7 +188,7 @@ export async function updateQuestion(questionRequest) {
         'question_kind'
     ]);
 
-    question.updateAnswers(questionRequest.answers);
+    await question.updateAnswers(questionRequest.answers);
 
     await uow.commit();
 
