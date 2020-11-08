@@ -3,7 +3,7 @@ import googleAccountsRepository from "../../db/repositories/GoogleAccountReposit
 import userRepository from "../../db/repositories/UserRepository";
 import addGoogleAccount from "./addGoogleAccount";
 import fetchBasicGoogleDetails from "../../google/fetchBasicDetails";
-import { registerUser } from "../registerUser";
+import { registerUser, registerLeader } from "../registerUser";
 import { loginByUserEntity } from "../login";
 import getUow from "../getUow";
 import cfg from "../../cfg";
@@ -44,8 +44,7 @@ export async function loginGoogleUser(googleAuthCode, state) {
 
             if (state.isLeader) {
                 if (!await hasRelation(leaders, user, 'user_id')) {
-                    log.error("User is not a leader");
-                    return {error: 'not_leader'};
+                    registerLeader(user);
                 }
             } else {
                 if (!await hasRelation(followers, user, 'user_id')) {

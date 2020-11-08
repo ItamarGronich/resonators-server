@@ -19,12 +19,21 @@ export async function registerUser({name, email, password}) {
 
     const user = new User({ name, email, pass: password });
 
+    registerLeader(user);
+    
+    if (user.error)
+        return user;
 
+    const loginResult = await login(email, password, true);
 
+    return {...loginResult, user_id: user.id};
+}
+
+export async function registerLeader(user) {
     const clinic = new Clinic({
         id: uuid(),
         user_id: user.id,
-        name: `${name}'s clinic`
+        name: `${user.name}'s clinic`
     });
 
     const leader = new Leader({
@@ -43,10 +52,6 @@ export async function registerUser({name, email, password}) {
         is_primary : true,
         is_leader_accepted: false
     });
-    
-    if (user.error)
-        return user;
-
     const uow = getUow();
 
     uow.trackEntity(user, {isNew: true});
@@ -54,8 +59,4 @@ export async function registerUser({name, email, password}) {
     uow.trackEntity(clinic, {isNew: true});
     uow.trackEntity(leaderClinic, {isNew: true});
     await uow.commit();
-
-    const loginResult = await login(email, password, true);
-
-    return {...loginResult, user_id: user.id};
 }
