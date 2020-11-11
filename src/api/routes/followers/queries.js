@@ -31,6 +31,7 @@ export const fetchFollowerSentResonators = async (follower, pageNum) => ({
             resonator_answers,
             {
                 model: resonators,
+                required: true,
                 include: [
                     {
                         model: followers,
@@ -55,6 +56,7 @@ export const fetchFollowerSentResonators = async (follower, pageNum) => ({
         include: [
             {
                 model: resonators,
+                required: true,
                 include: [
                     {
                         model: followers,
@@ -79,6 +81,7 @@ export const fetchSentResonator = async (follower, sentResonatorId) =>
             resonator_answers,
             {
                 model: resonators,
+                required: true,
                 include: [
                     {
                         model: followers,
