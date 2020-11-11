@@ -31,10 +31,12 @@ export const fetchFollowerSentResonators = async (follower, pageNum) => ({
             resonator_answers,
             {
                 model: resonators,
-                where: {
-                    follower_id: follower.id,
-                },
                 include: [
+                    {
+                        model: followers,
+                        where: { user_id: follower.user_id },
+                        required: true
+                    },
                     resonator_questions,
                     {
                         model: resonator_attachments,
@@ -53,9 +55,13 @@ export const fetchFollowerSentResonators = async (follower, pageNum) => ({
         include: [
             {
                 model: resonators,
-                where: {
-                    follower_id: follower.id,
-                },
+                include: [
+                    {
+                        model: followers,
+                        where: { user_id: follower.user_id },
+                        required: true
+                    }
+                ]
             },
         ],
     }),
@@ -73,10 +79,12 @@ export const fetchSentResonator = async (follower, sentResonatorId) =>
             resonator_answers,
             {
                 model: resonators,
-                where: {
-                    follower_id: follower.id,
-                },
                 include: [
+                    {
+                        model: followers,
+                        where: { user_id: follower.user_id },
+                        required: true
+                    },
                     {
                         model: resonator_questions,
                         include: [
