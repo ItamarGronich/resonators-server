@@ -26,17 +26,21 @@ export async function getResonatorStats(resonatorId) {
             acc[cur.id] = cur;
             return acc;
         }, {});
-        const answers = _(stats.criteria)
+        const answers = await Promise.all(_(stats.criteria)
             .map((arr, question_id) =>
-                _.map(arr, a => ({
-                    question_id,
-                    rank: _.get(answersMap[a.answer_id], 'rank'),
-                    time: a.createdAt,
-                    order: a.order,
-                    resonator: resonator.title,
-                }))
+                _.map(arr, async a => {
+                    const sentResonator = await sentResonatorRepository.findByPk(a.sent_resonator_id);
+                    return {
+                        question_id,
+                        rank: _.get(answersMap[a.answer_id], 'rank'),
+                        time: (sentResonator) ? sentResonator.createdAt : a.createdAt,
+                        time_answered: a.createdAt,
+                        order: a.order,
+                        resonator: resonator.title,
+                    }
+                })
             )
-            .reduce((acc, cur) => acc.concat(cur), []);
+            .reduce((acc, cur) => acc.concat(cur), []));
 
         const sortedAnswers = _.orderBy(answers, a => a.time, ['desc']);
         sortedAnswers.forEach((a) => {
