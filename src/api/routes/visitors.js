@@ -43,7 +43,7 @@ express.post('/api/contactForm', routeHandler(async (request, response) => {
 
     try {
         await sendEmail({
-            to: 'BuizDev@PsySession.com',
+            to: 'support@PsySession.com',
             subject: 'User submitted contact form',
             html: `
                 <table>
