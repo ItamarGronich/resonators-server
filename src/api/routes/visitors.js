@@ -1,10 +1,39 @@
 import express from "../express"
 import sendEmail from "../../mailing"
 import routeHandler from "../routeHandler"
+import axios from 'axios';
 
 express.post('/api/contactForm', routeHandler(async (request, response) => {
 
-    const { name = '', country = '', phone = '', email = '', message = '' } = request.body;
+    const { name = '', country = '', phone = '', email = '', message = '', 'g-recaptcha-response': grecaptcharesponse } = request.body;
+
+    const recaptchaSecretKey = "6Lfs494ZAAAAAP-UW6FkD553CXdYbyZlwrZY3ZId";
+    const googleVerifyUrl = `https://www.google.com/recaptcha/api/siteverify`;
+
+    try {
+        const result = await axios({
+            method: 'post',
+            url: googleVerifyUrl,
+            params: {
+                secret: recaptchaSecretKey,
+                response: grecaptcharesponse
+            }
+        });
+
+
+        const data = result.data;
+
+        if (!data.success) {
+            response.json("Please verify captcha");
+        }
+
+    }
+    catch (e) {
+        response.status(500);
+        response.json(e);
+        return;
+    }
+
 
     if (!(email || phone)) {
         response.status(422);
