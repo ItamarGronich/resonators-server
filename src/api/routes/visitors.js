@@ -7,7 +7,7 @@ express.post('/api/contactForm', routeHandler(async (request, response) => {
 
     const { name = '', country = '', phone = '', email = '', message = '', 'g-recaptcha-response': grecaptcharesponse } = request.body;
 
-    const recaptchaSecretKey = "6Lfs494ZAAAAAP-UW6FkD553CXdYbyZlwrZY3ZId";
+    const recaptchaSecretKey = "6LdyBuQZAAAAAPrDOy-hjdQXMW4jzlKon8SCay3F";
     const googleVerifyUrl = `https://www.google.com/recaptcha/api/siteverify`;
 
     try {
