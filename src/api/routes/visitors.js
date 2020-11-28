@@ -2,13 +2,20 @@ import express from "../express"
 import sendEmail from "../../mailing"
 import routeHandler from "../routeHandler"
 import axios from 'axios';
+import cfg from "../../cfg";
 
 express.post('/api/contactForm', routeHandler(async (request, response) => {
 
     const { name = '', country = '', phone = '', email = '', message = '', 'g-recaptcha-response': grecaptcharesponse } = request.body;
 
-    const recaptchaSecretKey = "6LdyBuQZAAAAAPrDOy-hjdQXMW4jzlKon8SCay3F";
+    const recaptchaSecretKey = cfg.googleCaptcha.secret;
     const googleVerifyUrl = `https://www.google.com/recaptcha/api/siteverify`;
+    
+    if (!(email || phone)) {
+        response.status(422);
+        response.json({})
+        return;
+    }
 
     try {
         const result = await axios({
@@ -20,11 +27,11 @@ express.post('/api/contactForm', routeHandler(async (request, response) => {
             }
         });
 
-
-        const data = result.data;
+        const data = result.data;              
 
         if (!data.success) {
             response.json("Please verify captcha");
+            return;
         }
 
     }
@@ -32,18 +39,11 @@ express.post('/api/contactForm', routeHandler(async (request, response) => {
         response.status(500);
         response.json(e);
         return;
-    }
-
-
-    if (!(email || phone)) {
-        response.status(422);
-        response.json({})
-        return;
-    }
-
+    }      
+  
     try {
         await sendEmail({
-            to: 'support@PsySession.com',
+            to: cfg.supportEmail.emailId,
             subject: 'User submitted contact form',
             html: `
                 <table>
