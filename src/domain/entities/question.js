@@ -38,4 +38,12 @@ export default class Question {
             ...a
         }));
     }
+
+    freeze() {
+        this.removed = true;
+    }
+
+    unfreeze() {
+        this.removed = false;
+    }
 }

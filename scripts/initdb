@@ -4,8 +4,8 @@ const selectedDB = process.env.DB;
 
 const allDatabases = [
     'resonators_dev',
-    'resonators_test',
-    'resonators_prod'
+    //'resonators_test',
+    //'resonators_prod'
 ];
 
 const databases = allDatabases.filter(dbName => !selectedDB || dbName === selectedDB);

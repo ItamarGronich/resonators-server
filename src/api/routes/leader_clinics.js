@@ -8,7 +8,9 @@ import {
     updateQuestion,
     UpsertLeaderClinics,
     UpdateCurrentClinicId,
-    addLeaderToClinic
+    addLeaderToClinic,
+    freezeCriterion,
+    unfreezeCriterion,
 } from '../../application/leaderClinics';
 
 express.get('/api/leader_clinics', routeHandler(async (request, response) => {
@@ -75,4 +77,26 @@ express.put('/api/leader_clinics/:clinicId/criteria/:criterionId\.:ext?', routeH
         response.status(200);
 
     response.json(updatedQuestion);
+}));
+
+express.post('/api/leader_clinics/:criterionId/freeze\.:ext?', routeHandler(async (request, response) => {
+    const {criterionId} = request.params;
+     console.log("Inside server");
+    const result = await freezeCriterion(criterionId);
+
+    response.status(result ? 200 : 422);
+    response.json({});
+}, {
+    //enforceLeaderClinics: true
+}));
+
+express.post('/api/leader_clinics/:criterionId/unfreeze\.:ext?', routeHandler(async (request, response) => {
+    const {criterionId} = request.params;
+
+    const result = await unfreezeCriterion(criterionId);
+
+    response.status(result ? 200 : 422);
+    response.json({});
+}, {
+   // enforceLeaderClinics: true
 }));
