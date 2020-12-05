@@ -187,7 +187,7 @@ export async function updateQuestion(questionRequest) {
         'clinic_id',
         'description',
         'title',
-        'question_kind'
+        'question_kind'       
     ]);
 
     await question.updateAnswers(questionRequest.answers);
@@ -202,22 +202,23 @@ export async function freezeCriterion(questionRequest) {
     const uow = getUow();
     const question = await questionsRepository.findByPk(questionRequest);
 
-    if (question) {
-        log.info(`Freezing question ${questionRequest.id}`);
-        question.freeze();
+    if (question) {      
+        await question.freeze();
         await uow.commit();
-        return true;
+        const savedQuestion = await questionsRepository.findByPk(question.id);
+        return dtoFactory.toQuestion(savedQuestion);
     }
 }
 
 export async function unfreezeCriterion(questionRequest) {    
+    const uow = getUow();
     const question = await questionsRepository.findByPk(questionRequest);
 
-    if (question) {
-        log.info(`Unfreezing question ${questionRequest.id}`);
-        question.unfreeze();
+    if (question) {      
+        await question.unfreeze();
         await uow.commit();
-        return true;
+        const savedQuestion = await questionsRepository.findByPk(question.id);
+        return dtoFactory.toQuestion(savedQuestion);
     }
 }
 

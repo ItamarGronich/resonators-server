@@ -81,13 +81,12 @@ express.put('/api/leader_clinics/:clinicId/criteria/:criterionId\.:ext?', routeH
 
 express.post('/api/leader_clinics/:criterionId/freeze\.:ext?', routeHandler(async (request, response) => {
     const {criterionId} = request.params;
-     console.log("Inside server");
+    
     const result = await freezeCriterion(criterionId);
 
     response.status(result ? 200 : 422);
-    response.json({});
-}, {
-    //enforceLeaderClinics: true
+    response.json(result);
+}, {   
 }));
 
 express.post('/api/leader_clinics/:criterionId/unfreeze\.:ext?', routeHandler(async (request, response) => {
@@ -96,7 +95,6 @@ express.post('/api/leader_clinics/:criterionId/unfreeze\.:ext?', routeHandler(as
     const result = await unfreezeCriterion(criterionId);
 
     response.status(result ? 200 : 422);
-    response.json({});
-}, {
-   // enforceLeaderClinics: true
+    response.json(result);
+}, {    
 }));
