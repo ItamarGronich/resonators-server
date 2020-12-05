@@ -10,6 +10,8 @@ import updatePermittedFields from './updatePermittedFields';
 import {leader_clinics} from '../db/sequelize/models';
 import LeaderClinic from '../domain/entities/leaderClinic';
 import { v4 as uuid } from 'uuid';
+import log from '../logging';
+import { uow } from '../api/middleware';
 
 export async function getLeaderClinics(user_id) {
     const rows = await clinics.findAll({
@@ -195,3 +197,27 @@ export async function updateQuestion(questionRequest) {
     const savedQuestion = await questionsRepository.findByPk(question.id);
     return dtoFactory.toQuestion(savedQuestion);
 }
+
+export async function freezeCriterion(questionRequest) {   
+    const uow = getUow();
+    const question = await questionsRepository.findByPk(questionRequest);
+
+    if (question) {
+        log.info(`Freezing question ${questionRequest.id}`);
+        question.freeze();
+        await uow.commit();
+        return true;
+    }
+}
+
+export async function unfreezeCriterion(questionRequest) {    
+    const question = await questionsRepository.findByPk(questionRequest);
+
+    if (question) {
+        log.info(`Unfreezing question ${questionRequest.id}`);
+        question.unfreeze();
+        await uow.commit();
+        return true;
+    }
+}
+
