@@ -10,6 +10,8 @@ import updatePermittedFields from './updatePermittedFields';
 import {leader_clinics} from '../db/sequelize/models';
 import LeaderClinic from '../domain/entities/leaderClinic';
 import { v4 as uuid } from 'uuid';
+import log from '../logging';
+import { uow } from '../api/middleware';
 
 export async function getLeaderClinics(user_id) {
     const rows = await clinics.findAll({
@@ -185,7 +187,7 @@ export async function updateQuestion(questionRequest) {
         'clinic_id',
         'description',
         'title',
-        'question_kind'
+        'question_kind'       
     ]);
 
     await question.updateAnswers(questionRequest.answers);
@@ -195,3 +197,28 @@ export async function updateQuestion(questionRequest) {
     const savedQuestion = await questionsRepository.findByPk(question.id);
     return dtoFactory.toQuestion(savedQuestion);
 }
+
+export async function freezeCriterion(questionRequest) {   
+    const uow = getUow();
+    const question = await questionsRepository.findByPk(questionRequest);
+
+    if (question) {      
+        await question.freeze();
+        await uow.commit();
+        const savedQuestion = await questionsRepository.findByPk(question.id);
+        return dtoFactory.toQuestion(savedQuestion);
+    }
+}
+
+export async function unfreezeCriterion(questionRequest) {    
+    const uow = getUow();
+    const question = await questionsRepository.findByPk(questionRequest);
+
+    if (question) {      
+        await question.unfreeze();
+        await uow.commit();
+        const savedQuestion = await questionsRepository.findByPk(question.id);
+        return dtoFactory.toQuestion(savedQuestion);
+    }
+}
+
