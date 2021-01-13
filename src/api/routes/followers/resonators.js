@@ -2,7 +2,7 @@ import api from "./mount";
 import { validateUuid, validatePageNum } from "./validations";
 import { getResonatorQuestion, getQuestionAnswer } from "./utils";
 import { formatSentResonatorPreview, formatSentResonatorFull } from "./normalizers";
-import { fetchFollowerSentResonators, fetchSentResonator, answerQuestion } from "./queries";
+import { fetchFollowerSentResonators, fetchSentResonator, answerQuestion, readResonator } from "./queries";
 
 /**
  * Returns a listing of a follower's resonator instances.
@@ -28,6 +28,7 @@ api.get(
         if (!sentResonator) {
             res.status(404).error("Follower has no such resonator");
         } else {
+            if (!sentResonator.read) readResonator(sentResonator);
             res.status(200).json({
                 resonator: formatSentResonatorFull(sentResonator),
             });

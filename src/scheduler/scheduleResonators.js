@@ -24,6 +24,7 @@ function createSentResonator(resonator) {
         id: uuid(),
         failed: false,
         resonator_id: resonator.id,
+        read: false,
         // expiry_date: computeExpiry(resonator.ttl_policy),
     });
 }
