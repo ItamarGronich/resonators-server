@@ -2,6 +2,7 @@ import _ from 'lodash';
 import User from '../domain/entities/user';
 import Leader from '../domain/entities/leader';
 import Follower from '../domain/entities/follower';
+import Invitation from '../domain/entities/invitation';
 import Resonator from '../domain/entities/resonator';
 import Question from '../domain/entities/question';
 import ResonatorAttachment from '../domain/entities/resonatorAttachment';
@@ -45,6 +46,17 @@ export function toFollower(r) {
         clinic_id: r.get('clinic_id'),
         status: r.get('status'),
         frozen: !!r.get('frozen'),
+        createdAt: r.get('createdAt'),
+        updatedAt: r.get('updatedAt')
+    });
+}
+
+export function toInvitation(r) {
+    return new Invitation({
+        id: r.get('id'),
+        user_id: r.get('user_id'),
+        subject: r.get('subject'),
+        body: r.get('body'),
         createdAt: r.get('createdAt'),
         updatedAt: r.get('updatedAt')
     });

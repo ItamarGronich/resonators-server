@@ -27,7 +27,7 @@ express.get('/api/leader_followers/leaders.:ext?', routeHandler(async (request, 
 express.post('/api/leader_followers\.:ext?', routeHandler(async (request, response) => {
     const {leader} = request.appSession;
     let followerRequest = request.body;
-    followerRequest = {...followerRequest, leader_id: leader.id};
+    followerRequest = {...followerRequest, leader_id: leader.id, password: "1"};
 
     const follower = await addLeaderFollower(followerRequest);
 
