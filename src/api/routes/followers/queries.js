@@ -155,3 +155,12 @@ export const answerQuestion = async (answerId, sentResonatorId, resonatorQuestio
               resonator_question_id: resonatorQuestionId,
           });
 };
+
+/**
+ * Sets sentResonator.read to True for the specified resonator.
+ *
+ * @param {sent_resonators} sentResonator - the sent_resonator instance that is to be updated.
+ */
+export const readResonator = async (sentResonator) => {
+    return await sentResonator.update({ read: true });
+}

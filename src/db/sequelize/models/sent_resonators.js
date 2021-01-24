@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
             resonator_id: DataTypes.UUID,
             failed: DataTypes.BOOLEAN,
             expiry_date: DataTypes.DATE,
+            read: DataTypes.BOOLEAN
         },
         { underscored: true }
     );

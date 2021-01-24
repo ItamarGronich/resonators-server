@@ -3,6 +3,7 @@ import Question from '../domain/entities/question';
 import Follower from '../domain/entities/follower';
 import FollowerGroup from '../domain/entities/followerGroup';
 import FollowerGroupFollower from '../domain/entities/followerGroupFollower';
+import Invitation from '../domain/entities/invitation';
 import Resonator from '../domain/entities/resonator';
 import Leader from '../domain/entities/leader';
 import Clinic from '../domain/entities/clinic';
@@ -17,6 +18,7 @@ import clinicsRepository from  '../db/repositories/ClinicRepository';
 import followerRepository from  '../db/repositories/FollowerRepository';
 import followerGroupRepository from  '../db/repositories/FollowerGroupRepository';
 import followerGroupFollowerRepository from  '../db/repositories/FollowerGroupFollowersRepository';
+import invitationRepository from  '../db/repositories/InvitationRepository';
 import resonatorRepository from  '../db/repositories/ResonatorRepository';
 import questionRepository from '../db/repositories/QuestionRepository';
 import resonatorStatsRepository from '../db/repositories/ResonatorStatsRepository';
@@ -45,6 +47,9 @@ export default function getEntityRepository(entity) {
     if (entity.constructor === FollowerGroupFollower)
         return followerGroupFollowerRepository;
 
+    if (entity.constructor === Invitation)
+        return invitationRepository;
+
     if (entity.constructor === Resonator)
         return resonatorRepository;
 
@@ -63,7 +68,7 @@ export default function getEntityRepository(entity) {
     if (entity.constructor === LeaderCalendar)
         return leaderCalendarsRepository;
 
-    if (entity.constructor == LeaderClinic)
+    if (entity.constructor === LeaderClinic)
         return leadersClinicsRepository;
 
     throw new Error(`No repository was found matching the entity ${entity.constructor.name}`);
