@@ -20,6 +20,7 @@ export async function getInvitations(user_id) {
 
         return {
             id: file.id,
+            displayTitle: file.name,
             subject: subject,
             body: body,
             system: true
