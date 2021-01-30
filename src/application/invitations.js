@@ -20,7 +20,7 @@ export async function getInvitations(user_id) {
 
         return {
             id: file.id,
-            displayTitle: file.name,
+            title: file.name,
             subject: subject,
             body: body,
             system: true
@@ -33,13 +33,14 @@ export async function getInvitations(user_id) {
     return invitations;
 }
 
-export async function createInvitation(user_id, { subject, body }) {
+export async function createInvitation(user_id, { title, subject, body }) {
     const user = await userRepository.findByPk(user_id);
 
     if (!user) return false;
 
     const invitation = new Invitation({
         user_id: user.id,
+        title,
         subject,
         body
     });
@@ -55,6 +56,7 @@ export async function createInvitation(user_id, { subject, body }) {
 
 export async function updateInvitation(invitationId, newInvitationDetails) {
     const invitation = await invitationRepository.findByPk(invitationId);
+    invitation.title = newInvitationDetails.title;
     invitation.subject = newInvitationDetails.subject;
     invitation.body = newInvitationDetails.body;
 

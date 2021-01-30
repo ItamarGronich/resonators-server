@@ -4,6 +4,7 @@ export default class Invitation {
     constructor({
                     id,
                     user_id,
+                    title,
                     subject,
                     body,
                     createdAt,
@@ -11,6 +12,7 @@ export default class Invitation {
                 }) {
         this.id = id || uuid();
         this.user_id = user_id;
+        this.title = title;
         this.subject = subject;
         this.body = body;
         this.createdAt = createdAt;
