@@ -55,6 +55,7 @@ export function toInvitation(r) {
     return new Invitation({
         id: r.get('id'),
         user_id: r.get('user_id'),
+        title: r.get('title'),
         subject: r.get('subject'),
         body: r.get('body'),
         createdAt: r.get('createdAt'),
