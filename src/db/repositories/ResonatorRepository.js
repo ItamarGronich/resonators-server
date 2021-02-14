@@ -154,6 +154,7 @@ class ResonatorsRepository extends Repository {
             where: {
                 follower_id: followerId
             },
+            order: [["createdAt", "DESC"]],
             include: this.queryInclude()
         });
 
@@ -171,6 +172,7 @@ class ResonatorsRepository extends Repository {
             where: {
                 follower_group_id: followerGroupId
             },
+            order: [["createdAt", "DESC"]],
             include: this.queryInclude()
         });
 

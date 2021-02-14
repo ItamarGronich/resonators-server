@@ -57,6 +57,15 @@ express.delete('/api/leader_followerGroups/:followerGroupId/reminders/:reminderI
     enforceLeaderFollowerGroup: true
 }));
 
+express.post('/api/leader_followerGroups/:followerGroupId/reminders/:reminderId/attachment\.:ext?', routeHandler(async (request, response) => {
+    const { resonatorId, link } = request.body;
+    await service.addAttachmentToGroupResonator(resonatorId, link);
+
+    response.status(201).json({});
+}, {
+    enforceLeaderFollowerGroup: true
+}));
+
 (() => {
     var itemsUpload = upload.fields([{
         name: 'follower_group_id'
