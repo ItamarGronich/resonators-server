@@ -83,6 +83,15 @@ express.delete('/api/leader_followers/:followerId/reminders/:reminderId/criteria
         enforceLeaderFollower: true
     }));
 
+express.post('/api/leader_followers/:followerId/reminders/:reminderId/attachment\.:ext?', routeHandler(async (request, response) => {
+    const { resonatorId, link } = request.body;
+    await service.addAttachmentToResonator(resonatorId, link);
+
+    response.status(201).json({});
+}, {
+    enforceLeaderFollower: true
+}));
+
 (() => {
     var itemsUpload = upload.fields([{
         name: 'follower_id'

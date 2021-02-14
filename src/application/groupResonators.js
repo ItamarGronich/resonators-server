@@ -133,6 +133,23 @@ export const removeQuestionFromGroupResonator = async (resonator_id, question_id
 
     return true;
 }
+export const addAttachmentToGroupResonator = async(resonator_id, link) => {
+    const resonator = await resonatorRepository.findByPk(resonator_id);
+
+    if (!resonator)
+        return null;
+
+    resonator.addItem({
+        id: uuid(),
+        link: link,
+        resonator_id,
+        media_kind: 'picture'
+    });
+
+    await getUow().commit();
+
+    return true;
+}
 export const addItemToGroupResonator = async (resonator_id, item, stream) => {
     const resonator = await resonatorRepository.findByPk(resonator_id);
 
