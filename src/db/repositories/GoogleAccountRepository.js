@@ -1,6 +1,7 @@
 import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
 import {google_accounts} from '../sequelize/models';
+import Sequelize from 'sequelize';
 
 class GoogleAccountsRepository extends Repository {
     constructor(...args) {
@@ -36,7 +37,7 @@ class GoogleAccountsRepository extends Repository {
     async findByEmail(google_email) {
         const dbRow = await google_accounts.findOne({
             where: {
-                google_email
+                where: Sequelize.where(Sequelize.fn('lower', Sequelize.col('google_email')), Sequelize.fn('lower', google_email))
             }
         });
 
