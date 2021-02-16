@@ -1,6 +1,7 @@
 import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
 import {users as User, followers, user_password_resets} from '../sequelize/models';
+import Sequelize from 'sequelize';
 
 class UserRepository extends Repository {
     constructor(...args) {
@@ -19,9 +20,7 @@ class UserRepository extends Repository {
 
     async findByEmail(email) {
         const dbUser = await User.findOne({
-            where: {
-                email
-            }
+            where: Sequelize.where(Sequelize.fn('lower', Sequelize.col('email')), Sequelize.fn('lower', email))
         });
 
         if (dbUser) {
