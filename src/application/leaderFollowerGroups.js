@@ -142,9 +142,13 @@ export async function checkLeaderGroupPermissions(user) {
     const sheet = doc.sheetsByIndex[0];
     const rows = await sheet.getRows();
 
-    const sheetLeader = rows.find(({ Email }) => Email && Email.toLowerCase() === user.email.toLowerCase())
-    const permission = Boolean(sheetLeader) && sheetLeader.Groups.toLowerCase() === 'true';
-    leader.group_permissions = permission;
+    const sheetLeader = rows.find(({ Email }) => Email && Email.toLowerCase() === user.email.toLowerCase());
+
+    const groupPermission = Boolean(sheetLeader) && sheetLeader.Groups.toLowerCase() === 'true';
+    const adminPermission = Boolean(sheetLeader) && sheetLeader['System Admin'].toLowerCase() === 'true';
+
+    leader.group_permissions = groupPermission;
+    leader.admin_permissions = adminPermission;
     await uow.commit();
 }
 

@@ -10,6 +10,8 @@ export default class Question {
         question_kind,
         description,
         title,
+        tags,
+        is_system,
         removed,
         answers = [],
         createdAt,
@@ -21,6 +23,8 @@ export default class Question {
         this.question_kind = question_kind;
         this.description = description;
         this.title = title;
+        this.tags = tags;
+        this.is_system = is_system;
         this.removed = removed || false;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;

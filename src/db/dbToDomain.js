@@ -34,6 +34,7 @@ export function toLeader(r) {
         visible: r.get('visible'),
         current_clinic_id: r.get('current_clinic_id'),
         group_permissions: r.get('group_permissions'),
+        admin_permissions: r.get('admin_permissions'),
     });
 }
 
@@ -46,6 +47,7 @@ export function toFollower(r) {
         clinic_id: r.get('clinic_id'),
         status: r.get('status'),
         frozen: !!r.get('frozen'),
+        is_system: !!r.get('is_system'),
         createdAt: r.get('createdAt'),
         updatedAt: r.get('updatedAt')
     });
@@ -140,6 +142,8 @@ export function toQuestion(r) {
         question_kind: r.get('question_kind'),
         description: r.get('description'),
         title: r.get('title'),
+        is_system: r.get('is_system'),
+        tags: r.get('tags'),
         removed: r.get('removed'),
         clinic_id: r.get('clinic_id'),
         createdAt: r.get('createdAt'),

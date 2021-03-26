@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
             current_clinic_id: DataTypes.UUID,
             visible: DataTypes.INTEGER,
             group_permissions: DataTypes.BOOLEAN,
+            admin_permissions: DataTypes.BOOLEAN,
         },
         { underscored: true }
     );
