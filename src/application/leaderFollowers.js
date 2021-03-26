@@ -9,6 +9,12 @@ import * as dtoFactory from './dto/index';
 import getUow from './getUow';
 import FollowerGroupFollowersRepository from '../db/repositories/FollowerGroupFollowersRepository';
 
+export async function getSystemFollowers() {
+    const followers = await followerRepository.findSystemFollowers();
+    const followersDto = followers.map(dtoFactory.toFollower);
+    return followersDto;
+}
+
 export async function getLeaderFollowers(user_id) {
     const followers = await followerRepository.findByLeaderUserId(user_id);
     const followersDto = followers.map(dtoFactory.toFollower);
@@ -20,10 +26,11 @@ export async function getLeader(leader_id) {
     const dto = dtoFactory.toLeader(leader);
     return dto;
 }
-export async function addLeaderFollower({ leader_id, clinic_id, email, name, password }) {
+export async function addLeaderFollower({ leader_id, clinic_id, email, name, password, is_system }) {
     const existingUser = await userRepository.findByEmail(email);
     const user = existingUser || new User({ name, email, pass: password });
     const isNewUser = !existingUser;
+    const leader = await leaderRepository.findByPk(leader_id);
 
     const follower = new Follower({
         user_id: user.id,
@@ -31,6 +38,7 @@ export async function addLeaderFollower({ leader_id, clinic_id, email, name, pas
         clinic_id,
         status: 2,
         frozen: false,
+        is_system: !!(leader.admin_permissions && is_system)
     });
 
     const uow = getUow();
@@ -42,6 +50,7 @@ export async function addLeaderFollower({ leader_id, clinic_id, email, name, pas
 
     const newFollower = await followerRepository.findByPk(follower.id);
     const followerDto = dtoFactory.toFollower(newFollower);
+
     return {
         ...followerDto,
         user: {
@@ -60,6 +69,9 @@ export async function deleteLeaderFollower(followerId) {
 }
 
 export async function updateFollowerUser(followerId, newUserDetails) {
+    const follower = await followerRepository.findByPk(followerId);
+    if (follower.is_system) return false;
+
     const user = await userRepository.findByFollowerId(followerId);
     user.email = newUserDetails.email;
     user.name = newUserDetails.name;

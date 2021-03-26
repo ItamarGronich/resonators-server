@@ -7,6 +7,8 @@ module.exports = (sequelize, DataTypes) => {
             leader_id: DataTypes.UUID,
             question_kind: DataTypes.STRING,
             description: DataTypes.STRING,
+            tags: DataTypes.STRING,
+            is_system: DataTypes.BOOLEAN,
             title: DataTypes.STRING,
             removed: DataTypes.BOOLEAN,
             clinic_id: DataTypes.UUID,

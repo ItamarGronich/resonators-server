@@ -1,6 +1,7 @@
 import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
 import {questions, answers, clinics, leaders, users} from '../sequelize/models';
+const { Op } = require("sequelize");
 import addRemoveChangedEntities from './addedRemovedEntities';
 
 class QuestionRepository extends Repository {
@@ -53,7 +54,10 @@ class QuestionRepository extends Repository {
 
     async findByClinic(clinic_id) {
         const rows = await questions.findAll({
-            where: {clinic_id},
+            [Op.or]: [
+                { clinic_id },
+                { is_system: true }
+            ],
             include: this.getInclude()
         });
 
@@ -68,7 +72,10 @@ class QuestionRepository extends Repository {
     async findByLeader(leader_id) {
         const rows = await questions.findAll({
             where: {
-                "$clinic.user.leader.id$": leader_id,
+                [Op.or]: [
+                    { "$clinic.user.leader.id$": leader_id },
+                    { is_system: true }
+                ],
             },
             include: [
                 ...this.getInclude(),

@@ -9,6 +9,7 @@ export default class Follower {
         clinic_id,
         status,
         frozen,
+        is_system,
         createdAt,
         updatedAt
     }) {
@@ -19,6 +20,7 @@ export default class Follower {
         this.clinic_id = clinic_id;
         this.status = status;
         this.frozen = frozen;
+        this.is_system = is_system;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

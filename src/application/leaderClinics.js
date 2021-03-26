@@ -187,7 +187,9 @@ export async function updateQuestion(questionRequest) {
         'clinic_id',
         'description',
         'title',
-        'question_kind'       
+        'question_kind',
+        'tags',
+        'is_system'
     ]);
 
     await question.updateAnswers(questionRequest.answers);

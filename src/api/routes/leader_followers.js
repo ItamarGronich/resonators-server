@@ -4,6 +4,7 @@ import routeHandler from '../routeHandler';
 import {
     updateFollowerUser,
     getLeaderFollowers,
+    getSystemFollowers,
     addLeaderFollower,
     deleteLeaderFollower,
     freezeFollower,
@@ -11,6 +12,11 @@ import {
     getLeader
 } from '../../application/leaderFollowers';
 
+express.get('/api/leader_followers/system\.:ext?', routeHandler(async (request, response) => {
+    const followers = await getSystemFollowers();
+    response.status(200);
+    response.json(followers);
+}));
 express.get('/api/leader_followers\.:ext?', routeHandler(async (request, response) => {
     const {user} = request.appSession;
 

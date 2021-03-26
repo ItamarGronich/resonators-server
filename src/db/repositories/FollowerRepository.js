@@ -29,7 +29,8 @@ class FollowerRepository extends Repository {
                     include: [{
                         model: users,
                         required: true
-                    }]
+                    }],
+                    where: {is_system: false}
                 }]
             }]
         });
@@ -42,6 +43,18 @@ class FollowerRepository extends Repository {
         foundFollowers.forEach(follower => this.trackEntity(follower));
 
         return foundFollowers;
+    }
+
+    async findSystemFollowers() {
+        const systemFollowers = await followers.findAll({
+            where: {is_system: true},
+            include: [{
+                model: users,
+                required: true
+            }]
+        });
+
+        return systemFollowers.map(dbToDomain.toFollower);
     }
 
     async findByPk(id) {

@@ -42,6 +42,7 @@ export async function registerLeader(user) {
         title: user.name,
         current_clinic_id: clinic.id,
         group_permissions: false,
+        admin_permissions: false,
         visible: 1
     });
 
