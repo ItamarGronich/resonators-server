@@ -12,5 +12,6 @@ import "./user_password_resets";
 import "./visitors";
 import "./unsubscribe";
 import "./googleLogin";
+import "./googleData";
 import "./followers";
 import "./push";

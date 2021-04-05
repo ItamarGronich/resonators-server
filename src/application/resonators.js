@@ -101,6 +101,28 @@ export async function removeQuestionFromResonator(resonator_id, question_id) {
 
     return true;
 }
+export const uploadBase64ToResonator = async(resonator_id, base64) => {
+    const resonator = await resonatorRepository.findByPk(resonator_id);
+
+    if (!resonator)
+        return null;
+
+    const id = uuid();
+    const stream = Buffer.from(base64.replace(/^data:image\/\w+;base64,/, ""), 'base64');
+
+    const { Location } = await s3.uploadImage(id, stream);
+
+    resonator.addItem({
+        id,
+        link: Location,
+        resonator_id,
+        media_kind: 'picture'
+    });
+
+    await getUow().commit();
+
+    return true;
+}
 export const addAttachmentToResonator = async(resonator_id, link) => {
     const resonator = await resonatorRepository.findByPk(resonator_id);
 

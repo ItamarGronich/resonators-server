@@ -92,6 +92,15 @@ express.post('/api/leader_followers/:followerId/reminders/:reminderId/attachment
     enforceLeaderFollower: true
 }));
 
+express.post('/api/leader_followers/:followerId/reminders/:reminderId/base64\.:ext?', routeHandler(async (request, response) => {
+    const { resonatorId, base64 } = request.body;
+    await service.uploadBase64ToResonator(resonatorId, base64);
+
+    response.status(201).json({});
+}, {
+    enforceLeaderFollower: true
+}));
+
 (() => {
     var itemsUpload = upload.fields([{
         name: 'follower_id'

@@ -130,7 +130,7 @@ export async function getLeaderClinicsCriteria(leader_id, clinic_id) {
 
     return _(questions)
             .map(dtoFactory.toQuestion)
-            .orderBy(q => q.createdAt, 'desc')
+            .orderBy(q => q.title, 'asc')
             .value();
 }
 
