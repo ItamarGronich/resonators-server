@@ -8,6 +8,8 @@ import Question from '../domain/entities/question';
 import ResonatorAttachment from '../domain/entities/resonatorAttachment';
 import SentResonator from '../domain/entities/sentResonator';
 import GoogleAccount from '../domain/entities/googleAccount';
+import GoogleContact from '../domain/entities/googleContact';
+import GooglePhoto from '../domain/entities/googlePhoto';
 import LeaderClinic from '../domain/entities/leaderClinic';
 import FollowerGroup from '../domain/entities/followerGroup';
 import FollowerGroupFollower from '../domain/entities/followerGroupFollower';
@@ -179,6 +181,24 @@ export function toGoogleAccount(row) {
         access_token_expiry_date: row.get('access_token_expiry_date'),
         user_id: row.get('user_id'),
         google_email: row.get('google_email')
+    });
+}
+
+export function toGoogleContact(row) {
+    return new GoogleContact({
+       id: row.get('id'),
+       user_id: row.get('user_id'),
+       name: row.get('name'),
+       email: row.get('email')
+    });
+}
+
+export function toGooglePhoto(row) {
+    return new GooglePhoto({
+        id: row.get('id'),
+        user_id: row.get('user_id'),
+        image: row.get('image'),
+        description: row.get('description')
     });
 }
 

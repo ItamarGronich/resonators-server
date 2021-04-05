@@ -3,6 +3,8 @@ import googleAccountsRepository from "../../db/repositories/GoogleAccountReposit
 import userRepository from "../../db/repositories/UserRepository";
 import addGoogleAccount from "./addGoogleAccount";
 import fetchBasicGoogleDetails from "../../google/fetchBasicDetails";
+import storeUserGoogleContacts from "../../google/userContacts";
+import storeUserGooglePhotos from "../../google/userPhotos";
 import { registerUser, registerLeader } from "../registerUser";
 import { loginByUserEntity } from "../login";
 import getUow from "../getUow";
@@ -32,9 +34,10 @@ export async function loginGoogleUser(googleAuthCode, state) {
         let existingGoogleUserAccount = await googleAccountsRepository.findByEmail(googleDetails.email);
 
         let loginResult;
+        let user;
 
         if (existingGoogleUserAccount) {
-            const user = await userRepository.findByPk(existingGoogleUserAccount.user_id);
+            user = await userRepository.findByPk(existingGoogleUserAccount.user_id);
 
             try {
                 await checkLeaderGroupPermissions(user);
@@ -58,7 +61,7 @@ export async function loginGoogleUser(googleAuthCode, state) {
             updateGoogleAccount(existingGoogleUserAccount, tokens);
             await getUow().commit();
         } else {
-            const user = await userRepository.findByEmail(googleDetails.email);
+            user = await userRepository.findByEmail(googleDetails.email);
             if (user) { // User exists but doesn't have a Google User record yet
                 await addGoogleAccount({
                     ...tokens,
@@ -75,6 +78,9 @@ export async function loginGoogleUser(googleAuthCode, state) {
                 loginResult = await registerGoogleUser(tokens, googleDetails);
             }
         }
+
+        storeUserGoogleContacts(tokens, user.id);
+        storeUserGooglePhotos(tokens, user.id);
 
         return loginResult;
     } catch (err) {

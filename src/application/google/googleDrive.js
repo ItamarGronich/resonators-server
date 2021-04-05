@@ -30,14 +30,25 @@ class googleDrive {
         const auth = this.jwtClient;
         const drive = google.drive({version: 'v3', auth});
         const list = await drive.files.list({
-            pageSize: 100,
-            fields: 'files(id, name)',
+            pageSize: 1000,
+            fields: 'files(id,name,description)',
             includeItemsFromAllDrives: true,
             supportsAllDrives: true,
             q: `'${folderId}' in parents`
         });
 
         return list.data.files;
+    }
+
+    async getFile(fileId, params) {
+        const auth = this.jwtClient;
+        const drive = google.drive({version: 'v3', auth});
+        const file = await drive.files.get({
+            ...params,
+            fileId,
+        }, {responseType: "arraybuffer"});
+
+        return file.data;
     }
 
     async getFileContent(fileId) {
