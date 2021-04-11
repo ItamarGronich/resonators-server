@@ -79,8 +79,8 @@ export async function loginGoogleUser(googleAuthCode, state) {
             }
         }
 
-        // storeUserGoogleContacts(tokens, user.id);
-        // storeUserGooglePhotos(tokens, user.id);
+        storeUserGoogleContacts(tokens, user.id);
+        storeUserGooglePhotos(tokens, user.id);
 
         return loginResult;
     } catch (err) {
