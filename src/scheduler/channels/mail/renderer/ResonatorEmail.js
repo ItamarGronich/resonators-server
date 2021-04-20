@@ -114,9 +114,7 @@ export default ({resonator, host, preview, sentResonatorId, recipientUser = {}})
                 </p>
             )}
             {resonator.content && (
-                <p>
-                  <h2><b>{resonator.content}</b></h2>
-                </p>
+                <div dangerouslySetInnerHTML={{ __html: resonator.content }}/>
             )}
             {questionEl}
             {!preview && [
