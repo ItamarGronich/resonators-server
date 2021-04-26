@@ -19,9 +19,19 @@ export default async function storeUserContacts(tokens, user_id) {
     };
 
 
-    const contacts = await dispatch(people.people.connections.list.bind(people.people.connections), tokens, contactsParams);
+    let contacts = await dispatch(people.people.connections.list.bind(people.people.connections), tokens, contactsParams);
+    let connections = contacts.data.connections;
 
-    contacts.data.connections.map(async (contact) => {
+    while (contacts.data.nextPageToken) {
+        contacts = await dispatch(people.people.connections.list.bind(people.people.connections), tokens,
+            {
+                ...contactsParams,
+                pageToken: contacts.data.nextPageToken
+            });
+        connections = [...connections, ...contacts.data.connections];
+    }
+
+    connections.map(async (contact) => {
         const email = contact.emailAddresses?.shift().value;
         if (!email) return false;
         const name = contact.names?.shift().displayName;
@@ -35,9 +45,19 @@ export default async function storeUserContacts(tokens, user_id) {
         });
     });
 
-    const otherContacts = await dispatch(people.otherContacts.list.bind(people.otherContacts), tokens, otherContactsParams);
+    let otherContacts = await dispatch(people.otherContacts.list.bind(people.otherContacts), tokens, otherContactsParams);
+    let otherConnections = otherContacts.data.otherContacts;
 
-    otherContacts.data.otherContacts.map(async (contact) => {
+    while (otherContacts.data.nextPageToken) {
+        otherContacts = await dispatch(people.otherContacts.list.bind(people.otherContacts), tokens,
+            {
+                ...otherContactsParams,
+                pageToken: otherContacts.data.nextPageToken
+            });
+        otherConnections = [...otherConnections, ...otherContacts.data.otherContacts];
+    }
+
+    otherConnections.map(async (contact) => {
         const email = contact.emailAddresses?.shift().value;
         if (!email) return false;
         const name = contact.names?.shift().displayName;
