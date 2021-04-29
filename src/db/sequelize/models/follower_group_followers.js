@@ -3,9 +3,8 @@ module.exports = (sequelize, DataTypes) => {
     const follower_group_followers = sequelize.define(
         "follower_group_followers",
         {
-            id: { type: DataTypes.UUID, primaryKey: true },
-            follower_group_id: DataTypes.UUID,
-            follower_id: DataTypes.UUID,
+            follower_group_id: { type: DataTypes.UUID, primaryKey: true },
+            follower_id: { type: DataTypes.UUID, primaryKey: true },
         },
         { underscored: true }
     );
