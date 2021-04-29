@@ -10,6 +10,7 @@ export default class Follower {
         status,
         frozen,
         is_system,
+        groups,
         createdAt,
         updatedAt
     }) {
@@ -21,6 +22,7 @@ export default class Follower {
         this.status = status;
         this.frozen = frozen;
         this.is_system = is_system;
+        this.groups = groups;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

@@ -104,7 +104,7 @@ express.post('/api/leader_followerGroups/:followerGroupId/reminders/:reminderId/
 
 express.delete('/api/leader_followerGroups/:followerGroupId/reminders/:reminderId/items/:itemId\.:ext?', routeHandler(async (request, response) => {
     const { reminderId, itemId } = request.params;
-    const result = await service.removeGroupResonatorItem(reminderId, itemId);
+    const result = await service.removeGroupResonatorItems(reminderId);
     response.status(result ? 202 : 422).json();
 }, {
     enforceLeaderFollowerGroup: true
@@ -120,7 +120,7 @@ express.delete('/api/leader_followerGroups/:followerGroupId/reminders/:reminderI
 
 express.delete('/api/leader_followerGroups/:followerGroupId/reminders/:reminderId/removeImage/:itemId\.:ext?', routeHandler(async (request, response) => {
     const { reminderId, itemId } = request.params;
-    const result = await service.removeGroupResonatorImage(reminderId, itemId);
+    const result = await service.removeGroupResonatorImages(reminderId);
     response.status(result ? 202 : 422).json();
 }, {
     enforceLeaderFollowerGroup: true

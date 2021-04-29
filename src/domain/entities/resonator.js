@@ -92,6 +92,10 @@ export default class Resonator {
         this.items = this.items.filter(i => i.id !== itemId);
     }
 
+    removeAllItems() {
+        this.items = [];
+    }
+
     getImage() {
         const picture = _(this.items)
             .filter(i => i.media_kind === 'image' ||
@@ -114,6 +118,10 @@ export default class Resonator {
             .orderBy('createdAt', ['desc'])
             .head();
         return picture;
+    }
+
+    getImages() {
+        return this.items;
     }
 
     getResonatorQuestionId(question_id) {

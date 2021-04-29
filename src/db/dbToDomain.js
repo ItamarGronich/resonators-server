@@ -40,7 +40,9 @@ export function toLeader(r) {
     });
 }
 
-export function toFollower(r) {
+export function toFollower(r, stndaln = false) {
+    const groups = r.get('follower_group_followers')?.map((group) => group.get('follower_group_id'));
+
     return new Follower({
         id: r.get('id'),
         user: r.user && toUser(r.user),
@@ -50,6 +52,7 @@ export function toFollower(r) {
         status: r.get('status'),
         frozen: !!r.get('frozen'),
         is_system: !!r.get('is_system'),
+        groups: (groups?.length > 0 && !stndaln) ? groups : ["STNDALN"],
         createdAt: r.get('createdAt'),
         updatedAt: r.get('updatedAt')
     });

@@ -139,9 +139,9 @@ express.post('/api/leader_followers/:followerId/reminders/:reminderId/base64\.:e
 })();
 
 express.delete('/api/leader_followers/:followerId/reminders/:reminderId/items/:itemId\.:ext?', routeHandler(async (request, response) => {
-    const { reminderId, itemId } = request.params;
+    const { reminderId } = request.params;
 
-    const result = await service.removeResonatorItem(reminderId, itemId);
+    const result = await service.removeResonatorItems(reminderId);
 
     if (!result)
         response.status(422);
@@ -169,9 +169,9 @@ express.delete('/api/leader_followers/:followerId/reminders/:reminderId\.:ext?',
     }));
 
 express.delete('/api/leader_followers/:followerId/reminders/:reminderId/removeImage/:itemId\.:ext?', routeHandler(async (request, response) => {
-    const { reminderId, itemId } = request.params;
+    const { reminderId } = request.params;
 
-    const result = await service.removeResonatorImage(reminderId, itemId);
+    const result = await service.removeResonatorImages(reminderId);
 
     if (!result)
         response.status(422);

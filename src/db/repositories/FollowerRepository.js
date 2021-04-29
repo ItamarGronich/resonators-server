@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
-import {followers, users, leaders} from '../sequelize/models';
+import {followers, users, leaders, follower_group_followers, resonators} from '../sequelize/models';
 
 class FollowerRepository extends Repository {
     constructor(...args) {
@@ -28,17 +28,27 @@ class FollowerRepository extends Repository {
                     model: followers,
                     include: [{
                         model: users,
-                        required: true
+                        required: true,
+                    }, {
+                        model: follower_group_followers,
+                    }, {
+                        model: resonators
                     }],
                     where: {is_system: false}
                 }]
-            }]
+            }],
         });
 
         if (!_.get(user, 'leader.followers'))
             return [];
 
-        const foundFollowers = user.leader.followers.map(dbToDomain.toFollower);
+        const foundFollowers = user.leader.followers.map((follower) => {
+            let stndaln = false;
+            if (follower.follower_group_followers.length > 0 && follower.resonators.find(r => r.parent_resonator_id === null && r.follower_group_id === null)) {
+                stndaln = true;
+            }
+            return dbToDomain.toFollower(follower, stndaln)
+        });
 
         foundFollowers.forEach(follower => this.trackEntity(follower));
 
