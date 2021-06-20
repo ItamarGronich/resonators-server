@@ -4,13 +4,15 @@ import React from 'react';
 
 import ResonatorEmail from './ResonatorEmail';
 
-export default function renderResonatorEmail({resonator, recipientUser, sentResonatorId, host, preview = false}) {
+export default function renderResonatorEmail({resonator, leader, clinic, recipientUser, sentResonatorId, host, preview = false}) {
     const dir = getBodyDir(resonator);
 
     const template = Oy.renderTemplate(
         <ResonatorEmail
             resonator={resonator}
             sentResonatorId={sentResonatorId}
+            leader={leader}
+            clinic={clinic}
             host={host}
             preview={preview}
             recipientUser={recipientUser}

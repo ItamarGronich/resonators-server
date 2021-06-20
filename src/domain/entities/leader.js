@@ -7,7 +7,9 @@ export default class Leader {
         current_clinic_id,
         visible,
         group_permissions,
-        admin_permissions
+        admin_permissions,
+        clinic_branding,
+        photo
     }) {
         this.id = id;
         this.user_id = user_id;
@@ -17,5 +19,7 @@ export default class Leader {
         this.current_clinic_id = current_clinic_id;
         this.group_permissions = group_permissions;
         this.admin_permissions = admin_permissions;
+        this.clinic_branding = clinic_branding;
+        this.photo = photo;
     }
 }

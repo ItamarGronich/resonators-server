@@ -4,6 +4,9 @@ import {
     users,
     answers,
     followers,
+    leaders,
+    leader_clinics,
+    clinics,
     questions,
     resonators,
     user_logins,
@@ -87,6 +90,17 @@ export const fetchSentResonator = async (follower, sentResonatorId) =>
                         model: followers,
                         where: { user_id: follower.user_id },
                         required: true
+                    },
+                    {
+                        model: leaders,
+                        include: [
+                            {
+                                model: leader_clinics,
+                                where: {is_primary: true},
+                                include: [clinics]
+                            },
+                            users
+                        ]
                     },
                     {
                         model: resonator_questions,

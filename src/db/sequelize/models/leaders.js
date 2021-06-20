@@ -11,6 +11,8 @@ module.exports = (sequelize, DataTypes) => {
             visible: DataTypes.INTEGER,
             group_permissions: DataTypes.BOOLEAN,
             admin_permissions: DataTypes.BOOLEAN,
+            clinic_branding: DataTypes.BOOLEAN,
+            photo: DataTypes.STRING,
         },
         { underscored: true }
     );
@@ -19,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
         leaders.belongsTo(models.users);
         leaders.hasMany(models.followers);
         leaders.hasMany(models.follower_groups);
+        leaders.hasMany(models.leader_clinics);
     };
 
     return leaders;

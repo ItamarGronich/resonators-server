@@ -10,6 +10,7 @@ import updatePermittedFields from './updatePermittedFields';
 import {leader_clinics} from '../db/sequelize/models';
 import LeaderClinic from '../domain/entities/leaderClinic';
 import { v4 as uuid } from 'uuid';
+import s3 from '../s3';
 import log from '../logging';
 import { uow } from '../api/middleware';
 
@@ -110,6 +111,11 @@ export async function getLeaderClinicsIncludingSecondary(leader_id) {
         id: r.get('clinic_id'),
         user_id: r.get('leader_id'),
         name: r.get('clinic').get('name'),
+        phone: r.get('clinic').get('phone'),
+        website: r.get('clinic').get('website'),
+        logo: r.get('clinic').get('logo'),
+        qr: r.get('clinic').get('qr'),
+        therapistPicture: r.get('leader').get('photo'),
         is_primary: r.get('is_primary'),
         is_leader_accepted: r.get('is_leader_accepted'),
         isCurrentClinic: r.get('clinic_id') == r.get('leader').get('current_clinic_id'),
@@ -224,3 +230,41 @@ export async function unfreezeCriterion(questionRequest) {
     }
 }
 
+export async function saveClinicSettings(leader_id, {logo, therapistPicture, phone, website, QRImage}) {
+    const uow = getUow();
+    const leaderClinic = await leader_clinics.findOne({
+        where: {
+            leader_id: leader_id,
+            is_primary: true
+        },
+        include: [clinics, leaders]
+    });
+
+    const activeClinic = leaderClinic?.dataValues?.clinic;
+    const leader = leaderClinic?.dataValues?.leader;
+    if (!activeClinic || !leader) return false;
+
+    const logoLink = (logo) ? await s3.uploadImage(uuid(), Buffer.from(logo.replace(/^data:image\/\w+;base64,/, ""), 'base64')) : null;
+    const QRLink = (QRImage) ? await s3.uploadImage(uuid(), Buffer.from(QRImage.replace(/^data:image\/\w+;base64,/, ""), 'base64')) : null;
+    const therapistPictureLink = (therapistPicture) ? await s3.uploadImage(uuid(), Buffer.from(therapistPicture.replace(/^data:image\/\w+;base64,/, ""), 'base64')) : null;
+
+    updatePermittedFields(activeClinic, {
+        logo: (logo === null) ? null : (logoLink?.Location || activeClinic.logo),
+        phone,
+        website,
+        qr: (QRImage === null) ? null : (QRLink?.Location || activeClinic.qr)
+    }, [
+        'logo',
+        'phone',
+        'website',
+        'qr'
+    ]);
+
+    updatePermittedFields(leader, {photo: (therapistPicture === null) ? null : (therapistPictureLink?.Location || leader.photo)}, ['photo']);
+
+    activeClinic.save();
+    leader.save();
+    await uow.commit();
+
+    return {activeClinic, leader};
+}

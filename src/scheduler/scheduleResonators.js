@@ -12,9 +12,9 @@ export default async function scheduleResonators() {
     return Promise.all(resonatorIds.map((id) => fetchResonatorData(id).then(sendNewResonator)));
 }
 
-function sendNewResonator({ resonator, followerUser, leaderUser }) {
+function sendNewResonator({ resonator, followerUser, leaderUser, clinic }) {
     return createSentResonator(resonator)
-        .then((sentResonator) => notifyFollower({ sentResonator, resonator, followerUser, leaderUser }))
+        .then((sentResonator) => notifyFollower({ sentResonator, resonator, followerUser, leaderUser, clinic }))
         .then(() => setResonatorLastSentTime(resonator))
         .then(() => disableResonatorForSendOneOff(resonator));
 }
@@ -29,10 +29,10 @@ function createSentResonator(resonator) {
     });
 }
 
-function notifyFollower({ resonator, sentResonator, followerUser, leaderUser }) {
+function notifyFollower({ resonator, sentResonator, followerUser, leaderUser, clinic }) {
     logger.info(`Sending new resonator ${sentResonator.id} for template resonator ${resonator.id}`);
     return Promise.all([
-        sendResonatorMail(sentResonator, resonator, followerUser, leaderUser),
+        sendResonatorMail(sentResonator, resonator, followerUser, leaderUser, clinic),
         sendResonatorNotification(sentResonator, resonator, followerUser),
     ]);
 }

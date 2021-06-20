@@ -11,6 +11,7 @@ import {
     addLeaderToClinic,
     freezeCriterion,
     unfreezeCriterion,
+    saveClinicSettings,
 } from '../../application/leaderClinics';
 
 express.get('/api/leader_clinics', routeHandler(async (request, response) => {
@@ -97,4 +98,12 @@ express.post('/api/leader_clinics/:criterionId/unfreeze\.:ext?', routeHandler(as
     response.status(result ? 200 : 422);
     response.json(result);
 }, {    
+}));
+
+express.post('/api/leader_clinics/clinic_settings', routeHandler(async (request, response) => {
+    const {leader} = request.appSession;
+    const result = await saveClinicSettings(leader.id, request.body);
+
+    response.status(result ? 200 : 422);
+    response.json(result);
 }));

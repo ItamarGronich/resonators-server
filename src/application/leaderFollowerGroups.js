@@ -146,9 +146,11 @@ export async function checkLeaderGroupPermissions(user) {
 
     const groupPermission = Boolean(sheetLeader) && sheetLeader.Groups.toLowerCase() === 'true';
     const adminPermission = Boolean(sheetLeader) && sheetLeader['System Admin'].toLowerCase() === 'true';
+    const clinicBranding = Boolean(sheetLeader) && sheetLeader.ClinicBranding.toLowerCase() !== 'false';
 
     leader.group_permissions = groupPermission;
     leader.admin_permissions = adminPermission;
+    leader.clinic_branding = clinicBranding;
     await uow.commit();
 }
 

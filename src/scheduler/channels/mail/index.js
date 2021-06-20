@@ -3,13 +3,15 @@ import sendEmail from "../../../mailing";
 import renderResonatorEmail from "./renderer";
 import { schedulerLogger as log } from "../../../logging";
 
-export default function sendResonatorMail(sentResonator, resonator, follower, leader) {
+export default function sendResonatorMail(sentResonator, resonator, follower, leader, clinic) {
     if (follower.unsubscribed) {
         return Promise.resolve();
     }
 
     const html = renderResonatorEmail({
         resonator,
+        leader,
+        clinic,
         host: cfg.host,
         recipientUser: follower,
         sentResonatorId: sentResonator.id,

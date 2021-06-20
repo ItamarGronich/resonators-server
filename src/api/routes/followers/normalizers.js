@@ -14,6 +14,13 @@ export const formatSentResonatorPreview = (resonator) => ({
     picture: getPictureUrl(resonator.resonator),
     time: roundDate(resonator.createdAt, DATE_RESOLUTION),
     done: resonator.read && resonator.resonator_answers.length === resonator.resonator.resonator_questions.length,
+    leader_photo: resonator.resonator.leader?.photo,
+    leader_name: resonator.resonator.leader?.user.name,
+    clinic_phone: resonator.resonator.leader?.leader_clinics[0].clinic.dataValues.phone,
+    clinic_website: resonator.resonator.leader?.leader_clinics[0].clinic.dataValues.website,
+    clinic_qr: resonator.resonator.leader?.leader_clinics[0].clinic.dataValues.qr,
+    clinic_name: resonator.resonator.leader?.leader_clinics[0].clinic.dataValues.name,
+    clinic_logo: resonator.resonator.leader?.leader_clinics[0].clinic.dataValues.logo
 });
 
 /**

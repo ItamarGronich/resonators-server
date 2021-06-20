@@ -24,7 +24,13 @@ export default function fetchResonatorData(resonatorId) {
                 },
                 {
                     model: leaders,
-                    include: [users],
+                    include: [
+                        users,
+                        {
+                            model: leader_clinics,
+                            include: [clinics]
+                        }
+                    ],
                 },
                 {
                     model: resonator_questions,
@@ -41,5 +47,6 @@ export default function fetchResonatorData(resonatorId) {
             resonator: dbToDomain.toResonator(row),
             leaderUser: dbToDomain.toUser(row.leader.user),
             followerUser: dbToDomain.toUser(row.follower.user),
+            clinic: row.clinic
         }));
 }

@@ -87,12 +87,14 @@ function renderQuestion({
     );
 }
 
-export default ({resonator, host, preview, sentResonatorId, recipientUser = {}}) => {
+export default ({resonator, leader, clinic, host, preview, sentResonatorId, recipientUser = {}}) => {
     const resonatorQuestion = resonator.questions[0];
     const question = _.get(resonatorQuestion, 'question');
 
     const questionEl = question && renderQuestion({question, preview, resonator, host, sentResonatorId, totalQuestionsCount: resonator.questions.length});
     const imageUrl = resonator.getImage();
+
+    const clinicBranding = leader && leader.dataValues?.clinicBranding !== false;
 
     const mainCol = (
         <TD>
@@ -127,13 +129,34 @@ export default ({resonator, host, preview, sentResonatorId, recipientUser = {}})
         </TD>
     );
 
+    const footer = (
+        <>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
+                <div style={{ display: "inline-flex", flexDirection:"column", alignItems: "center" }}>
+                    {clinic?.dataValues?.logo && <img src={clinic.dataValues.logo} style={{height:"100px", maxWidth: "150px"}} />}
+                    {clinic?.dataValues?.name && <span>{clinic.dataValues.name}</span>}
+                </div>
+                <div style={{ display: "inline-flex", flexDirection:"column", alignItems: "center" }}>
+                    {clinic?.dataValues?.qr && <img src={clinic.dataValues.qr} style={{ marginBottom: "10px" }} />}
+                    {clinic?.dataValues?.phone && <a href={'tel:'+clinic.dataValues.phone} target="_blank">{clinic.dataValues.phone}</a>}
+                    {clinic?.dataValues?.website && <a href={clinic.dataValues.website} target="_blank">{clinic.dataValues.website}</a>}
+                </div>
+                <div style={{ display: "inline-flex", flexDirection:"column", alignItems: "center" }}>
+                    {leader?.dataValues?.photo && <img src={leader.dataValues.photo} style={{height:"100px", maxWidth: "150px"}} />}
+                    {leader?.dataValues?.user?.name && <span>{leader.dataValues.user?.name}</span>}
+                </div>
+            </div>
+        </>
+    );
+
     return (
-        <Table style={{width: '100% !important'}}>
-            <TBody>
-                <TR>
-                    {mainCol}
-                </TR>
-            </TBody>
-        </Table>
+        <>
+            <Table style={{width: '100% !important'}}>
+                <TBody>
+                    <TR>{mainCol}</TR>
+                </TBody>
+            </Table>
+            {clinicBranding && <div>{footer}</div>}
+        </>
     );
 }
