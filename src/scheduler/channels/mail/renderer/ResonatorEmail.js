@@ -131,7 +131,7 @@ export default ({resonator, leader, clinic, host, preview, sentResonatorId, reci
 
     const footer = (
         <>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px", direction: "ltr" }}>
                 <div style={{ display: "inline-flex", flexDirection:"column", alignItems: "center" }}>
                     {clinic?.dataValues?.logo && <img src={clinic.dataValues.logo} style={{height:"100px", maxWidth: "150px"}} />}
                     {clinic?.dataValues?.name && <span>{clinic.dataValues.name}</span>}
