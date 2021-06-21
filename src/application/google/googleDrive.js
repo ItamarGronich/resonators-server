@@ -34,7 +34,7 @@ class googleDrive {
             fields: 'files(id,name,description)',
             includeItemsFromAllDrives: true,
             supportsAllDrives: true,
-            q: `'${folderId}' in parents`
+            q: `'${folderId}' in parents and trashed = false`
         });
 
         return list.data.files;
