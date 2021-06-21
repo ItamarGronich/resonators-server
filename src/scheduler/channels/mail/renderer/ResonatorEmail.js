@@ -131,14 +131,14 @@ export default ({resonator, leader, clinic, host, preview, sentResonatorId, reci
 
     const footer = (
         <>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px", direction: "ltr" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
                 <div style={{ display: "inline-flex", flexDirection:"column", alignItems: "center" }}>
                     {clinic?.dataValues?.logo && <img src={clinic.dataValues.logo} style={{height:"100px", maxWidth: "150px"}} />}
                     {clinic?.dataValues?.name && <span>{clinic.dataValues.name}</span>}
                 </div>
                 <div style={{ display: "inline-flex", flexDirection:"column", alignItems: "center" }}>
                     {clinic?.dataValues?.qr && <img src={clinic.dataValues.qr} style={{ marginBottom: "10px" }} />}
-                    {clinic?.dataValues?.phone && <a href={'tel:'+clinic.dataValues.phone} target="_blank">{clinic.dataValues.phone}</a>}
+                    {clinic?.dataValues?.phone && <a href={'tel:'+clinic.dataValues.phone} style={{ direction: "ltr" }} target="_blank">{clinic.dataValues.phone}</a>}
                     {clinic?.dataValues?.website && <a href={clinic.dataValues.website} target="_blank">{clinic.dataValues.website}</a>}
                 </div>
                 <div style={{ display: "inline-flex", flexDirection:"column", alignItems: "center" }}>
