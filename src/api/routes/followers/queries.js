@@ -146,6 +146,20 @@ export const fetchClientData = async (loginId) =>
     });
 
 /**
+ * Creates a new answer.
+ *
+ * @param {String} question_id - the ID of the question.
+ * @param {String} body - content of the answer
+ * @param {String} rank - answer weight
+ */
+export const createAnswer = async (question_id, body, rank) => {
+    const id = uuid();
+    await answers.create({id, body, question_id, rank});
+
+    return id;
+};
+
+/**
  * Creates a new resonator answer, or updates one if it exists.
  *
  * @param {String} answerId - the ID of the answer chosen for the given question

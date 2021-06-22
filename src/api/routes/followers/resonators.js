@@ -2,7 +2,7 @@ import api from "./mount";
 import { validateUuid, validatePageNum } from "./validations";
 import { getResonatorQuestion, getQuestionAnswer } from "./utils";
 import { formatSentResonatorPreview, formatSentResonatorFull } from "./normalizers";
-import { fetchFollowerSentResonators, fetchSentResonator, answerQuestion, readResonator } from "./queries";
+import { fetchFollowerSentResonators, fetchSentResonator, answerQuestion, readResonator, createAnswer } from "./queries";
 
 /**
  * Returns a listing of a follower's resonator instances.
@@ -41,12 +41,11 @@ api.get(
  */
 api.put(
     "/resonators/:sentResonatorId",
-    validateUuid((req) => req.body.answerId),
     validateUuid((req) => req.params.sentResonatorId),
     validateUuid((req) => req.body.resonatorQuestionId),
     async (req, res) => {
         const { sentResonatorId } = req.params;
-        const { resonatorQuestionId, answerId } = req.body;
+        let { resonatorQuestionId, answerId } = req.body;
 
         const sentResonator = await fetchSentResonator(req.follower, req.params.sentResonatorId);
 
@@ -56,9 +55,12 @@ api.put(
             const resonatorQuestion = getResonatorQuestion(sentResonator.resonator, resonatorQuestionId);
             if (!resonatorQuestion) {
                 res.status(422).error("Resonator has no such question");
-            } else if (!getQuestionAnswer(resonatorQuestion.question, answerId)) {
+            } else if (resonatorQuestion.question.dataValues.question_kind !== 'text' && !getQuestionAnswer(resonatorQuestion.question, answerId)) {
                 res.status(422).error("Question has no such answer option");
             } else {
+                if (resonatorQuestion.question.dataValues.question_kind === 'text') {
+                    answerId = await createAnswer(resonatorQuestion.dataValues.question_id, answerId, 1);
+                }
                 await answerQuestion(answerId, sentResonatorId, resonatorQuestionId);
 
                 res.status(200).json({

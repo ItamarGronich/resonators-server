@@ -33,6 +33,7 @@ export async function getResonatorStats(resonatorId) {
                     return {
                         question_id,
                         rank: _.get(answersMap[a.answer_id], 'rank'),
+                        answerBody: _.get(answersMap[a.answer_id], 'body'),
                         time: (sentResonator) ? sentResonator.createdAt : a.createdAt,
                         time_answered: a.createdAt,
                         order: a.order,
@@ -44,7 +45,10 @@ export async function getResonatorStats(resonatorId) {
 
         const sortedAnswers = _.orderBy(answers, a => a.time, ['desc']);
         sortedAnswers.forEach((a) => {
-            questions.find(q => q.id === a.question_id).order = a.order;
+            const question = questions.find(q => q.id === a.question_id);
+            question.order = a.order;
+            question.tooltip = question.question_kind === 'text' ? a.answerBody : "";
+            a.tooltip = question.tooltip;
         });
         allStats.push({
             questions,
@@ -107,6 +111,7 @@ export function convertStatsToCSV({ questions, answers }) {
         const answerCSV = {
             resonator: answer.resonator,
             followerName: answer.followerName,
+            answerBody: answer.tooltip,
             title: question.title,
             description: question.description,
             rank: answer.rank,

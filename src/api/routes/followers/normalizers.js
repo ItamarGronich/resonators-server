@@ -67,6 +67,7 @@ const aggregateResonatorQuestions = (sentResonator) => {
                 value: answer.rank,
             })),
             answer: getChosenAnswer(sentResonator, question),
+            answerBody: question.question.answers.find(a => a.id === getChosenAnswer(sentResonator, question))?.body
         }));
 };
 
