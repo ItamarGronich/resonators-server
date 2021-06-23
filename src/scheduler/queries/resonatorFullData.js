@@ -3,6 +3,8 @@ import {
     users,
     answers,
     leaders,
+    clinics,
+    leader_clinics,
     followers,
     questions,
     resonators,
