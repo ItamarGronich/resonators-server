@@ -156,19 +156,19 @@ export default ({resonator, leader, clinic, host, preview, sentResonatorId, reci
 
     const footer = (
         <>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
-                <div style={{ display: "flex", flexDirection:"column", alignItems: "center" }}>
+            <div style={{ padding: "10px", textAlign: 'center' }}>
+                <div style={{ display: "inline-block", width: "33%" }}>
                     {clinic?.dataValues?.logo && <img src={clinic.dataValues.logo} style={{height:"100px", maxWidth: "150px"}} />}
-                    {clinic?.dataValues?.name && <span>{clinic.dataValues.name}</span>}
+                    {clinic?.dataValues?.name && <div>{clinic.dataValues.name}</div>}
                 </div>
-                <div style={{ display: "flex", flexDirection:"column", alignItems: "center" }}>
+                <div style={{ display: "inline-block", width: "32%" }}>
                     {clinic?.dataValues?.qr && <img src={clinic.dataValues.qr} style={{ marginBottom: "10px" }} />}
-                    {clinic?.dataValues?.phone && <a href={'tel:'+clinic.dataValues.phone} style={{ direction: "ltr" }} target="_blank">{clinic.dataValues.phone}</a>}
-                    {clinic?.dataValues?.website && <a href={clinic.dataValues.website} target="_blank">{clinic.dataValues.website}</a>}
+                    {clinic?.dataValues?.phone && <a href={'tel:'+clinic.dataValues.phone} style={{ direction: "ltr", display: "block" }} target="_blank">{clinic.dataValues.phone}</a>}
+                    {clinic?.dataValues?.website && <a href={clinic.dataValues.website} style={{ display: "block" }} target="_blank">{clinic.dataValues.website}</a>}
                 </div>
-                <div style={{ display: "flex", flexDirection:"column", alignItems: "center" }}>
+                <div style={{ display: "inline-block", width: "33%" }}>
                     {leader?.dataValues?.photo && <img src={leader.dataValues.photo} style={{height:"100px", maxWidth: "150px"}} />}
-                    {leader?.dataValues?.user?.name && <span>{leader.dataValues.user?.name}</span>}
+                    {leader?.dataValues?.user?.name && <div>{leader.dataValues.user?.name}</div>}
                 </div>
             </div>
         </>
