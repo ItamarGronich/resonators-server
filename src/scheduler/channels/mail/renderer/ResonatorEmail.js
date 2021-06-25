@@ -13,6 +13,10 @@ function getAnswerLink({host, question, answer, resonator, sentResonatorId}) {
     return `${host}stats/reminders/${resonator.id}/criteria/submit?question_id=${question.id}&answer_id=${answer.id}&sent_resonator_id=${sentResonatorId}`;
 }
 
+function getInputAnswerLink({host, question, resonator, sentResonatorId}){
+    return `${host}stats/reminders/${resonator.id}/criteria/submit?question_id=${question.id}&sent_resonator_id=${sentResonatorId}&type=text`;
+}
+
 function getUnsubscribeLink(host, user) {
     return `${host}api/users/${user.id}/unsubscribe`;
 }
@@ -48,21 +52,42 @@ function renderQuestion({
         }
     </div>);
 
-    const answers = _.orderBy(question.answers, 'rank').map(a => {
-        return (
+    let answers;
+    if (question.question_kind === 'text') {
+        answers = (
             <TR>
                 <TD>
-                    {preview ? renderAnswer(a) : (
-                        <a href={getAnswerLink({host, question, answer: a, resonator, sentResonatorId})}
-                            style={{
-                                textDecoration: 'none',
-                            }}>
-                            {renderAnswer(a)}
-                        </a>)}
+                    {preview ? (
+                        <input type="text" name={"question_"+question.id} placeholder="Text..." style={{pointerEvents:"none"}}/>
+                    ) : (
+                        <a href={getInputAnswerLink({host, question, resonator, sentResonatorId})}
+                           style={{
+                               textDecoration: 'none',
+                           }}>
+                            {<input type="text" name={"question_"+question.id} placeholder="Text..." style={{pointerEvents:"none"}}/>}
+                        </a>
+                    )}
                 </TD>
             </TR>
         );
-    });
+    } else {
+        answers = _.orderBy(question.answers, 'rank').map(a => {
+            return (
+                <TR>
+                    <TD>
+                        {preview ? renderAnswer(a) : (
+                            <a href={getAnswerLink({host, question, answer: a, resonator, sentResonatorId})}
+                               target="_blank"
+                               style={{
+                                   textDecoration: 'none',
+                               }}>
+                                {renderAnswer(a)}
+                            </a>)}
+                    </TD>
+                </TR>
+            );
+        });
+    }
 
     return (
         <div style={{
