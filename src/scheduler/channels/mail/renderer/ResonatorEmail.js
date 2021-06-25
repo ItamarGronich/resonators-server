@@ -176,7 +176,7 @@ export default ({resonator, leader, clinic, host, preview, sentResonatorId, reci
 
     return (
         <>
-            <Table style={{width: '500px !important'}}>
+            <Table style={{width: '100% !important'}}>
                 <TBody>
                     <TR>{mainCol}</TR>
                 </TBody>
