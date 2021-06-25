@@ -49,6 +49,5 @@ export default function fetchResonatorData(resonatorId) {
             resonator: dbToDomain.toResonator(row),
             leaderUser: dbToDomain.toUser(row.leader.user),
             followerUser: dbToDomain.toUser(row.follower.user),
-            clinic: row.clinic
         }));
 }

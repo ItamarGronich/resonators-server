@@ -2,12 +2,14 @@ import express from '../express';
 import routeHandler from '../routeHandler';
 import {
     getResonatorStats,
+    getResonator,
     getAllGroupStats,
     sendResonatorAnswer,
     getResonatorStatsFileName,
     getGroupStatsFileName
 } from '../../application/resonatorStats';
 import { sendCsvDownload } from './utils';
+import {answerQuestion, createAnswer} from "./followers/queries";
 
 
 express.get('/api/criteria/stats/reminders/:resonatorId\.:ext?', routeHandler(async (request, response) => {
@@ -46,9 +48,18 @@ express.get('/api/criteria/stats/followerGroups/:followerGroupId/download\.:ext?
 
 express.post(`/api/criteria/stats/reminders/:resonator_id/criteria/submit`, routeHandler(async (request, response) => {
     const { resonator_id } = request.params;
-    const { question_id, answer_id, sent_resonator_id } = request.body;
+    const { question_id, answer_id, sent_resonator_id, type } = request.body;
 
-    const result = await sendAnswer({ resonator_id, question_id, answer_id, sent_resonator_id });
+    if (type === 'text') {
+        const { resonator } = await getResonator(resonator_id);
+        if (resonator && answer_id) {
+            const answerId = await createAnswer(resonator.questions.find(rq => rq.id === question_id)?.question_id, answer_id, 1);
+            await answerQuestion(answerId, sent_resonator_id, question_id);
+        }
+        return response.status(200).json({resonator});
+    }
+
+    const result = await sendAnswer({ resonator_id, question_id, answer_id, sent_resonator_id, response });
 
     if (result)
         response.status(200).json(result);

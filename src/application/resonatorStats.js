@@ -66,6 +66,12 @@ export async function getResonatorStats(resonatorId) {
     return finalStats;
 }
 
+export async function getResonator(resonatorId) {
+    const resonator = await resonatorRepository.findByPk(resonatorId);
+
+    return { resonator };
+}
+
 export async function getAllGroupStats(followerGroupId) {
     const resonators = await resonatorRepository.findByFollowerGroupId(followerGroupId);
     return resonators.reduce(async (acc, resonator) => {
