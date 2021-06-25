@@ -27,10 +27,10 @@ export default async function sendResonatorMail(sentResonator, resonator, follow
     };
 
     const sendCopyToLeader = !resonator.disable_copy_to_leader;
-    if (sendCopyToLeader) msg.cc = leader.dataValues.email;
+    if (sendCopyToLeader) msg.cc = leader.user.dataValues.email;
 
     log.info(`Sending email for resonator ${resonator.id} to ${msg.to}`, {
-        leader: `${leader.dataValues.name} | ${leader.dataValues.email}`,
+        leader: `${leader.user.dataValues.name} | ${leader.user.dataValues.email}`,
         "leader copy": sendCopyToLeader,
     });
 
