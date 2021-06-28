@@ -116,6 +116,7 @@ export async function getLeaderClinicsIncludingSecondary(leader_id) {
         logo: r.get('clinic').get('logo'),
         qr: r.get('clinic').get('qr'),
         therapistPicture: r.get('leader').get('photo'),
+        therapistName: r.get('leader').get('title'),
         is_primary: r.get('is_primary'),
         is_leader_accepted: r.get('is_leader_accepted'),
         isCurrentClinic: r.get('clinic_id') == r.get('leader').get('current_clinic_id'),
@@ -230,7 +231,7 @@ export async function unfreezeCriterion(questionRequest) {
     }
 }
 
-export async function saveClinicSettings(leader_id, {logo, therapistPicture, phone, website, QRImage}) {
+export async function saveClinicSettings(leader_id, {logo, name, therapistName, therapistPicture, phone, website, QRImage}) {
     const uow = getUow();
     const leaderClinic = await leader_clinics.findOne({
         where: {
@@ -249,18 +250,26 @@ export async function saveClinicSettings(leader_id, {logo, therapistPicture, pho
     const therapistPictureLink = (therapistPicture) ? await s3.uploadImage(uuid(), Buffer.from(therapistPicture.replace(/^data:image\/\w+;base64,/, ""), 'base64')) : null;
 
     updatePermittedFields(activeClinic, {
+        name: name,
         logo: (logo === null) ? null : (logoLink?.Location || activeClinic.logo),
         phone,
         website,
         qr: (QRImage === null) ? null : (QRLink?.Location || activeClinic.qr)
     }, [
+        'name',
         'logo',
         'phone',
         'website',
         'qr'
     ]);
 
-    updatePermittedFields(leader, {photo: (therapistPicture === null) ? null : (therapistPictureLink?.Location || leader.photo)}, ['photo']);
+    updatePermittedFields(leader, {
+        photo: (therapistPicture === null) ? null : (therapistPictureLink?.Location || leader.photo),
+        title: therapistName
+    }, [
+        'photo',
+        'title'
+    ]);
 
     activeClinic.save();
     leader.save();
