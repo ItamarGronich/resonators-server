@@ -12,7 +12,11 @@ import {
     freezeCriterion,
     unfreezeCriterion,
     saveClinicSettings,
+    uploadClinicMedia
 } from '../../application/leaderClinics';
+import multer from 'multer';
+
+const upload = multer();
 
 express.get('/api/leader_clinics', routeHandler(async (request, response) => {
     const {leader} = request.appSession;
@@ -107,3 +111,24 @@ express.post('/api/leader_clinics/clinic_settings', routeHandler(async (request,
     response.status(result ? 200 : 422);
     response.json(result);
 }));
+
+(() => {
+    var itemsUpload = upload.fields([{
+        name: 'field_name'
+    }, {
+        name: 'media_kind'
+    }, {
+        name: 'media_title'
+    }, {
+        name: 'media_data'
+    }]);
+
+    express.post('/api/leader_clinics/clinic_settings/upload', itemsUpload, routeHandler(async (request, response) => {
+        const {leader} = request.appSession;
+        const mediaData = request.files.media_data;
+        const result = await uploadClinicMedia(leader.id, request.body.field_name, mediaData[0].buffer);
+
+        response.status(result ? 200 : 422);
+        response.json(result);
+    }));
+})();

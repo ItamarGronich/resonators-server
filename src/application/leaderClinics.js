@@ -231,7 +231,7 @@ export async function unfreezeCriterion(questionRequest) {
     }
 }
 
-export async function saveClinicSettings(leader_id, {logo, name, therapistName, therapistPicture, phone, website, QRImage}) {
+export async function saveClinicSettings(leader_id, {name, logo, QRImage, therapistPicture, therapistName, phone, website}) {
     const uow = getUow();
     const leaderClinic = await leader_clinics.findOne({
         where: {
@@ -245,17 +245,20 @@ export async function saveClinicSettings(leader_id, {logo, name, therapistName, 
     const leader = leaderClinic?.dataValues?.leader;
     if (!activeClinic || !leader) return false;
 
-    const logoLink = (logo) ? await s3.uploadImage(uuid(), Buffer.from(logo.replace(/^data:image\/\w+;base64,/, ""), 'base64')) : null;
-    const QRLink = (QRImage) ? await s3.uploadImage(uuid(), Buffer.from(QRImage.replace(/^data:image\/\w+;base64,/, ""), 'base64')) : null;
-    const therapistPictureLink = (therapistPicture) ? await s3.uploadImage(uuid(), Buffer.from(therapistPicture.replace(/^data:image\/\w+;base64,/, ""), 'base64')) : null;
-
-    updatePermittedFields(activeClinic, {
+    const activeClinicFields = {
         name: name,
-        logo: (logo === null) ? null : (logoLink?.Location || activeClinic.logo),
         phone,
         website,
-        qr: (QRImage === null) ? null : (QRLink?.Location || activeClinic.qr)
-    }, [
+    };
+    if (logo === null) activeClinicFields.logo = null;
+    if (QRImage === null) {
+        activeClinicFields.qr = null;
+    } else if (QRImage) {
+        const { Location } = await s3.uploadImage(uuid(), Buffer.from(QRImage.replace(/^data:image\/\w+;base64,/, ""), 'base64'));
+        activeClinicFields.qr = Location;
+    }
+
+    updatePermittedFields(activeClinic, activeClinicFields, [
         'name',
         'logo',
         'phone',
@@ -263,10 +266,11 @@ export async function saveClinicSettings(leader_id, {logo, name, therapistName, 
         'qr'
     ]);
 
-    updatePermittedFields(leader, {
-        photo: (therapistPicture === null) ? null : (therapistPictureLink?.Location || leader.photo),
+    const leaderFields = {
         title: therapistName
-    }, [
+    };
+    if (therapistPicture === null) leaderFields.photo = null;
+    updatePermittedFields(leader, leaderFields, [
         'photo',
         'title'
     ]);
@@ -276,4 +280,34 @@ export async function saveClinicSettings(leader_id, {logo, name, therapistName, 
     await uow.commit();
 
     return {activeClinic, leader};
+}
+
+export async function uploadClinicMedia(leader_id, fieldName, file) {
+    const uow = getUow();
+    const leaderClinic = await leader_clinics.findOne({
+        where: {
+            leader_id: leader_id,
+            is_primary: true
+        },
+        include: [clinics, leaders]
+    });
+
+    const activeClinic = leaderClinic?.dataValues?.clinic;
+    const leader = leaderClinic?.dataValues?.leader;
+    if (!activeClinic || !leader) return false;
+
+    const { Location } = await s3.uploadImage(uuid(), file);
+
+    switch (fieldName) {
+        case 'logo':
+            updatePermittedFields(activeClinic, {logo: Location}, ['logo']);
+            activeClinic.save();
+        break;
+        case 'therapistPicture':
+            updatePermittedFields(leader, {photo: Location}, ['photo']);
+            leader.save();
+        break;
+    }
+    await uow.commit();
+    return true;
 }
