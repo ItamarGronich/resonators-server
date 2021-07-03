@@ -5,6 +5,7 @@ import addGoogleAccount from "./addGoogleAccount";
 import fetchBasicGoogleDetails from "../../google/fetchBasicDetails";
 import storeUserGoogleContacts from "../../google/userContacts";
 import storeUserGooglePhotos from "../../google/userPhotos";
+import addResonatorsLinkToCalendar from "../../google/userCalendar";
 import { registerUser, registerLeader } from "../registerUser";
 import { loginByUserEntity } from "../login";
 import getUow from "../getUow";
@@ -81,6 +82,7 @@ export async function loginGoogleUser(googleAuthCode, state) {
 
         storeUserGoogleContacts(tokens, user.id);
         storeUserGooglePhotos(tokens, user.id);
+        state.isLeader && addResonatorsLinkToCalendar(tokens, user.id);
 
         return loginResult;
     } catch (err) {

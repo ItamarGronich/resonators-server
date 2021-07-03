@@ -1,21 +1,21 @@
-import google from 'googleapis';
+import { google } from 'googleapis';
 import dispatch from './dispatcher';
 
 const calendar = google.calendar('v3');
 
 //{items}
 export function listCalendars(tokens) {
-    return dispatch(calendar.calendarList.list, tokens);
+    return dispatch(calendar.calendarList.list.bind(calendar.calendarList), tokens);
 }
 
 //{kind, etag, id, summary}
 export function createCalendar(tokens, params) {
-    return dispatch(calendar.calendars.insert, tokens, params);
+    return dispatch(calendar.calendars.insert.bind(calendar.calendars), tokens, params);
 }
 
 //void
 export function removeCalendar(tokens, calendarId) {
-    return dispatch(calendar.calendarList.delete, tokens, {
+    return dispatch(calendar.calendarList.delete.bind(calendar.calendarList), tokens, {
         calendarId
     });
 }

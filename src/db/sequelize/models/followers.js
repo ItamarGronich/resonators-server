@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
 
     followers.associate = (models) => {
         followers.belongsTo(models.users);
+        followers.belongsTo(models.leaders);
         followers.hasMany(models.resonators);
         followers.hasMany(models.follower_group_followers);
     };

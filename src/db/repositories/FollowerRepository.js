@@ -67,6 +67,28 @@ class FollowerRepository extends Repository {
         return systemFollowers.map(dbToDomain.toFollower);
     }
 
+    async findByUserEmail(email, leader_userId) {
+        const follower = await followers.findOne({
+           where: {is_system: false},
+           include: [
+               {
+                   model: users,
+                   required: true,
+                   where: {email}
+               },
+               {
+                   model: leaders,
+                   required: true,
+                   where: {user_id: leader_userId}
+               }
+           ]
+        });
+
+        if (!follower) return null;
+
+        return dbToDomain.toFollower(follower);
+    }
+
     async findByPk(id) {
         const row = await followers.findByPk(id);
 
