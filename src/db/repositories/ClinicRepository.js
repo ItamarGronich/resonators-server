@@ -51,7 +51,7 @@ class ClinicRepository extends Repository {
         const sql = `SELECT f.id, f.user_id, f.leader_id, f.status, f.frozen, u.name
             FROM followers f
             JOIN users u ON u.id = f.user_id
-            JOIN leaders l ON l.user_id = f.user_id
+            JOIN leaders l ON l.id = f.leader_id
             WHERE NOT f.is_system
             AND f.clinic_id = '${clinicId}'
             AND l.clinic_gdrive`;
