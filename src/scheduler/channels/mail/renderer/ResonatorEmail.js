@@ -165,6 +165,7 @@ export default ({resonator, leader, clinic, host, preview, sentResonatorId, reci
                     {clinic?.dataValues?.qr && <img src={clinic.dataValues.qr} style={{ marginBottom: "10px" }} />}
                     {clinic?.dataValues?.phone && <a href={'tel:'+clinic.dataValues.phone} style={{ direction: "ltr", display: "block", maxHeight: "36px", overflow:"hidden" }} target="_blank">{clinic.dataValues.phone}</a>}
                     {clinic?.dataValues?.website && <a href={clinic.dataValues.website} style={{ display: "block", maxHeight: "36px", overflow:"hidden" }} target="_blank">{clinic.dataValues.website}</a>}
+                    {clinic?.dataValues?.email && <a href={"mailto:"+clinic.dataValues.email} style={{ display: "block", maxHeight: "36px", overflow:"hidden" }}>{clinic.dataValues.email}</a>}
                 </div>
                 <div style={{ display: "inline-block", width: "33%" }}>
                     {leader?.dataValues?.photo && <img src={leader.dataValues.photo} style={{height:"100px", maxWidth: "150px"}} />}

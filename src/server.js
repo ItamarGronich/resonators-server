@@ -3,6 +3,7 @@ import cfg from "./cfg";
 import scheduler from "./scheduler";
 import { apiLogger as logger } from "./logging";
 // import syncCalendarsJob from "./calendars/calendarsSync";
+import syncClinicGoogleDriveJob from "./google/leaderClinic";
 
 function startServer() {
     api.listen(cfg.port, "0.0.0.0", () => {
@@ -13,6 +14,7 @@ function startServer() {
 function startJobs() {
     if (cfg.scheduler.on) scheduler.start();
     // syncCalendarsJob.start();
+    if (cfg.GDriveClinicSync) syncClinicGoogleDriveJob.start();
 }
 
 startJobs();

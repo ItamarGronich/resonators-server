@@ -9,13 +9,15 @@ module.exports = (sequelize, DataTypes) => {
             clinic_id: DataTypes.UUID,
             status: DataTypes.INTEGER,
             frozen: DataTypes.BOOLEAN,
-            is_system: DataTypes.BOOLEAN
+            is_system: DataTypes.BOOLEAN,
+            gdrive_link: DataTypes.STRING
         },
         { underscored: true }
     );
 
     followers.associate = (models) => {
         followers.belongsTo(models.users);
+        followers.belongsTo(models.leaders);
         followers.hasMany(models.resonators);
         followers.hasMany(models.follower_group_followers);
     };
