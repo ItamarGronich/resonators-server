@@ -12,7 +12,7 @@ export default {
         on: true,
         interval: 60 * 1000,
     },
-    GDriveClinicSync: true,
+    GDriveClinicSync: false,
     logging: {
         directory: "/var/log/resonators",
         maxFileSize: 1024 * 1024 * 10,
