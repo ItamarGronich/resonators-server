@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
             group_permissions: DataTypes.BOOLEAN,
             admin_permissions: DataTypes.BOOLEAN,
             clinic_branding: DataTypes.BOOLEAN,
+            clinic_gdrive: DataTypes.BOOLEAN,
             photo: DataTypes.STRING,
         },
         { underscored: true }

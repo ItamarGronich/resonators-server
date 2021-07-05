@@ -20,6 +20,11 @@ async function buildClinicGoogleDrive() {
         const Drive = new GoogleDrive(cfg.googleDriveAccount);
         const drives = await Drive.listDrives();
         const clinics = await ClinicRepository.findAllClinicsRaw();
+        if (!clinics.length) {
+            log.info('No clinics to sync.');
+            return;
+        }
+
         const allDrivesFiles = await Drive.listFiles();
 
         allDrivesFiles.map((file) => { // attach files to their drives
@@ -31,7 +36,7 @@ async function buildClinicGoogleDrive() {
         });
 
         clinics.map(async (clinic) => {
-            if (!clinic.leader_name) return;
+            if (!clinic.leader_name || !clinic.leader_id) return;
             let existingDrive = drives.find(drive => drive.name === clinic.name);
             if (!existingDrive) { // create clinic drive if it doesn't exist yet
                 existingDrive = await Drive.createDrive({name: clinic.name});
@@ -55,6 +60,7 @@ async function buildClinicGoogleDrive() {
                     mimeType: "application/vnd.google-apps.folder",
                     parents: [leaderFolder.id]
                 });
+                existingDrive.files.push(inactiveFollowersFolder);
             }
 
             const followers = await ClinicRepository.findClinicFollowersRaw(clinic.id);
@@ -69,6 +75,7 @@ async function buildClinicGoogleDrive() {
                         mimeType: "application/vnd.google-apps.folder",
                         parents: [followerParent]
                     });
+                    existingDrive.files.push(existingFollower);
                     await ClinicRepository.addFollowerGDriveLink(follower.id, existingFollower.webViewLink);
                 } else if (!existingFollower.parents.includes(followerParent)) { // move the follower if they're in the wrong folder (active||inactive)
                     await Drive.updateFile({
@@ -86,6 +93,7 @@ async function buildClinicGoogleDrive() {
                         mimeType: "application/vnd.google-apps.folder",
                         parents: [existingFollower.id]
                     });
+                    existingDrive.files.push(systemTemplatesFolder);
                 }
             });
         });

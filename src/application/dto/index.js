@@ -17,6 +17,7 @@ export function toLeader(leader){
         current_clinic_id: leader.current_clinic_id,
         group_permissions: leader.group_permissions,
         admin_permissions: leader.admin_permissions,
+        clinic_gdrive: leader.clinic_gdrive,
         clinic_branding: leader.clinic_branding
     }
 }

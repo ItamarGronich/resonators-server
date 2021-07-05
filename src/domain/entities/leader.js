@@ -8,6 +8,7 @@ export default class Leader {
         visible,
         group_permissions,
         admin_permissions,
+        clinic_gdrive,
         clinic_branding,
         photo
     }) {
@@ -20,6 +21,7 @@ export default class Leader {
         this.group_permissions = group_permissions;
         this.admin_permissions = admin_permissions;
         this.clinic_branding = clinic_branding;
+        this.clinic_gdrive = clinic_gdrive;
         this.photo = photo;
     }
 }
