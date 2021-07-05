@@ -18,6 +18,7 @@ export const formatSentResonatorPreview = (resonator) => ({
     leader_name: resonator.resonator.leader?.title,
     clinic_phone: resonator.resonator.leader?.leader_clinics[0].clinic.dataValues.phone,
     clinic_website: resonator.resonator.leader?.leader_clinics[0].clinic.dataValues.website,
+    clinic_email: resonator.resonator.leader?.leader_clinics[0].clinic.dataValues.email,
     clinic_qr: resonator.resonator.leader?.leader_clinics[0].clinic.dataValues.qr,
     clinic_name: resonator.resonator.leader?.leader_clinics[0].clinic.dataValues.name,
     clinic_logo: resonator.resonator.leader?.leader_clinics[0].clinic.dataValues.logo

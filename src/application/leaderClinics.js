@@ -111,6 +111,7 @@ export async function getLeaderClinicsIncludingSecondary(leader_id) {
         id: r.get('clinic_id'),
         user_id: r.get('leader_id'),
         name: r.get('clinic').get('name'),
+        email: r.get('clinic').get('email'),
         phone: r.get('clinic').get('phone'),
         website: r.get('clinic').get('website'),
         logo: r.get('clinic').get('logo'),
@@ -231,7 +232,7 @@ export async function unfreezeCriterion(questionRequest) {
     }
 }
 
-export async function saveClinicSettings(leader_id, {name, logo, QRImage, therapistPicture, therapistName, phone, website}) {
+export async function saveClinicSettings(leader_id, {name, email, logo, QRImage, therapistPicture, therapistName, phone, website}) {
     const uow = getUow();
     const leaderClinic = await leader_clinics.findOne({
         where: {
@@ -246,7 +247,8 @@ export async function saveClinicSettings(leader_id, {name, logo, QRImage, therap
     if (!activeClinic || !leader) return false;
 
     const activeClinicFields = {
-        name: name,
+        name,
+        email,
         phone,
         website,
     };
@@ -260,6 +262,7 @@ export async function saveClinicSettings(leader_id, {name, logo, QRImage, therap
 
     updatePermittedFields(activeClinic, activeClinicFields, [
         'name',
+        'email',
         'logo',
         'phone',
         'website',
