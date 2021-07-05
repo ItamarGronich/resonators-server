@@ -44,6 +44,7 @@ export async function registerLeader(user) {
         group_permissions: false,
         admin_permissions: false,
         clinic_branding: true,
+        clinic_gdrive: false,
         visible: 1
     });
 

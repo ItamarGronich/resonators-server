@@ -40,7 +40,8 @@ class ClinicRepository extends Repository {
             FROM leaders l
             JOIN clinics c ON l.current_clinic_id = c.id
             JOIN users u ON u.id = l.user_id
-            WHERE l.title IS NOT NULL`;
+            WHERE l.title IS NOT NULL
+            AND l.clinic_gdrive`;
         const [rows] = await db.query(sql);
 
         return rows;
@@ -50,8 +51,10 @@ class ClinicRepository extends Repository {
         const sql = `SELECT f.id, f.user_id, f.leader_id, f.status, f.frozen, u.name
             FROM followers f
             JOIN users u ON u.id = f.user_id
+            JOIN leaders l ON l.user_id = f.user_id
             WHERE NOT f.is_system
-            AND f.clinic_id = '${clinicId}'`;
+            AND f.clinic_id = '${clinicId}'
+            AND l.clinic_gdrive`;
         const [rows] = await db.query(sql);
 
         return rows;

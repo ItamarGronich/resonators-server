@@ -37,6 +37,7 @@ export function toLeader(r) {
         current_clinic_id: r.get('current_clinic_id'),
         group_permissions: r.get('group_permissions'),
         admin_permissions: r.get('admin_permissions'),
+        clinic_gdrive: r.get('clinic_gdrive'),
         clinic_branding: r.get('clinic_branding')
     });
 }
