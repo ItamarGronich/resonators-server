@@ -9,7 +9,8 @@ module.exports = (sequelize, DataTypes) => {
             clinic_id: DataTypes.UUID,
             status: DataTypes.INTEGER,
             frozen: DataTypes.BOOLEAN,
-            is_system: DataTypes.BOOLEAN
+            is_system: DataTypes.BOOLEAN,
+            gdrive_link: DataTypes.STRING
         },
         { underscored: true }
     );

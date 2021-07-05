@@ -53,6 +53,7 @@ export function toFollower(r, stndaln = false) {
         status: r.get('status'),
         frozen: !!r.get('frozen'),
         is_system: !!r.get('is_system'),
+        gdrive_link: r.get('gdrive_link'),
         groups: (groups?.length > 0 && !stndaln) ? groups : [...groups, "STNDALN"],
         createdAt: r.get('createdAt'),
         updatedAt: r.get('updatedAt')

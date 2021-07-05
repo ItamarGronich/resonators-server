@@ -15,6 +15,7 @@ export default {
         on: true,
         interval: 10 * 1000,
     },
+    GDriveClinicSync: false,
     logging: {
         directory: path.join(__dirname, "../../logs"),
         maxFileSize: 1024 * 1024,

@@ -1,5 +1,6 @@
 import Repository from './Repository';
 import {clinics} from '../sequelize/models';
+import db from '../sequelize/dbConnection';
 
 class ClinicRepository extends Repository {
     constructor(...args) {
@@ -32,6 +33,34 @@ class ClinicRepository extends Repository {
         }));
     
         return foundClinics;
+    }
+
+    async findAllClinicsRaw() {
+        const sql = `SELECT c.id, c.user_id, c.name, l.title leader_name, l.id leader_id, u.email leader_email
+            FROM leaders l
+            JOIN clinics c ON l.current_clinic_id = c.id
+            JOIN users u ON u.id = l.user_id
+            WHERE l.title IS NOT NULL`;
+        const [rows] = await db.query(sql);
+
+        return rows;
+    }
+
+    async findClinicFollowersRaw(clinicId) {
+        const sql = `SELECT f.id, f.user_id, f.leader_id, f.status, f.frozen, u.name
+            FROM followers f
+            JOIN users u ON u.id = f.user_id
+            WHERE NOT f.is_system
+            AND f.clinic_id = '${clinicId}'`;
+        const [rows] = await db.query(sql);
+
+        return rows;
+    }
+
+    async addFollowerGDriveLink(followerId, link) {
+        const sql = `UPDATE followers SET gdrive_link = '${link}' WHERE id = '${followerId}'`;
+
+        await db.query(sql);
     }
 }
 

@@ -10,6 +10,7 @@ export default class Follower {
         status,
         frozen,
         is_system,
+        gdrive_link,
         groups,
         createdAt,
         updatedAt
@@ -22,6 +23,7 @@ export default class Follower {
         this.status = status;
         this.frozen = frozen;
         this.is_system = is_system;
+        this.gdrive_link = gdrive_link;
         this.groups = groups;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;

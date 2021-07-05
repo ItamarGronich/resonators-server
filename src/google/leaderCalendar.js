@@ -5,7 +5,7 @@ import cfg from "../cfg";
 
 const calendar = google.calendar('v3');
 
-export default async function addResonatorsLinkToCalendar(tokens, user_id) {
+export default async function addResonatorsLinkToGoogleCalendar(tokens, user_id) {
     const calendarEvents = await dispatch(calendar.events.list.bind(calendar.events), tokens, {calendarId: "primary"});
     const calendarEventsWithAttendees = calendarEvents.data?.items?.filter(event => event.attendees?.length > 0) || [];
     calendarEventsWithAttendees.map((event) => {

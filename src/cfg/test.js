@@ -7,4 +7,5 @@ export default {
         on: true,
         interval: 10 * 1000,
     },
+    GDriveClinicSync: false,
 };
