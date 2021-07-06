@@ -1,13 +1,16 @@
 import createOauthClient from './createOauthClient';
 
-// generate a url that asks permissions for Google+ and Google Calendar scopes
-const scopes = [
+const leaderScopes = [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile',
     'https://www.googleapis.com/auth/contacts.readonly',
     'https://www.googleapis.com/auth/contacts.other.readonly',
     'https://www.googleapis.com/auth/drive.readonly',
     'https://www.googleapis.com/auth/calendar'
+];
+const followerScopes = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
 ];
 
 export function generateAuthUrl(redirectUrl, state = {isLeader: false}) {
@@ -18,7 +21,7 @@ export function generateAuthUrl(redirectUrl, state = {isLeader: false}) {
         access_type: 'offline',
 
         // If you only need one scope you can pass it as a string
-        scope: scopes,
+        scope: state.isLeader ? leaderScopes : followerScopes,
 
         // Optional property that passes state parameters to redirect URI
         state: JSON.stringify(state)
