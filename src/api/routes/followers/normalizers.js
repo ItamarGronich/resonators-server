@@ -16,6 +16,7 @@ export const formatSentResonatorPreview = (resonator) => ({
     done: resonator.read && resonator.resonator_answers.length >= resonator.resonator.resonator_questions.length,
     leader_photo: resonator.resonator.leader?.photo,
     leader_name: resonator.resonator.leader?.title,
+    leader_email: resonator.resonator.leader?.user?.email,
     clinic_phone: resonator.resonator.leader?.leader_clinics[0].clinic.dataValues.phone,
     clinic_website: resonator.resonator.leader?.leader_clinics[0].clinic.dataValues.website,
     clinic_email: resonator.resonator.leader?.leader_clinics[0].clinic.dataValues.email,

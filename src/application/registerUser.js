@@ -33,7 +33,8 @@ export async function registerLeader(user) {
     const clinic = new Clinic({
         id: uuid(),
         user_id: user.id,
-        name: `${user.name}'s clinic`
+        name: `${user.name}'s clinic`,
+        email: user.email
     });
 
     const leader = new Leader({

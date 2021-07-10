@@ -1,18 +1,13 @@
 import _ from 'lodash';
-import {clinics} from '../db/sequelize/models';
-import {leaders} from '../db/sequelize/models';
-import {users} from '../db/sequelize/models';
+import {leader_clinics, clinics, leaders, users} from '../db/sequelize/models';
 import questionsRepository from '../db/repositories/QuestionRepository';
 import Question from '../domain/entities/question';
 import * as dtoFactory from './dto';
 import getUow from './getUow';
 import updatePermittedFields from './updatePermittedFields';
-import {leader_clinics} from '../db/sequelize/models';
 import LeaderClinic from '../domain/entities/leaderClinic';
 import { v4 as uuid } from 'uuid';
 import s3 from '../s3';
-import log from '../logging';
-import { uow } from '../api/middleware';
 
 export async function getLeaderClinics(user_id) {
     const rows = await clinics.findAll({
@@ -104,7 +99,13 @@ export async function getLeaderClinicsIncludingSecondary(leader_id) {
         where: {
             leader_id: leader_id
         },
-        include: [clinics, leaders]
+        include: [
+            clinics,
+            {
+                model: leaders,
+                include: [users]
+            }
+        ]
     });
     
     const foundClinics = rows.map(r => ({
@@ -118,6 +119,7 @@ export async function getLeaderClinicsIncludingSecondary(leader_id) {
         qr: r.get('clinic').get('qr'),
         therapistPicture: r.get('leader').get('photo'),
         therapistName: r.get('leader').get('title'),
+        therapistEmail: r.get('leader').get('user').get('email'),
         is_primary: r.get('is_primary'),
         is_leader_accepted: r.get('is_leader_accepted'),
         isCurrentClinic: r.get('clinic_id') == r.get('leader').get('current_clinic_id'),
@@ -232,19 +234,26 @@ export async function unfreezeCriterion(questionRequest) {
     }
 }
 
-export async function saveClinicSettings(leader_id, {name, email, logo, QRImage, therapistPicture, therapistName, phone, website}) {
+export async function saveClinicSettings(leader_id, {name, email, logo, QRImage, therapistPicture, therapistName, therapistEmail, phone, website}) {
     const uow = getUow();
     const leaderClinic = await leader_clinics.findOne({
         where: {
             leader_id: leader_id,
             is_primary: true
         },
-        include: [clinics, leaders]
+        include: [
+            clinics,
+            {
+                model: leaders,
+                include: [users]
+            }
+        ]
     });
 
     const activeClinic = leaderClinic?.dataValues?.clinic;
     const leader = leaderClinic?.dataValues?.leader;
-    if (!activeClinic || !leader) return false;
+    const user = leader?.user;
+    if (!activeClinic || !leader || !user) return false;
 
     const activeClinicFields = {
         name,
@@ -278,11 +287,14 @@ export async function saveClinicSettings(leader_id, {name, email, logo, QRImage,
         'title'
     ]);
 
+    updatePermittedFields(user, {email: therapistEmail}, ['email']);
+
     activeClinic.save();
     leader.save();
+    user.save();
     await uow.commit();
 
-    return {activeClinic, leader};
+    return {activeClinic, leader, user};
 }
 
 export async function uploadClinicMedia(leader_id, fieldName, file) {

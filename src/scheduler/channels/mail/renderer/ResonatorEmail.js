@@ -160,16 +160,17 @@ export default ({resonator, leader, clinic, host, preview, sentResonatorId, reci
                 <div style={{ display: "inline-block", width: "33%" }}>
                     {clinic?.dataValues?.logo && <img src={clinic.dataValues.logo} style={{height:"100px", maxWidth: "150px"}} />}
                     {clinic?.dataValues?.name && <div style={{maxHeight: "36px", overflow:"hidden"}}>{clinic.dataValues.name}</div>}
+                    {clinic?.dataValues?.email && <a href={"mailto:"+clinic.dataValues.email} style={{ display: "block", maxHeight: "36px", overflow:"hidden" }}>{clinic.dataValues.email}</a>}
                 </div>
                 <div style={{ display: "inline-block", width: "32%" }}>
                     {clinic?.dataValues?.qr && <img src={clinic.dataValues.qr} style={{ marginBottom: "10px" }} />}
                     {clinic?.dataValues?.phone && <a href={'tel:'+clinic.dataValues.phone} style={{ direction: "ltr", display: "block", maxHeight: "36px", overflow:"hidden" }} target="_blank">{clinic.dataValues.phone}</a>}
                     {clinic?.dataValues?.website && <a href={clinic.dataValues.website} style={{ display: "block", maxHeight: "36px", overflow:"hidden" }} target="_blank">{clinic.dataValues.website}</a>}
-                    {clinic?.dataValues?.email && <a href={"mailto:"+clinic.dataValues.email} style={{ display: "block", maxHeight: "36px", overflow:"hidden" }}>{clinic.dataValues.email}</a>}
                 </div>
                 <div style={{ display: "inline-block", width: "33%" }}>
                     {leader?.dataValues?.photo && <img src={leader.dataValues.photo} style={{height:"100px", maxWidth: "150px"}} />}
                     {leader?.dataValues?.title && <div style={{maxHeight: "36px", overflow:"hidden"}}>{leader.dataValues.title}</div>}
+                    {leader?.user?.dataValues?.email && <a href={"mailto:"+leader.user.dataValues.email} style={{ display: "block", maxHeight: "36px", overflow:"hidden" }}>{leader.user.dataValues.email}</a>}
                 </div>
             </div>
         </>
