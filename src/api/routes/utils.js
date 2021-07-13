@@ -7,7 +7,7 @@ export const sendCsvDownload = async (response, data, type, filename) => {
     convertStatsToCSV(data).map((stat, i, arr) => {
         stat.on('readable', () => {
             const row = stat.read();
-            response.write(row);
+            if (row) response.write(row);
             if (arr.length === (i + 1)) {
                 response.end();
             }
