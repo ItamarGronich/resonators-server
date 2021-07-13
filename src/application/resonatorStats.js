@@ -72,17 +72,6 @@ export async function getResonator(resonatorId) {
     return { resonator };
 }
 
-export async function getAllGroupStats(followerGroupId) {
-    const resonators = await resonatorRepository.findByFollowerGroupId(followerGroupId);
-    return resonators.reduce(async (acc, resonator) => {
-        const resonatorStats = await getResonatorStats(resonator.id);
-        return {
-            questions: resonatorStats.questions.concat(acc.questions || []),
-            answers: resonatorStats.answers.concat(acc.answers || []),
-        }
-    }, {});
-}
-
 export async function sendResonatorAnswer({ resonator_id, question_id, answer_id, sent_resonator_id }) {
     const [resonator, resonatorStats, sentResonator] = await Promise.all([
         resonatorRepository.findByPk(resonator_id),
@@ -111,20 +100,44 @@ export async function sendResonatorAnswer({ resonator_id, question_id, answer_id
     };
 }
 
-export function convertStatsToCSV({ questions, answers }) {
-    return toCSV(answers.map((answer) => {
-        const question = questions.find(_.matches({ id: answer.question_id }));
-        const answerCSV = {
-            resonator: answer.resonator,
-            followerName: answer.followerName,
-            answerBody: answer.tooltip,
-            title: question.title,
-            description: question.description,
-            rank: answer.rank,
-            time: answer.time,
+export async function getResonatorCSVData(resonatorId) {
+    const sentResonators = await sentResonatorRepository.findDataByResonatorId(resonatorId);
+
+    return sentResonators.map((sent_resonator) => {
+        const header = {
+            Resonator: sent_resonator.resonator.title,
+            Follower: sent_resonator.resonator.follower?.user?.name
         };
-        return answerCSV;
-    }));
+        const answers = {Resonator: "", Follower: ""};
+
+        sent_resonator.resonator.resonator_questions.sort((a, b) => a.order - b.order);
+
+        sent_resonator.resonator.resonator_questions.map((resonator_question) => {
+            const rank = (resonator_question.resonator_answers[0]?.answer?.rank >= 0) ? " (Rank: " + resonator_question.resonator_answers[0]?.answer?.rank + ")" : "";
+            header[resonator_question.question.title] = resonator_question.question.description + rank;
+            const answer = resonator_question.resonator_answers?.find(ra => ra.dataValues.sentResonatorId === sent_resonator.dataValues.id && ra.dataValues.resonator_quest === resonator_question.dataValues.id)?.answer;
+            answers[resonator_question.question.title] = answer?.body || answer?.rank;
+        });
+        sent_resonator.resonator.resonator_questions.map((resonator_question, i) => {
+            const questionNumber = i + 1;
+            header["Time-Reply"+questionNumber] = "Time-Reply"+questionNumber;
+            answers["Time-Reply"+questionNumber] = resonator_question.resonator_answers?.find(ra => ra.dataValues.sentResonatorId === sent_resonator.dataValues.id && ra.dataValues.resonator_quest === resonator_question.dataValues.id)?.createdAt;
+        });
+
+        return [header, answers];
+    });
+}
+
+export async function getGroupCSVData(followerGroupId) {
+    const resonators = await resonatorRepository.findByFollowerGroupId(followerGroupId);
+
+    return resonators.map(async (resonator) => await getResonatorCSVData(resonator.id)).flat();
+}
+
+export function convertStatsToCSV(sentResonators) {
+    return sentResonators.map((sentResonator) => {
+        return toCSV(sentResonator);
+    });
 }
 
 
