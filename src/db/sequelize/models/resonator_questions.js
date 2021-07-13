@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     resonator_questions.associate = (models) => {
         resonator_questions.belongsTo(models.questions);
         resonator_questions.belongsTo(models.resonators);
+        resonator_questions.hasMany(models.resonator_answers);
     };
 
     return resonator_questions;

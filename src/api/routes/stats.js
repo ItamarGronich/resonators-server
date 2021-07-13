@@ -3,8 +3,9 @@ import routeHandler from '../routeHandler';
 import {
     getResonatorStats,
     getResonator,
-    getAllGroupStats,
     sendResonatorAnswer,
+    getResonatorCSVData,
+    getGroupCSVData,
     getResonatorStatsFileName,
     getGroupStatsFileName
 } from '../../application/resonatorStats';
@@ -22,7 +23,7 @@ express.get('/api/criteria/stats/reminders/:resonatorId\.:ext?', routeHandler(as
 
 express.get('/api/criteria/stats/reminders/:resonatorId/download\.:ext?', routeHandler(async (request, response) => {
     const { resonatorId } = request.params;
-    const stats = await getResonatorStats(resonatorId);
+    const stats = await getResonatorCSVData(resonatorId);
     if (stats) {
         response.status(200);
         await sendCsvDownload(response, stats, 'text/csv', await getResonatorStatsFileName(resonatorId))
@@ -35,7 +36,8 @@ express.get('/api/criteria/stats/reminders/:resonatorId/download\.:ext?', routeH
 
 express.get('/api/criteria/stats/followerGroups/:followerGroupId/download\.:ext?', routeHandler(async (request, response) => {
     const { followerGroupId } = request.params;
-    const stats = await getAllGroupStats(followerGroupId);
+    const stats = await getGroupCSVData(followerGroupId);
+
     if (stats) {
         response.status(200);
         await sendCsvDownload(response, stats, 'text/csv', await getGroupStatsFileName(followerGroupId))

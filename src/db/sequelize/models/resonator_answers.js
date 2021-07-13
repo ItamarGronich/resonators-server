@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
 
     resonator_answers.associate = (models) => {
         resonator_answers.belongsTo(models.resonator_questions);
+        resonator_answers.belongsTo(models.answers);
     };
     
     return resonator_answers;

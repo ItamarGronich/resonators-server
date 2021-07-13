@@ -1,6 +1,7 @@
 import * as dbToDomain from '../dbToDomain';
 import Repository from './Repository';
-import {sent_resonators} from '../sequelize/models';
+const { Op } = require("sequelize");
+import {sent_resonators, resonators, resonator_questions, questions, resonator_answers, answers, followers, users} from '../sequelize/models';
 
 class SentResonatorRepository extends Repository {
     constructor(...args) {
@@ -26,6 +27,39 @@ class SentResonatorRepository extends Repository {
         const sentResonator = dbToDomain.toSentResonator(row);
         this.trackEntity(sentResonator);
         return sentResonator;
+    }
+
+    async findDataByResonatorId(resonator_id) {
+        const rows = await sent_resonators.findAll({
+            include: {
+                model: resonators,
+                where: {
+                    [Op.or]: [
+                        { id: resonator_id },
+                        { parent_resonator_id: resonator_id }
+                    ]
+                },
+                required: true,
+                include: [
+                    {
+                        model: resonator_questions,
+                        include: [
+                            questions,
+                            {
+                                model: resonator_answers,
+                                include: [answers]
+                            }
+                        ]
+                    },
+                    {
+                        model: followers,
+                        include: [users]
+                    }
+                ]
+            }
+        });
+
+        return rows || null;
     }
 }
 
