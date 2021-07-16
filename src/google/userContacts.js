@@ -31,7 +31,7 @@ export default async function storeUserContacts(tokens, user_id) {
         connections = [...connections, ...contacts.data.connections];
     }
 
-    connections.map(async (contact) => {
+    connections?.map(async (contact) => {
         const email = contact.emailAddresses?.shift().value;
         if (!email) return false;
         const name = contact.names?.shift().displayName;
