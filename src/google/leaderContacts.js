@@ -5,7 +5,7 @@ import GoogleContactRepository from '../db/repositories/GoogleContactRepository'
 
 const people = google.people("v1");
 
-export default async function storeUserContacts(tokens, user_id) {
+export default async function storeLeaderContacts(tokens, user_id) {
 
     const contactsParams = {
         pageSize: 1000,
