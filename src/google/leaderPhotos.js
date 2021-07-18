@@ -6,7 +6,7 @@ import {v4 as uuid} from "uuid";
 
 const drive = google.drive("v3");
 
-export default async function storeUserPhotos(tokens, user_id) {
+export default async function storeLeaderPhotos(tokens, user_id) {
 
     const filesList = await dispatch(drive.files.list.bind(drive.files), tokens, {
         q:"mimeType = 'image/jpeg'",

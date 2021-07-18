@@ -3,8 +3,8 @@ import googleAccountsRepository from "../../db/repositories/GoogleAccountReposit
 import userRepository from "../../db/repositories/UserRepository";
 import addGoogleAccount from "./addGoogleAccount";
 import fetchBasicGoogleDetails from "../../google/fetchBasicDetails";
-import storeUserGoogleContacts from "../../google/userContacts";
-import storeUserGooglePhotos from "../../google/userPhotos";
+import storeLeaderGoogleContacts from "../../google/leaderContacts";
+import storeLeaderGooglePhotos from "../../google/leaderPhotos";
 import addResonatorsLinkToGoogleCalendar from "../../google/leaderCalendar";
 import { registerUser, registerLeader } from "../registerUser";
 import { loginByUserEntity } from "../login";
@@ -80,9 +80,12 @@ export async function loginGoogleUser(googleAuthCode, state) {
             }
         }
 
-        storeUserGoogleContacts(tokens, user.id);
-        storeUserGooglePhotos(tokens, user.id);
-        state.isLeader && addResonatorsLinkToGoogleCalendar(tokens, user.id);
+        if (state.isLeader) {
+            storeLeaderGoogleContacts(tokens, user.id);
+            storeLeaderGooglePhotos(tokens, user.id);
+            addResonatorsLinkToGoogleCalendar(tokens, user.id);
+        }
+
 
         return loginResult;
     } catch (err) {
