@@ -20,7 +20,7 @@ export default async function addResonatorsLinkToGoogleCalendar(tokens, user_id)
                     const follower = await FollowerRepository.findByUserEmail(attendee.email, user_id);
                     if (follower) {
                         const link = cfg.host + 'followers/' + follower.id + '/resonators';
-                        const linkMessage = `To open the Follower's page on the Resonators system for ${follower.user.name} click the following link:\n` + link;
+                        const linkMessage = `To open the Follower's page on the Resonators system for ${follower.user.name} click the following link\n` + link;
                         if (!event.description?.includes(linkMessage)) {
                             event.description = event.description ? (event.description + '\n==========\n' + linkMessage) : linkMessage;
                             await dispatch(calendar.events.update.bind(calendar.events), tokens, {
